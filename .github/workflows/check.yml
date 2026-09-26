@@ -24,12 +24,12 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: gitleaks (default rules plus the LiteLLM sk- rule)
-        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
-          GITLEAKS_ENABLE_SUMMARY: "false"
-          GITLEAKS_ENABLE_COMMENTS: "false"
+        # The gitleaks GitHub Action demands a paid licence key on organisation accounts; the CLI
+        # in the project's own container image does not, and scans the same history with the
+        # same rules.
+        run: >-
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest
+          detect --source /repo --config /repo/.gitleaks.toml --redact --no-banner
       - uses: actions/setup-node@v4
         with:
           node-version: 26
