@@ -1,0 +1,10 @@
+{
+	"name": "Kriket",
+	"short_name": "Kriket",
+	"description": "Budgeting for bumpy income.",
+	"start_url": "/app",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#16a34a",
+	"icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

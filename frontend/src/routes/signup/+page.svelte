@@ -1,106 +1,93 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { authClient } from '$lib/auth-client';
-
-	const session = authClient.useSession();
+	import BrandMark from '$lib/components/brand-mark.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
 
 	let name = $state('');
 	let email = $state('');
 	let password = $state('');
 	let submitting = $state(false);
 	let error = $state<string | null>(null);
-	let done = $state(false);
 
 	async function handleSubmit() {
 		error = null;
 		submitting = true;
 		try {
-			const { error: authError } = await authClient.signUp.email({
-				name,
-				email,
-				password
-			});
+			const { error: authError } = await authClient.signUp.email({ name, email, password });
 			if (authError) {
 				error = authError.message ?? 'Something went wrong';
 				return;
 			}
-			done = true;
+			await goto(page.url.searchParams.get('next') ?? '/app');
 		} finally {
 			submitting = false;
 		}
 	}
 </script>
 
-<svelte:head><title>Sign up</title></svelte:head>
+<svelte:head><title>Get started · kriket</title></svelte:head>
 
-{#if $session.data}
-	<h1 class="text-2xl font-bold text-gray-900">You're signed in</h1>
-	<p class="mt-2 text-gray-600">
-		Hello, <span class="font-semibold">{$session.data.user.name}</span>
-		({$session.data.user.email}).
-	</p>
-	<button
-		class="mt-4 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
-		onclick={() => authClient.signOut()}
-	>
-		Sign out
-	</button>
-{:else if done}
-	<h1 class="text-2xl font-bold text-gray-900">Signed up!</h1>
-	<p class="mt-2 text-gray-600">
-		Your session is active. Reload the page or sign out to test the flow.
-	</p>
-{:else}
-	<h1 class="text-2xl font-bold text-gray-900">Sign up</h1>
-	<p class="mt-2 text-gray-600">
-		Create an account. This calls <code class="font-mono">POST /api/auth/sign-up/email</code> on the Express
-		backend.
-	</p>
+<div class="flex min-h-dvh flex-col items-center justify-center gap-8 bg-brand-soft px-4 py-12">
+	<a href="/" class="flex items-center gap-2 text-lg font-semibold">
+		<BrandMark class="size-8" /> kriket
+	</a>
 
-	<form
-		class="mt-6 flex max-w-sm flex-col gap-4"
-		onsubmit={(e) => {
-			e.preventDefault();
-			handleSubmit();
-		}}
-	>
-		<label class="flex flex-col gap-1">
-			<span class="text-sm font-medium text-gray-700">Name</span>
-			<input
-				bind:value={name}
-				required
-				class="rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900"
-			/>
-		</label>
-		<label class="flex flex-col gap-1">
-			<span class="text-sm font-medium text-gray-700">Email</span>
-			<input
-				bind:value={email}
-				type="email"
-				required
-				class="rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900"
-			/>
-		</label>
-		<label class="flex flex-col gap-1">
-			<span class="text-sm font-medium text-gray-700">Password</span>
-			<input
-				bind:value={password}
-				type="password"
-				required
-				minlength="8"
-				class="rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900"
-			/>
-		</label>
+	<Card.Root class="w-full max-w-sm">
+		<Card.Header>
+			<Card.Title class="text-xl">Create your account</Card.Title>
+			<Card.Description>
+				Kriket forecasts where your money is heading from the income and expenses you actually have,
+				ranges included, so you know weeks ahead whether you'll make it, and what to change if you
+				won't.
+			</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<form
+				class="flex flex-col gap-4"
+				onsubmit={(e) => {
+					e.preventDefault();
+					handleSubmit();
+				}}
+			>
+				<div class="flex flex-col gap-2">
+					<Label for="name">Name</Label>
+					<Input id="name" autocomplete="name" required bind:value={name} />
+				</div>
+				<div class="flex flex-col gap-2">
+					<Label for="email">Email</Label>
+					<Input id="email" type="email" autocomplete="email" required bind:value={email} />
+				</div>
+				<div class="flex flex-col gap-2">
+					<Label for="password">Password</Label>
+					<Input
+						id="password"
+						type="password"
+						autocomplete="new-password"
+						required
+						minlength={8}
+						bind:value={password}
+					/>
+				</div>
 
-		{#if error}
-			<p class="text-sm text-red-600">{error}</p>
-		{/if}
+				{#if error}
+					<p class="text-sm text-destructive" role="alert">{error}</p>
+				{/if}
 
-		<button
-			class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-			type="submit"
-			disabled={submitting}
-		>
-			{submitting ? 'Creating account…' : 'Create account'}
-		</button>
-	</form>
-{/if}
+				<Button type="submit" size="lg" class="w-full" disabled={submitting}>
+					{submitting ? 'Creating account…' : 'Create account'}
+				</Button>
+			</form>
+		</Card.Content>
+		<Card.Footer class="justify-center text-sm text-muted-foreground">
+			<p>
+				Already have an account?
+				<a href="/signin" class="font-medium text-brand-strong hover:underline">Sign in</a>
+			</p>
+		</Card.Footer>
+	</Card.Root>
+</div>

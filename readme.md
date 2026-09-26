@@ -1,12 +1,28 @@
-# Full Stack Svelte Template
+# kriket
 
-A full-stack template with:
+Kriket is a budgeting app for people whose money is bumpy: students, first jobs, shift
+work. You set it up once with your income and expense streams, each as a min, max, and
+usual amount on a repeat interval, and mostly leave it alone: kriket forecasts where your
+balance is heading and tells you whether you'll hit your goal at the worst, expected, and
+best case, instead of asking you to log every receipt.
 
-- **Frontend**: SvelteKit (adapter-node) + Tailwind CSS
-- **Backend**: Express 5 + Drizzle ORM + Better Auth (email/password)
-- **Database**: PostgreSQL
-- **Type safety**: OpenAPI spec generated from Zod schemas → typed frontend API client
-- **Deployment**: Docker Compose + Caddy (auto-TLS), works on Hetzner or any Docker host
+Built on a full-stack template: SvelteKit (adapter-node) + Tailwind CSS on the frontend,
+Express 5 + Drizzle ORM + Better Auth (email/password) on the backend, PostgreSQL for
+storage, an OpenAPI spec generated from Zod schemas driving a typed frontend API client,
+and Docker Compose + Caddy (auto-TLS) for deployment.
+
+## Running locally
+
+```bash
+cp .env.example .env          # set BETTER_AUTH_SECRET (32+ chars)
+docker compose up --build
+```
+
+Open http://localhost:3000.
+
+For the dev loop instead, run `npm run dev` in both `backend/` and `frontend/` (each
+needs its own `npm install` first; the backend also needs Postgres reachable per its
+`.env`).
 
 ## Architecture
 

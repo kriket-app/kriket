@@ -3,7 +3,10 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			/** Set by hooks.server.ts for every /app route; matches the GET /api/me user. */
+			user?: { id: string; email: string; name: string };
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

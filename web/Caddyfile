@@ -1,0 +1,20 @@
+# The app's own front door: plain HTTP on :3000, same-origin for the frontend and the API so Better
+# Auth cookies just work. TLS and the public hostname are the Docker box's Caddy's job
+# (app.26.cohack.tetl.ca -> this container), so nothing here knows about domains or certificates.
+{
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+:3000 {
+	encode zstd gzip
+
+	handle /api/* {
+		reverse_proxy backend:3001
+	}
+
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
