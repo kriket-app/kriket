@@ -339,9 +339,9 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
       <span class="proposed" title="A proposal for iteration 2, not a promise">Proposed</span>
       <nav class="nav-top" aria-label="Primary">
         <a href="#overview" data-go="overview">Overview</a>
-        <a href="#coming-up" data-go="coming-up">Coming up</a>
         <a href="#income" data-go="income">Income</a>
         <a href="#expenses" data-go="expenses">Expenses</a>
+        <a href="#tags" data-go="tags">Tags</a>
       </nav>
       <div class="hdr-right">
         <span class="who">sam</span>
@@ -370,21 +370,15 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
           </div>
           <div class="card-c">
             <form class="form" data-checkin-form novalidate>
-              <div class="checkin-fields">
+              <div class="checkin-row">
                 <div class="field">
                   <label class="label" for="balance">Balance</label>
                   <input class="input" id="balance" name="balance" autocomplete="off" value="430.00">
                 </div>
-                <div class="field">
-                  <label class="label" for="as-of">As of</label>
-                  <button type="button" class="datefield" id="as-of" data-datefield data-date="2026-09-26" aria-haspopup="dialog"><span>Sep 26, 2026</span><svg><use href="#i-calendar"/></svg></button>
-                </div>
-              </div>
-              <div class="checkin-foot">
-                <a class="card-link" href="#balances" data-go="balances">Your balances ›</a>
                 <button type="submit" class="btn">Save</button>
               </div>
               <p class="saved" role="status" aria-live="polite" data-saved></p>
+              <a class="card-link" href="#balances" data-go="balances">Your balances ›</a>
             </form>
           </div>
         </div>
@@ -404,23 +398,31 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
 
       <div class="tiles mt-4" data-tiles></div>
 
-      <div class="grid-2 mt-4">
-        <div class="card">
-          <div class="card-h"><div class="card-t">Coming up</div></div>
-          <div class="card-c">
-            <ul class="rows" data-upcoming></ul>
-            <a class="card-link" href="#coming-up" data-go="coming-up">See the whole month →</a>
+      <div class="card md-only mt-4">
+        <div class="card-h">
+          <div class="card-t">Your balances</div>
+          <p class="card-d">Kept every time you save one.</p>
+        </div>
+        <div class="card-c">
+          <ul class="checkins-row" data-checkins-plain></ul>
+          <a class="card-link" href="#balances" data-go="balances">Flip through them →</a>
+        </div>
+      </div>
+
+      <!-- Coming up: one month at a time, at the bottom of the overview. -->
+      <div class="card mt-4" data-coming-up>
+        <div class="card-h coming-h">
+          <div class="card-t">Coming up</div>
+          <p class="card-d" data-edge-note hidden></p>
+          <div class="month-nav">
+            <button type="button" class="btn btn--outline btn--icon-sm" data-month="-1" aria-label="Previous month"><svg><use href="#i-left"/></svg></button>
+            <h2 data-month-label aria-live="polite">October 2026</h2>
+            <button type="button" class="btn btn--outline btn--icon-sm" data-month="1" aria-label="Next month"><svg><use href="#i-right"/></svg></button>
           </div>
         </div>
-        <div class="card md-only">
-          <div class="card-h">
-            <div class="card-t">Your balances</div>
-            <p class="card-d">Kept every time you save one.</p>
-          </div>
-          <div class="card-c">
-            <ul class="checkins checkins-plain" data-checkins-plain></ul>
-            <a class="card-link" href="#balances" data-go="balances">Flip through them →</a>
-          </div>
+        <div class="card-c">
+          <p class="strip" data-strip></p>
+          <ul class="days" data-days></ul>
         </div>
       </div>
     </section>
@@ -459,25 +461,6 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
       </div>
     </section>
 
-    <!-- ------------------------------------------------------------ coming up -->
-    <section class="screen" data-screen="coming-up" aria-labelledby="cu-title" hidden>
-      <div class="page-head">
-        <h1 id="cu-title">Coming up</h1>
-        <div class="month-nav">
-          <button type="button" class="btn btn--outline btn--icon-sm" data-month="-1" aria-label="Previous month"><svg><use href="#i-left"/></svg></button>
-          <h2 data-month-label aria-live="polite">October 2026</h2>
-          <button type="button" class="btn btn--outline btn--icon-sm" data-month="1" aria-label="Next month"><svg><use href="#i-right"/></svg></button>
-        </div>
-        <p class="edge-note" data-edge-note hidden></p>
-      </div>
-      <div class="card card--sm mt-6">
-        <p class="strip" data-strip></p>
-      </div>
-      <div class="card card--list mt-4">
-        <ul class="days" data-days></ul>
-      </div>
-    </section>
-
     <!-- ------------------------------------------------------------ income -->
     <section class="screen" data-screen="income" aria-labelledby="in-title" hidden>
       <div class="page-head">
@@ -485,10 +468,7 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
           <h1 id="in-title">Income</h1>
           <p class="sub">Add what comes in on a rhythm. Just the usual amount is enough.</p>
         </div>
-        <div class="head-actions">
-          <a class="btn btn--ghost btn--sm" href="#tags" data-go="tags"><svg><use href="#i-tags"/></svg>Tags</a>
-          <button type="button" class="btn" data-add="income"><svg><use href="#i-plus"/></svg>Add income</button>
-        </div>
+        <button type="button" class="btn" data-add="income"><svg><use href="#i-plus"/></svg>Add income</button>
       </div>
       <ul class="streams mt-6" data-streams="income"></ul>
     </section>
@@ -500,10 +480,7 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
           <h1 id="ex-title">Expenses</h1>
           <p class="sub">Add what goes out on a rhythm. Just the usual amount is enough.</p>
         </div>
-        <div class="head-actions">
-          <a class="btn btn--ghost btn--sm" href="#tags" data-go="tags"><svg><use href="#i-tags"/></svg>Tags</a>
-          <button type="button" class="btn" data-add="expense"><svg><use href="#i-plus"/></svg>Add expense</button>
-        </div>
+        <button type="button" class="btn" data-add="expense"><svg><use href="#i-plus"/></svg>Add expense</button>
       </div>
       <ul class="streams mt-6" data-streams="expense"></ul>
     </section>
@@ -527,14 +504,26 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
       </div>
       <p class="hint mt-4">Presets you delete can't be brought back; rename them instead.</p>
     </section>
+
+    <!-- ------------------------------------------------------------ one tag -->
+    <section class="screen" data-screen="tag" aria-labelledby="tag-title" hidden>
+      <a class="back" href="#tags" data-go="tags">← Tags</a>
+      <div class="page-head mt-4">
+        <div>
+          <h1 id="tag-title" class="h1-tag"></h1>
+          <p class="sub" data-tag-summary></p>
+        </div>
+      </div>
+      <ul class="streams mt-6" data-tag-streams></ul>
+    </section>
   </main>
 
   <nav class="nav-bottom" aria-label="Primary">
     <div>
       <a href="#overview" data-go="overview"><svg><use href="#i-chart"/></svg><span>Overview</span></a>
-      <a href="#coming-up" data-go="coming-up"><svg><use href="#i-calendar"/></svg><span>Coming up</span></a>
       <a href="#income" data-go="income"><svg><use href="#i-in"/></svg><span>Income</span></a>
       <a href="#expenses" data-go="expenses"><svg><use href="#i-out"/></svg><span>Expenses</span></a>
+      <a href="#tags" data-go="tags"><svg><use href="#i-tags"/></svg><span>Tags</span></a>
     </div>
   </nav>
 </div>

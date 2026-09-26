@@ -33,19 +33,19 @@ WINDOWS = (30, 90, 180)
 
 TODAY = "2026-09-26"
 
-# The four proposed presets, then one tag of Sam's own.
+# The four proposed presets, two for money in and two for money out, then one tag of Sam's own.
 TAGS = [
     {"id": "pay", "name": "Pay cheque", "color": "#16a34a", "preset": True},
+    {"id": "side", "name": "Side hustle", "color": "#059669", "preset": True},
     {"id": "bill", "name": "Bill", "color": "#ea580c", "preset": True},
     {"id": "groceries", "name": "Groceries", "color": "#d97706", "preset": True},
-    {"id": "investment", "name": "Investment", "color": "#0ea5e9", "preset": True},
     {"id": "fun", "name": "Fun", "color": "#a855f7", "preset": False},
 ]
 
 # `unit` names one occurrence, for the answer sentence ("your first café shift").
 STREAMS = [
     {"id": "cafe", "kind": "income", "name": "Café shifts", "unit": "café shift", "min": 15000, "usual": 22000, "max": 30000, "every": 7, "first": "2026-10-03", "tag": "pay"},
-    {"id": "tutoring", "kind": "income", "name": "Tutoring", "unit": "tutoring session", "min": 8000, "usual": 12000, "max": 16000, "every": 14, "first": "2026-10-08", "tag": "pay"},
+    {"id": "tutoring", "kind": "income", "name": "Tutoring", "unit": "tutoring session", "min": 8000, "usual": 12000, "max": 16000, "every": 14, "first": "2026-10-08", "tag": "side"},
     {"id": "rent", "kind": "expense", "name": "Rent", "unit": "rent", "min": 60000, "usual": 60000, "max": 60000, "every": 30, "first": "2026-10-01", "tag": "bill"},
     {"id": "groceries", "kind": "expense", "name": "Groceries", "unit": "grocery run", "min": 6000, "usual": 8500, "max": 12000, "every": 7, "first": "2026-09-15", "tag": "groceries"},
     {"id": "phone", "kind": "expense", "name": "Phone and subscriptions", "unit": "phone bill", "min": 4200, "usual": 4200, "max": 4200, "every": 30, "first": "2026-10-06", "tag": "bill"},
