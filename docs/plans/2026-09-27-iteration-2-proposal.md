@@ -29,7 +29,7 @@
 11. **Setup in five steps:** balance today, then income, rent, then the bills that come every month, each a stream with the usual amount only; the forecast appears after the first income and nothing else is asked for. -- Why: the differentiator from the pitch feedback is low lift; five streams cover most of Sam's month.
 12. **The one habit is the check-in.** The balance field is at the top whenever Sam opens the app; typing today's number and Save is the whole ritual. kriket keeps every check-in and says how it compared with what it expected ("$5.00 under forecast"). -- Why: a forecast drifts unless it is re-anchored; this is the cheapest way to re-anchor it.
 13. **The forecast always starts from the latest check-in** and the window rolls forward to today. -- Why: iteration 1 anchored the window at the saved balance date and never moved it, so the forecast was stale by the second day.
-14. **Statement upload and bank connections stay out of iteration 2,** but the model is shaped for them: a stream is exactly what a recurring-transaction detector would produce. -- Why: they are the long-term low-lift story and a project of their own (consent, syncing, trust); not a weekend.
+14. **Statement upload is planned, not built, in iteration 2; bank connections stay out.** Theo's plan is `2026-09-27-statement-import-plan.md` next to this file: a PDF statement or paystub, parsed on the box only, stripped to dates, amounts, and categories, turned into suggested streams that Sam accepts or discards. A stream is exactly what that detector produces, so the model needs no change. -- Why: it is the long-term low-lift story and deserves real fixtures; row 46 asks when it goes in.
 
 ## The notes on iteration 1, one by one
 
@@ -63,7 +63,7 @@ Erik and Theo, after using the live app (the numbers are the note numbers in the
 
 ## What stays out of iteration 2
 
-34. **Bank connections and statement upload.** Row 14. -- Why: a project of its own.
+34. **Bank connections.** Statement upload has its plan (row 14) and waits for the answer in row 46. -- Why: a connection is consent, syncing, and a provider contract; a project of its own.
 35. **Suggestions to meet a goal** (whiteboard item 8). -- Why: needs goals first and a day to get right.
 36. **One-time incomes and expenses** (items 6 and 7). -- Why: small, but they come after the rows above; first candidates if time is left.
 37. **The phone install** (item 5) **and subscription reminders** (item 9). -- Why: neither changes what Sam sees on day 2.
@@ -78,3 +78,4 @@ Erik and Theo, after using the live app (the numbers are the note numbers in the
 43. **Coming up as a list grouped by day, or a calendar grid?** Proposed: the list; a grid spends a phone screen on empty days.
 44. **The bottom nav:** Overview, Coming up, Income, Expenses (row 17), or keep Tags and fold Coming up into the overview?
 45. **The month of the first check-in:** are the days before it shown muted with a "Today" divider, or not at all? Proposed: shown, muted.
+46. **Statement import: when, and what is kept?** Theo's plan asks whether v1 keeps seven days of redacted totals or nothing at all (session-only, no table, nothing stored until Accept). Proposed: build it right after the iteration 2 rows, session-only, bank statements first; the plan's last section lists the four decisions.
