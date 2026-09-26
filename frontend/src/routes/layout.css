@@ -139,7 +139,7 @@
 
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.2 0.02 150);
-	--primary: var(--brand);
+	--primary: var(--brand-strong);
 	--primary-foreground: var(--brand-foreground);
 	--ring: var(--brand);
 	--accent: var(--brand-soft);

@@ -113,14 +113,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/items": {
+    "/api/tags": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List the current user's items */
+        /** List tags (seeds presets once) */
         get: {
             parameters: {
                 query?: never;
@@ -130,13 +130,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description The current user's items */
+                /** @description Tags */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["ItemList"];
+                        "application/json": components["schemas"]["TagList"];
                     };
                 };
                 /** @description Not authenticated */
@@ -145,15 +145,13 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": {
-                            message: string;
-                        };
+                        "application/json": components["schemas"]["ErrorMessage"];
                     };
                 };
             };
         };
         put?: never;
-        /** Create an item for the current user */
+        /** Create a tag */
         post: {
             parameters: {
                 query?: never;
@@ -163,17 +161,17 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["CreateItemBody"];
+                    "application/json": components["schemas"]["CreateTagBody"];
                 };
             };
             responses: {
-                /** @description The created item */
+                /** @description Created */
                 201: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Item"];
+                        "application/json": components["schemas"]["Tag"];
                     };
                 };
                 /** @description Invalid body */
@@ -182,15 +180,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": {
-                            error: {
-                                message: string;
-                                details: {
-                                    path: string;
-                                    message: string;
-                                }[];
-                            };
-                        };
+                        "application/json": components["schemas"]["ValidationError"];
                     };
                 };
                 /** @description Not authenticated */
@@ -199,9 +189,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": {
-                            message: string;
-                        };
+                        "application/json": components["schemas"]["ErrorMessage"];
                     };
                 };
             };
@@ -212,27 +200,779 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/tags/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a tag (streams keep working, untagged) */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Rename or recolour a tag */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateTagBody"];
+                };
+            };
+            responses: {
+                /** @description Updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Tag"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the current settings (defaults when nothing is stored) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Settings */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Settings"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        /** Replace the current settings */
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["Settings"];
+                };
+            };
+            responses: {
+                /** @description Settings */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Settings"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Project the balance forward from the stored settings and streams */
+        get: {
+            parameters: {
+                query?: {
+                    days?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Forecast */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Forecast"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/income-streams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List income streams */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Streams */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StreamList"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create an income stream */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateStreamBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Stream"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/income-streams/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete an income stream */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Update an income stream */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateStreamBody"];
+                };
+            };
+            responses: {
+                /** @description Updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Stream"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
+    "/api/expense-streams": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List expense streams */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Streams */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["StreamList"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create an expense stream */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateStreamBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Stream"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/expense-streams/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete an expense stream */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Update an expense stream */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateStreamBody"];
+                };
+            };
+            responses: {
+                /** @description Updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Stream"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        Item: {
-            /** @example abc123 */
+        ErrorMessage: {
+            message: string;
+        };
+        ValidationError: {
+            error: {
+                message: string;
+                details: {
+                    path: string;
+                    message: string;
+                }[];
+            };
+        };
+        Tag: {
             id: string;
-            /** @example Groceries */
             name: string;
-            /**
-             * Format: date-time
-             * @example 2026-08-13T00:00:00.000Z
-             */
+            color: string | null;
+            isPreset: boolean;
+            /** Format: date-time */
             createdAt: string;
         };
-        CreateItemBody: {
+        TagList: {
+            tags: components["schemas"]["Tag"][];
+        };
+        CreateTagBody: {
             /** @example Groceries */
             name: string;
+            /** @example #16a34a */
+            color?: string;
         };
-        ItemList: {
-            items: components["schemas"]["Item"][];
+        UpdateTagBody: {
+            /** @example Groceries */
+            name?: string;
+            /** @example #16a34a */
+            color?: string;
+        };
+        Stream: {
+            id: string;
+            name: string;
+            tagId: string | null;
+            minCents: number;
+            maxCents: number;
+            actualCents: number;
+            intervalDays: number;
+            /** @example 2026-10-01 */
+            firstDate: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        StreamList: {
+            streams: components["schemas"]["Stream"][];
+        };
+        CreateStreamBody: {
+            /** @example Shifts at the café */
+            name: string;
+            /** Format: uuid */
+            tagId?: string | null;
+            /**
+             * @description integer cents
+             * @example 150000
+             */
+            minCents: number;
+            /**
+             * @description integer cents
+             * @example 150000
+             */
+            maxCents: number;
+            /**
+             * @description integer cents
+             * @example 150000
+             */
+            actualCents: number;
+            /** @example 14 */
+            intervalDays: number;
+            /** @example 2026-10-01 */
+            firstDate: string;
+        };
+        UpdateStreamBody: {
+            /** @example Shifts at the café */
+            name?: string;
+            /** Format: uuid */
+            tagId?: string | null;
+            /**
+             * @description integer cents
+             * @example 150000
+             */
+            minCents?: number;
+            /**
+             * @description integer cents
+             * @example 150000
+             */
+            maxCents?: number;
+            /**
+             * @description integer cents
+             * @example 150000
+             */
+            actualCents?: number;
+            /** @example 14 */
+            intervalDays?: number;
+            /** @example 2026-10-01 */
+            firstDate?: string;
+        };
+        Settings: {
+            /** @example 42000 */
+            startingBalanceCents: number;
+            /** @example 2026-10-01 */
+            startingDate: string;
+        };
+        ForecastPoint: {
+            /** @example 2026-10-01 */
+            date: string;
+            minCents: number;
+            actualCents: number;
+            maxCents: number;
+        };
+        ForecastEvent: {
+            /** @example 2026-10-01 */
+            date: string;
+            /** @enum {string} */
+            kind: "income" | "expense";
+            streamId: string;
+            name: string;
+            minCents: number;
+            actualCents: number;
+            maxCents: number;
+        };
+        Forecast: {
+            /** @example 2026-10-01 */
+            startDate: string;
+            /** @example 2026-10-01 */
+            endDate: string;
+            startingBalanceCents: number;
+            points: components["schemas"]["ForecastPoint"][];
+            events: components["schemas"]["ForecastEvent"][];
+            endBalance: {
+                minCents: number;
+                actualCents: number;
+                maxCents: number;
+            };
         };
     };
     responses: never;

@@ -1,5 +1,5 @@
 import createClient from 'openapi-fetch';
-import type { RequestEvent } from '@sveltejs/kit';
+import { error, type RequestEvent } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import type { paths } from '$lib/api/schema';
 
@@ -12,3 +12,18 @@ export const api = (event: RequestEvent) =>
 		fetch: event.fetch,
 		headers: { cookie: event.request.headers.get('cookie') ?? '' }
 	});
+
+/** The API's `message` (or `error.message`) from an error body, for SvelteKit's error page. */
+export function messageOf(body: unknown) {
+	if (typeof body === 'object' && body !== null) {
+		const inner = 'error' in body && typeof body.error === 'object' ? body.error : body;
+		if (inner && 'message' in inner && typeof inner.message === 'string') return inner.message;
+	}
+	return 'The server could not handle that request';
+}
+
+/** A load's data from a successful API call; any failure becomes SvelteKit's error page. */
+export function dataOf<T>(result: { data?: T; error?: unknown; response: Response }): T {
+	if (result.data === undefined) error(result.response.status, messageOf(result.error));
+	return result.data;
+}
