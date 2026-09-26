@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { today } from '../services/dates.js';
 import { signUp, testAgent } from '../../tests/helpers.js';
 
 describe('/api/settings', () => {
@@ -7,7 +8,7 @@ describe('/api/settings', () => {
 		await signUp(a, 'settings1@example.com');
 		const def = await a.get('/api/settings');
 		expect(def.body.startingBalanceCents).toBe(0);
-		expect(def.body.startingDate).toBe(new Date().toISOString().slice(0, 10));
+		expect(def.body.startingDate).toBe(today());
 		const put = await a
 			.put('/api/settings')
 			.send({ startingBalanceCents: -2500, startingDate: '2026-09-26' });

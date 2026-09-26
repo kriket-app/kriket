@@ -8,6 +8,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Select from '$lib/components/ui/select';
+	import { today } from '$lib/dates';
 	import { centsToDollars } from '$lib/money';
 
 	let {
@@ -176,7 +177,7 @@
 			name="firstDate"
 			type="date"
 			required
-			value={stream?.firstDate ?? ''}
+			value={stream?.firstDate ?? today()}
 			aria-invalid={errorFor('firstDate') ? true : undefined}
 			aria-describedby={describedBy('firstDate')}
 		/>

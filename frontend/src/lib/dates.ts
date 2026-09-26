@@ -2,7 +2,15 @@
 const DAY_MS = 86_400_000;
 const toUtc = (iso: string) => new Date(`${iso}T00:00:00Z`);
 const toIso = (date: Date) => date.toISOString().slice(0, 10);
-const today = () => toIso(new Date());
+// Fixed to the team's timezone for now, so "today" doesn't roll over to tomorrow (UTC) hours
+// before evening in Saskatoon.
+export const today = () =>
+	new Intl.DateTimeFormat('en-CA', {
+		timeZone: 'America/Regina',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	}).format(new Date());
 
 /**
  * The first payment on or after `from`: `firstDate` plus a whole number of intervals, the rule the
