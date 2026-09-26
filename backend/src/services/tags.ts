@@ -1,4 +1,7 @@
-import { deleteTag, findTag, insertTags, listTags, updateTag, type TagRow } from '../crud/tags.js';
+import { asc, eq, sql } from 'drizzle-orm';
+import { deleteTag, findTag, insertTags, updateTag, type TagRow } from '../crud/tags.js';
+import { db } from '../db/index.js';
+import { tags } from '../db/tables.js';
 import type { TagDto } from '../schemas/tags.js';
 import { NotFoundError } from './errors.js';
 
@@ -22,14 +25,25 @@ export const toTagDto = (row: TagRow): TagDto => ({
 	createdAt: row.createdAt.toISOString()
 });
 
+// The frontend preloads this on hover, so two first requests for the same brand-new user can
+// land within milliseconds of each other. The advisory lock serializes them on userId so only
+// one seeds the presets; without it, the plain check-then-insert below is a race that can seed
+// 16 presets instead of 8.
 export async function listTagsWithPresets(userId: string): Promise<TagDto[]> {
-	const existing = await listTags(userId);
-	if (existing.length > 0) return existing.map(toTagDto);
-	await insertTags(
-		userId,
-		PRESET_TAGS.map((t) => ({ ...t, isPreset: true }))
-	);
-	return (await listTags(userId)).map(toTagDto);
+	return db.transaction(async (tx) => {
+		await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${userId}))`);
+		const existing = await tx
+			.select()
+			.from(tags)
+			.where(eq(tags.userId, userId))
+			.orderBy(asc(tags.name));
+		if (existing.length > 0) return existing.map(toTagDto);
+		const inserted = await tx
+			.insert(tags)
+			.values(PRESET_TAGS.map((t) => ({ ...t, isPreset: true, userId })))
+			.returning();
+		return inserted.map(toTagDto);
+	});
 }
 export async function createTag(userId: string, body: { name: string; color?: string }) {
 	const [row] = await insertTags(userId, [{ name: body.name, color: body.color ?? null }]);
