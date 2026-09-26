@@ -154,3 +154,16 @@
 	--color-brand-soft: var(--brand-soft);
 	--color-brand-foreground: var(--brand-foreground);
 }
+
+/* Money out. Green is money in and every action; expense-orange is every amount that leaves.
+   Text on white uses --expense-strong (5:1 on white). */
+:root {
+	--expense: oklch(0.646 0.222 41.116); /* tailwind orange-600, #ea580c */
+	--expense-strong: oklch(0.553 0.195 38.402); /* orange-700, #c2410c */
+	--expense-soft: oklch(0.98 0.016 73.684); /* orange-50, #fff7ed */
+}
+@theme inline {
+	--color-expense: var(--expense);
+	--color-expense-strong: var(--expense-strong);
+	--color-expense-soft: var(--expense-soft);
+}
