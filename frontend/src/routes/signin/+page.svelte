@@ -1,7 +1,12 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { authClient } from '$lib/auth-client';
-
-	const session = authClient.useSession();
+	import BrandMark from '$lib/components/brand-mark.svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as Card from '$lib/components/ui/card';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
 
 	let email = $state('');
 	let password = $state('');
@@ -17,70 +22,63 @@
 				error = authError.message ?? 'Something went wrong';
 				return;
 			}
+			await goto(page.url.searchParams.get('next') ?? '/app');
 		} finally {
 			submitting = false;
 		}
 	}
 </script>
 
-<svelte:head><title>Sign in</title></svelte:head>
+<svelte:head><title>Sign in · kriket</title></svelte:head>
 
-{#if $session.data}
-	<h1 class="text-2xl font-bold text-gray-900">You're signed in</h1>
-	<p class="mt-2 text-gray-600">
-		Hello, <span class="font-semibold">{$session.data.user.name}</span>. Head to
-		<a href="/items" class="underline">your items</a>.
-	</p>
-	<button
-		class="mt-4 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700"
-		onclick={() => authClient.signOut()}
-	>
-		Sign out
-	</button>
-{:else}
-	<h1 class="text-2xl font-bold text-gray-900">Sign in</h1>
-	<p class="mt-2 text-gray-600">Sign in to access your items.</p>
+<div class="flex min-h-dvh flex-col items-center justify-center gap-8 bg-brand-soft px-4 py-12">
+	<a href="/" class="flex items-center gap-2 text-lg font-semibold">
+		<BrandMark class="size-8" /> kriket
+	</a>
 
-	<form
-		class="mt-6 flex max-w-sm flex-col gap-4"
-		onsubmit={(e) => {
-			e.preventDefault();
-			handleSubmit();
-		}}
-	>
-		<label class="flex flex-col gap-1">
-			<span class="text-sm font-medium text-gray-700">Email</span>
-			<input
-				bind:value={email}
-				type="email"
-				required
-				class="rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900"
-			/>
-		</label>
-		<label class="flex flex-col gap-1">
-			<span class="text-sm font-medium text-gray-700">Password</span>
-			<input
-				bind:value={password}
-				type="password"
-				required
-				class="rounded-md border-gray-300 shadow-sm focus:border-gray-900 focus:ring-gray-900"
-			/>
-		</label>
+	<Card.Root class="w-full max-w-sm">
+		<Card.Header>
+			<Card.Title class="text-xl">Sign in</Card.Title>
+			<Card.Description>Welcome back. Your forecast is waiting.</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<form
+				class="flex flex-col gap-4"
+				onsubmit={(e) => {
+					e.preventDefault();
+					handleSubmit();
+				}}
+			>
+				<div class="flex flex-col gap-2">
+					<Label for="email">Email</Label>
+					<Input id="email" type="email" autocomplete="email" required bind:value={email} />
+				</div>
+				<div class="flex flex-col gap-2">
+					<Label for="password">Password</Label>
+					<Input
+						id="password"
+						type="password"
+						autocomplete="current-password"
+						required
+						bind:value={password}
+					/>
+				</div>
 
-		{#if error}
-			<p class="text-sm text-red-600">{error}</p>
-		{/if}
+				{#if error}
+					<p class="text-sm text-destructive" role="alert">{error}</p>
+				{/if}
 
-		<button
-			class="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-			type="submit"
-			disabled={submitting}
-		>
-			{submitting ? 'Signing in…' : 'Sign in'}
-		</button>
-	</form>
-
-	<p class="mt-4 text-sm text-gray-600">
-		No account? <a href="/signup" class="underline">Sign up</a>.
-	</p>
-{/if}
+				<Button type="submit" size="lg" class="w-full" disabled={submitting}>
+					{submitting ? 'Signing in…' : 'Sign in'}
+				</Button>
+			</form>
+		</Card.Content>
+		<Card.Footer class="justify-center text-sm text-muted-foreground">
+			<p>
+				No account yet?
+				<a href="/signup" class="font-medium text-brand-strong hover:underline">Create an account</a
+				>
+			</p>
+		</Card.Footer>
+	</Card.Root>
+</div>
