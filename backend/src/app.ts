@@ -13,6 +13,7 @@ import tagsRouter from './routes/tags.js';
 import { streamsRouter } from './routes/streams.js';
 import settingsRouter from './routes/settings.js';
 import forecastRouter from './routes/forecast.js';
+import pushRouter from './routes/push.js';
 import { InvalidInputError, NotFoundError } from './services/errors.js';
 
 const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
@@ -53,6 +54,7 @@ export function createApp() {
 	app.use('/api', streamsRouter('expense'));
 	app.use('/api', settingsRouter);
 	app.use('/api', forecastRouter);
+	app.use('/api', pushRouter);
 
 	// Swagger UI with the spec generated from the route registry.
 	const spec = buildOpenApiDocument();

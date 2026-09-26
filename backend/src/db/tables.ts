@@ -60,3 +60,20 @@ export const userSettings = pgTable('user_settings', {
 	startingDate: date('starting_date', { mode: 'string' }).notNull(),
 	...timestamps()
 });
+
+// One row per browser/device a user enables notifications on. `endpoint` is
+// globally unique per the Push API; re-subscribing from the same browser
+// upserts instead of duplicating.
+export const pushSubscriptions = pgTable(
+	'push_subscriptions',
+	{
+		id: idColumn(),
+		userId: userIdColumn(),
+		endpoint: text('endpoint').notNull().unique(),
+		p256dh: text('p256dh').notNull(),
+		auth: text('auth').notNull(),
+		userAgent: text('user_agent'),
+		...timestamps()
+	},
+	(t) => [index('push_subscriptions_user_idx').on(t.userId)]
+);

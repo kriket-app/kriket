@@ -2,6 +2,7 @@
 	import { ArrowRight } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
 	import ForecastChart from '$lib/components/forecast-chart.svelte';
+	import PushSettings from '$lib/components/push-settings.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -183,4 +184,8 @@
 			{/if}
 		</Card.Content>
 	</Card.Root>
+</div>
+
+<div class="mt-4">
+	<PushSettings />
 </div>

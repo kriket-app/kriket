@@ -10,6 +10,14 @@
 :3000 {
 	encode zstd gzip
 
+	# PWA: the service worker must always revalidate so updates are picked up;
+	# the manifest revalidates hourly; version-hashed icons are immutable.
+	header /service-worker.js Cache-Control "no-cache"
+	header /manifest.webmanifest Cache-Control "public, max-age=3600"
+	header /icon-*.png Cache-Control "public, max-age=31536000, immutable"
+	header /apple-touch-icon.png Cache-Control "public, max-age=31536000, immutable"
+	header /icon.svg Cache-Control "public, max-age=31536000, immutable"
+
 	handle /api/* {
 		reverse_proxy backend:3001
 	}

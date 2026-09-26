@@ -10,7 +10,10 @@ const schema = z.object({
 		.min(1, 'BETTER_AUTH_URL is required (e.g. http://localhost or https://your-domain.com)'),
 	CORS_ORIGINS: z.string().optional(),
 	PORT: z.coerce.number().int().positive().default(3001),
-	LOG_LEVEL: z.string().optional()
+	LOG_LEVEL: z.string().optional(),
+	VAPID_PUBLIC_KEY: z.string().optional(),
+	VAPID_PRIVATE_KEY: z.string().optional(),
+	VAPID_SUBJECT: z.string().default('mailto:admin@example.com')
 });
 
 export type Env = z.infer<typeof schema>;

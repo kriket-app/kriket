@@ -9,6 +9,7 @@ import '../routes/tags.js';
 import { streamsRouter } from '../routes/streams.js';
 import '../routes/settings.js';
 import '../routes/forecast.js';
+import '../routes/push.js';
 
 streamsRouter('income');
 streamsRouter('expense');
