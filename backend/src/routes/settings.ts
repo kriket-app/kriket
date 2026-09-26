@@ -6,7 +6,9 @@ import { unauthorized } from '../schemas/common.js';
 import { Settings } from '../schemas/settings.js';
 import { getSettings, putSettings } from '../services/settings.js';
 
-const json = (schema: Parameters<typeof registry.register>[1]) => ({ content: { 'application/json': { schema } } });
+const json = (schema: Parameters<typeof registry.register>[1]) => ({
+	content: { 'application/json': { schema } }
+});
 
 registry.registerPath({
 	method: 'get',

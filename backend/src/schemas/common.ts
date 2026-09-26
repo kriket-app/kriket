@@ -21,7 +21,10 @@ export const ValidationError = registry.register(
 	})
 );
 export const unauthorized = {
-	401: { description: 'Not authenticated', content: { 'application/json': { schema: ErrorMessage } } }
+	401: {
+		description: 'Not authenticated',
+		content: { 'application/json': { schema: ErrorMessage } }
+	}
 };
 export const notFound = {
 	404: { description: 'Not found', content: { 'application/json': { schema: ErrorMessage } } }

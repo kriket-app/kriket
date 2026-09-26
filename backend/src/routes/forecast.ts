@@ -5,7 +5,9 @@ import { badRequest, unauthorized } from '../schemas/common.js';
 import { Forecast, ForecastQuery } from '../schemas/forecast.js';
 import { getForecast } from '../services/forecast.js';
 
-const json = (schema: Parameters<typeof registry.register>[1]) => ({ content: { 'application/json': { schema } } });
+const json = (schema: Parameters<typeof registry.register>[1]) => ({
+	content: { 'application/json': { schema } }
+});
 
 registry.registerPath({
 	method: 'get',
@@ -26,7 +28,10 @@ router.get('/forecast', requireAuth, async (req, res) => {
 		res.status(400).json({
 			error: {
 				message: 'Invalid request',
-				details: parsed.error.issues.map((issue) => ({ path: issue.path.join('.'), message: issue.message }))
+				details: parsed.error.issues.map((issue) => ({
+					path: issue.path.join('.'),
+					message: issue.message
+				}))
 			}
 		});
 		return;

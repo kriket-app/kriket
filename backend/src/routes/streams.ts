@@ -6,7 +6,9 @@ import { IdParams, badRequest, notFound, unauthorized } from '../schemas/common.
 import { CreateStreamBody, Stream, StreamList, UpdateStreamBody } from '../schemas/streams.js';
 import { streamService } from '../services/streams.js';
 
-const json = (schema: Parameters<typeof registry.register>[1]) => ({ content: { 'application/json': { schema } } });
+const json = (schema: Parameters<typeof registry.register>[1]) => ({
+	content: { 'application/json': { schema } }
+});
 
 export function streamsRouter(kind: 'income' | 'expense') {
 	const base = `/${kind}-streams`;
@@ -37,7 +39,12 @@ export function streamsRouter(kind: 'income' | 'expense') {
 		summary: `Update ${noun}`,
 		security: [{ cookieAuth: [] }],
 		request: { params: IdParams, body: json(UpdateStreamBody) },
-		responses: { 200: { description: 'Updated', ...json(Stream) }, ...badRequest, ...unauthorized, ...notFound }
+		responses: {
+			200: { description: 'Updated', ...json(Stream) },
+			...badRequest,
+			...unauthorized,
+			...notFound
+		}
 	});
 	registry.registerPath({
 		method: 'delete',
@@ -57,11 +64,17 @@ export function streamsRouter(kind: 'income' | 'expense') {
 	router.post(base, requireAuth, validate({ body: CreateStreamBody }), async (req, res) => {
 		res.status(201).json(await service.create(res.locals.user!.id, req.body));
 	});
-	router.patch(`${base}/:id`, requireAuth, validate({ params: IdParams, body: UpdateStreamBody }), async (req, res) => {
-		res.json(await service.update(res.locals.user!.id, req.params.id, req.body));
-	});
+	router.patch(
+		`${base}/:id`,
+		requireAuth,
+		validate({ params: IdParams, body: UpdateStreamBody }),
+		async (req, res) => {
+			// See the note in routes/tags.ts: `validate` guarantees a single string here.
+			res.json(await service.update(res.locals.user!.id, req.params.id as string, req.body));
+		}
+	);
 	router.delete(`${base}/:id`, requireAuth, validate({ params: IdParams }), async (req, res) => {
-		await service.remove(res.locals.user!.id, req.params.id);
+		await service.remove(res.locals.user!.id, req.params.id as string);
 		res.status(204).end();
 	});
 	return router;

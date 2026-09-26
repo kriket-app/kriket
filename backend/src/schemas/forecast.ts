@@ -7,7 +7,12 @@ export const ForecastQuery = z.object({
 });
 export const ForecastPoint = registry.register(
 	'ForecastPoint',
-	z.object({ date: isoDate, minCents: z.number().int(), actualCents: z.number().int(), maxCents: z.number().int() })
+	z.object({
+		date: isoDate,
+		minCents: z.number().int(),
+		actualCents: z.number().int(),
+		maxCents: z.number().int()
+	})
 );
 export const ForecastEvent = registry.register(
 	'ForecastEvent',
@@ -29,7 +34,11 @@ export const Forecast = registry.register(
 		startingBalanceCents: z.number().int(),
 		points: z.array(ForecastPoint),
 		events: z.array(ForecastEvent),
-		endBalance: z.object({ minCents: z.number().int(), actualCents: z.number().int(), maxCents: z.number().int() })
+		endBalance: z.object({
+			minCents: z.number().int(),
+			actualCents: z.number().int(),
+			maxCents: z.number().int()
+		})
 	})
 );
 export type ForecastDto = z.infer<typeof Forecast>;

@@ -16,7 +16,11 @@ export const CreateTagBody = registry.register(
 	'CreateTagBody',
 	z.object({
 		name: z.string().trim().min(1).max(40).openapi({ example: 'Groceries' }),
-		color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional().openapi({ example: '#16a34a' })
+		color: z
+			.string()
+			.regex(/^#[0-9a-fA-F]{6}$/)
+			.optional()
+			.openapi({ example: '#16a34a' })
 	})
 );
 export const UpdateTagBody = registry.register('UpdateTagBody', CreateTagBody.partial());

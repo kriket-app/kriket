@@ -2,12 +2,20 @@ import { sql } from 'drizzle-orm';
 import { boolean, date, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { user } from './schema.js';
 
-const idColumn = () => text('id').primaryKey().default(sql`gen_random_uuid()`);
+const idColumn = () =>
+	text('id')
+		.primaryKey()
+		.default(sql`gen_random_uuid()`);
 const userIdColumn = () =>
-	text('user_id').notNull().references(() => user.id, { onDelete: 'cascade' });
+	text('user_id')
+		.notNull()
+		.references(() => user.id, { onDelete: 'cascade' });
 const timestamps = () => ({
 	createdAt: timestamp('created_at').defaultNow().notNull(),
-	updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull()
+	updatedAt: timestamp('updated_at')
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull()
 });
 
 export const tags = pgTable(

@@ -6,7 +6,10 @@ export async function findSettings(userId: string) {
 	const [row] = await db.select().from(userSettings).where(eq(userSettings.userId, userId));
 	return row ?? null;
 }
-export async function upsertSettings(userId: string, values: { startingBalanceCents: number; startingDate: string }) {
+export async function upsertSettings(
+	userId: string,
+	values: { startingBalanceCents: number; startingDate: string }
+) {
 	const [row] = await db
 		.insert(userSettings)
 		.values({ ...values, userId })

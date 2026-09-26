@@ -35,7 +35,11 @@ export async function createTag(userId: string, body: { name: string; color?: st
 	const [row] = await insertTags(userId, [{ name: body.name, color: body.color ?? null }]);
 	return toTagDto(row);
 }
-export async function renameTag(userId: string, id: string, patch: { name?: string; color?: string }) {
+export async function renameTag(
+	userId: string,
+	id: string,
+	patch: { name?: string; color?: string }
+) {
 	const row = await updateTag(userId, id, patch);
 	if (!row) throw new NotFoundError('Tag not found');
 	return toTagDto(row);
@@ -43,4 +47,5 @@ export async function renameTag(userId: string, id: string, patch: { name?: stri
 export async function removeTag(userId: string, id: string) {
 	if (!(await deleteTag(userId, id))) throw new NotFoundError('Tag not found');
 }
-export const tagBelongsToUser = async (userId: string, id: string) => (await findTag(userId, id)) !== null;
+export const tagBelongsToUser = async (userId: string, id: string) =>
+	(await findTag(userId, id)) !== null;

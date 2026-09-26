@@ -25,7 +25,9 @@ describe('/api/tags', () => {
 		const b = testAgent();
 		await signUp(b, 'tags3@example.com');
 		expect((await b.patch(`/api/tags/${created.body.id}`).send({ name: 'Mine' })).status).toBe(404);
-		expect((await b.get('/api/tags')).body.tags.map((t: { name: string }) => t.name)).not.toContain('Cats');
+		expect((await b.get('/api/tags')).body.tags.map((t: { name: string }) => t.name)).not.toContain(
+			'Cats'
+		);
 		expect((await a.delete(`/api/tags/${created.body.id}`)).status).toBe(204);
 		expect((await a.delete(`/api/tags/${created.body.id}`)).status).toBe(404);
 	});
@@ -34,6 +36,8 @@ describe('/api/tags', () => {
 		await signUp(a, 'tags4@example.com');
 		const res = await a.post('/api/tags').send({ name: '', color: 'green' });
 		expect(res.status).toBe(400);
-		expect(res.body.error.details.map((d: { path: string }) => d.path)).toEqual(expect.arrayContaining(['name', 'color']));
+		expect(res.body.error.details.map((d: { path: string }) => d.path)).toEqual(
+			expect.arrayContaining(['name', 'color'])
+		);
 	});
 });

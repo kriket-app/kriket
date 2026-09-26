@@ -18,55 +18,444 @@
       }
     },
     "schemas": {
-      "Item": {
+      "ErrorMessage": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "message"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "message",
+              "details"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "Tag": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "example": "abc123"
+            "type": "string"
           },
           "name": {
+            "type": "string"
+          },
+          "color": {
             "type": "string",
-            "example": "Groceries"
+            "nullable": true
+          },
+          "isPreset": {
+            "type": "boolean"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
-            "example": "2026-08-13T00:00:00.000Z"
+            "format": "date-time"
           }
         },
         "required": [
           "id",
           "name",
+          "color",
+          "isPreset",
           "createdAt"
         ]
       },
-      "CreateItemBody": {
+      "TagList": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          }
+        },
+        "required": [
+          "tags"
+        ]
+      },
+      "CreateTagBody": {
         "type": "object",
         "properties": {
           "name": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 200,
+            "maxLength": 40,
             "example": "Groceries"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "example": "#16a34a"
           }
         },
         "required": [
           "name"
         ]
       },
-      "ItemList": {
+      "UpdateTagBody": {
         "type": "object",
         "properties": {
-          "items": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "example": "Groceries"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$",
+            "example": "#16a34a"
+          }
+        }
+      },
+      "Stream": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "tagId": {
+            "type": "string",
+            "nullable": true
+          },
+          "minCents": {
+            "type": "integer"
+          },
+          "maxCents": {
+            "type": "integer"
+          },
+          "actualCents": {
+            "type": "integer"
+          },
+          "intervalDays": {
+            "type": "integer"
+          },
+          "firstDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "tagId",
+          "minCents",
+          "maxCents",
+          "actualCents",
+          "intervalDays",
+          "firstDate",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "StreamList": {
+        "type": "object",
+        "properties": {
+          "streams": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Item"
+              "$ref": "#/components/schemas/Stream"
             }
           }
         },
         "required": [
-          "items"
+          "streams"
+        ]
+      },
+      "CreateStreamBody": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Shifts at the café"
+          },
+          "tagId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "minCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "example": 150000,
+            "description": "integer cents"
+          },
+          "maxCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "example": 150000,
+            "description": "integer cents"
+          },
+          "actualCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "example": 150000,
+            "description": "integer cents"
+          },
+          "intervalDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 366,
+            "example": 14
+          },
+          "firstDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          }
+        },
+        "required": [
+          "name",
+          "minCents",
+          "maxCents",
+          "actualCents",
+          "intervalDays",
+          "firstDate"
+        ]
+      },
+      "UpdateStreamBody": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "Shifts at the café"
+          },
+          "tagId": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
+          "minCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "example": 150000,
+            "description": "integer cents"
+          },
+          "maxCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "example": 150000,
+            "description": "integer cents"
+          },
+          "actualCents": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "example": 150000,
+            "description": "integer cents"
+          },
+          "intervalDays": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 366,
+            "example": 14
+          },
+          "firstDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          }
+        }
+      },
+      "Settings": {
+        "type": "object",
+        "properties": {
+          "startingBalanceCents": {
+            "type": "integer",
+            "minimum": -1000000000,
+            "maximum": 1000000000,
+            "example": 42000
+          },
+          "startingDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          }
+        },
+        "required": [
+          "startingBalanceCents",
+          "startingDate"
+        ]
+      },
+      "ForecastPoint": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          },
+          "minCents": {
+            "type": "integer"
+          },
+          "actualCents": {
+            "type": "integer"
+          },
+          "maxCents": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date",
+          "minCents",
+          "actualCents",
+          "maxCents"
+        ]
+      },
+      "ForecastEvent": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "income",
+              "expense"
+            ]
+          },
+          "streamId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "minCents": {
+            "type": "integer"
+          },
+          "actualCents": {
+            "type": "integer"
+          },
+          "maxCents": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "date",
+          "kind",
+          "streamId",
+          "name",
+          "minCents",
+          "actualCents",
+          "maxCents"
+        ]
+      },
+      "Forecast": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          },
+          "endDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "example": "2026-10-01"
+          },
+          "startingBalanceCents": {
+            "type": "integer"
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForecastPoint"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForecastEvent"
+            }
+          },
+          "endBalance": {
+            "type": "object",
+            "properties": {
+              "minCents": {
+                "type": "integer"
+              },
+              "actualCents": {
+                "type": "integer"
+              },
+              "maxCents": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "minCents",
+              "actualCents",
+              "maxCents"
+            ]
+          }
+        },
+        "required": [
+          "startDate",
+          "endDate",
+          "startingBalanceCents",
+          "points",
+          "events",
+          "endBalance"
         ]
       }
     },
@@ -202,12 +591,12 @@
         }
       }
     },
-    "/api/items": {
+    "/api/tags": {
       "get": {
-        "summary": "List the current user's items",
         "tags": [
-          "items"
+          "tags"
         ],
+        "summary": "List tags (seeds presets once)",
         "security": [
           {
             "cookieAuth": []
@@ -215,11 +604,11 @@
         ],
         "responses": {
           "200": {
-            "description": "The current user's items",
+            "description": "Tags",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ItemList"
+                  "$ref": "#/components/schemas/TagList"
                 }
               }
             }
@@ -229,15 +618,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "message"
-                  ]
+                  "$ref": "#/components/schemas/ErrorMessage"
                 }
               }
             }
@@ -245,10 +626,10 @@
         }
       },
       "post": {
-        "summary": "Create an item for the current user",
         "tags": [
-          "items"
+          "tags"
         ],
+        "summary": "Create a tag",
         "security": [
           {
             "cookieAuth": []
@@ -258,18 +639,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateItemBody"
+                "$ref": "#/components/schemas/CreateTagBody"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "The created item",
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Item"
+                  "$ref": "#/components/schemas/Tag"
                 }
               }
             }
@@ -279,42 +660,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "path": {
-                                "type": "string"
-                              },
-                              "message": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "path",
-                              "message"
-                            ]
-                          }
-                        }
-                      },
-                      "required": [
-                        "message",
-                        "details"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ]
+                  "$ref": "#/components/schemas/ValidationError"
                 }
               }
             }
@@ -324,15 +670,682 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "message"
-                  ]
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tags/{id}": {
+      "patch": {
+        "tags": [
+          "tags"
+        ],
+        "summary": "Rename or recolour a tag",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTagBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "tags"
+        ],
+        "summary": "Delete a tag (streams keep working, untagged)",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/settings": {
+      "get": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Get the current settings (defaults when nothing is stored)",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "settings"
+        ],
+        "summary": "Replace the current settings",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Settings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/forecast": {
+      "get": {
+        "tags": [
+          "forecast"
+        ],
+        "summary": "Project the balance forward from the stored settings and streams",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 7,
+              "maximum": 366,
+              "default": 90
+            },
+            "required": false,
+            "name": "days",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Forecast",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forecast"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/income-streams": {
+      "get": {
+        "tags": [
+          "income-streams"
+        ],
+        "summary": "List income streams",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Streams",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "income-streams"
+        ],
+        "summary": "Create an income stream",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStreamBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/income-streams/{id}": {
+      "patch": {
+        "tags": [
+          "income-streams"
+        ],
+        "summary": "Update an income stream",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStreamBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "income-streams"
+        ],
+        "summary": "Delete an income stream",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/expense-streams": {
+      "get": {
+        "tags": [
+          "expense-streams"
+        ],
+        "summary": "List expense streams",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Streams",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StreamList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "expense-streams"
+        ],
+        "summary": "Create an expense stream",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStreamBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/expense-streams/{id}": {
+      "patch": {
+        "tags": [
+          "expense-streams"
+        ],
+        "summary": "Update an expense stream",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStreamBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Stream"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "expense-streams"
+        ],
+        "summary": "Delete an expense stream",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
                 }
               }
             }

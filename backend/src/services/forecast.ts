@@ -58,7 +58,15 @@ export function computeForecast(input: ForecastInput): ForecastDto {
 	input.incomes.forEach((s) => push('income', s));
 	input.expenses.forEach((s) => push('expense', s));
 	events.sort((a, b) =>
-		a.date !== b.date ? (a.date < b.date ? -1 : 1) : a.kind !== b.kind ? (a.kind === 'income' ? -1 : 1) : a.name.localeCompare(b.name)
+		a.date !== b.date
+			? a.date < b.date
+				? -1
+				: 1
+			: a.kind !== b.kind
+				? a.kind === 'income'
+					? -1
+					: 1
+				: a.name.localeCompare(b.name)
 	);
 
 	// Worst case: incomes at their minimum, expenses at their maximum. Best case: the reverse.

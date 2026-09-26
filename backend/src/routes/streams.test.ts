@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { signUp, testAgent } from '../../tests/helpers.js';
 
-const body = { name: 'Shifts', minCents: 80000, actualCents: 100000, maxCents: 120000, intervalDays: 14, firstDate: '2026-10-01' };
+const body = {
+	name: 'Shifts',
+	minCents: 80000,
+	actualCents: 100000,
+	maxCents: 120000,
+	intervalDays: 14,
+	firstDate: '2026-10-01'
+};
 
 describe.each(['income', 'expense'] as const)('/api/%s-streams', (kind) => {
 	const base = `/api/${kind}-streams`;

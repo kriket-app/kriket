@@ -29,19 +29,19 @@ describe('occurrences', () => {
 		]);
 	});
 	it('skips ahead when the first date is years in the past, without walking day by day', () => {
-		expect(occurrences(stream({ firstDate: '2020-01-01', intervalDays: 7 }), '2026-09-28', '2026-10-12')).toEqual([
-			'2026-09-30',
-			'2026-10-07'
-		]);
+		expect(
+			occurrences(stream({ firstDate: '2020-01-01', intervalDays: 7 }), '2026-09-28', '2026-10-12')
+		).toEqual(['2026-09-30', '2026-10-07']);
 	});
 	it('includes both window edges', () => {
-		expect(occurrences(stream({ firstDate: '2026-09-26', intervalDays: 30 }), '2026-09-26', '2026-10-26')).toEqual([
-			'2026-09-26',
-			'2026-10-26'
-		]);
+		expect(
+			occurrences(stream({ firstDate: '2026-09-26', intervalDays: 30 }), '2026-09-26', '2026-10-26')
+		).toEqual(['2026-09-26', '2026-10-26']);
 	});
 	it('is empty when the first date is after the window', () => {
-		expect(occurrences(stream({ firstDate: '2027-01-01' }), '2026-09-26', '2026-12-25')).toEqual([]);
+		expect(occurrences(stream({ firstDate: '2027-01-01' }), '2026-09-26', '2026-12-25')).toEqual(
+			[]
+		);
 	});
 });
 
@@ -71,7 +71,12 @@ describe('computeForecast', () => {
 			actualCents: 10000 + 3 * 100000 - 2 * 50000,
 			maxCents: 10000 + 3 * 120000 - 2 * 50000
 		});
-		expect(f.points[0]).toEqual({ date: '2026-09-26', minCents: 90000, actualCents: 110000, maxCents: 130000 });
+		expect(f.points[0]).toEqual({
+			date: '2026-09-26',
+			minCents: 90000,
+			actualCents: 110000,
+			maxCents: 130000
+		});
 		expect(f.events.map((e) => `${e.date} ${e.kind}`)).toEqual([
 			'2026-09-26 income',
 			'2026-10-01 expense',
@@ -86,7 +91,9 @@ describe('computeForecast', () => {
 			days: 7,
 			startingBalanceCents: 0,
 			incomes: [],
-			expenses: [stream({ firstDate: '2026-09-27', minCents: 100, actualCents: 200, maxCents: 300 })]
+			expenses: [
+				stream({ firstDate: '2026-09-27', minCents: 100, actualCents: 200, maxCents: 300 })
+			]
 		});
 		expect(f.endBalance).toEqual({ minCents: -300, actualCents: -200, maxCents: -100 });
 	});
