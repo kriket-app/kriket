@@ -1,4 +1,47 @@
+# Compose convention of the Co.Hack kit (the Docker box's deploy and preview scripts read this file):
+#   - the service the world sees is `web`: our Caddy on :3000, plain HTTP. TLS and the public
+#     hostname belong to the box's own Caddy, which routes app.26.cohack.tetl.ca to this container.
+#   - no `ports:` here. compose.override.yaml (read automatically for local `docker compose up`,
+#     never by the box) adds the host ports and the `build:` sections.
+#   - `image: ${IMAGE:-...}` so the deploy runs the images CI built; the frontend and backend images
+#     are the same tag with a suffix, so one IMAGE value names all three.
+#   - no secrets here. BETTER_AUTH_SECRET comes from .env locally and from the parameter store
+#     (/xenia/app/BETTER_AUTH_SECRET) on the box.
 services:
+  web:
+    image: ${IMAGE:-kriket-web:local}
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - backend
+
+  frontend:
+    image: ${IMAGE:-kriket-web:local}-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+
+  backend:
+    image: ${IMAGE:-kriket-web:local}-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-app}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env locally, or /xenia/app/BETTER_AUTH_SECRET on the box}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      PORT: 3001
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   db:
     image: postgres:17-alpine
     restart: unless-stopped
@@ -8,56 +51,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-app}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-app}"]
       interval: 5s
       timeout: 5s
       retries: 10
 
-  backend:
-    build: ./backend
-    restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-app}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:?set BETTER_AUTH_URL in .env}
-      CORS_ORIGINS: ${CORS_ORIGINS:-}
-      PORT: 3001
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://localhost:3001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  frontend:
-    build: ./frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
-    environment:
-      HOST: 0.0.0.0
-      PORT: 3000
-
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    depends_on:
-      - frontend
-      - backend
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-
 volumes:
   pgdata:
-  caddy_data:
-  caddy_config:

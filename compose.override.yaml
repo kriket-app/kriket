@@ -1,0 +1,16 @@
+# Local development only. `docker compose up --build` reads this file automatically next to
+# compose.yaml; the Docker box names its compose files explicitly and never sees it. It adds what the
+# base file leaves out on purpose: the image builds and the host ports (the box's Caddy is the only
+# way in there). The app is at http://localhost:3000, Postgres at localhost:5432.
+services:
+  web:
+    build: ./web
+    ports:
+      - "3000:3000"
+  frontend:
+    build: ./frontend
+  backend:
+    build: ./backend
+  db:
+    ports:
+      - "5432:5432"

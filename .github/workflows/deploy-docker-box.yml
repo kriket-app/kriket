@@ -1,0 +1,74 @@
+# deploy-docker-box: on a push to main, build the three images for arm64 (web = Caddy, frontend,
+# backend), push them to ECR under one tag family, and deploy over SSM to the Co.Hack Docker box,
+# which serves them at https://app.26.cohack.tetl.ca. The deploy role trusts only this file on main.
+# Copied from the kit's template (ert485/xenia-2026, templates/workflows/deploy-docker-box.yml); the
+# only change is the build step, because this app is three images instead of one.
+name: deploy-docker-box
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: deploy-docker-box
+  cancel-in-progress: false
+env:
+  APP_DIR: ${{ vars.APP_DIR || '.' }}
+  AWS_REGION: ${{ vars.AWS_REGION || 'ca-central-1' }}
+  APP_HOST: ${{ vars.APP_HOST || 'app.26.cohack.tetl.ca' }}
+jobs:
+  deploy:
+    name: deploy
+    # Free arm64 runner for public repos.
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 25
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          mask-aws-account-id: true
+      - name: build and push the web, frontend, and backend images (linux/arm64)
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        run: |
+          echo "::add-mask::$ECR_REGISTRY"
+          aws ecr get-login-password | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+          image="$ECR_REGISTRY/xenia/${GITHUB_REPOSITORY##*/}:sha-$GITHUB_SHA"
+          # compose.yaml derives the frontend and backend image names from IMAGE with these suffixes.
+          docker build --platform linux/arm64 -t "$image" web
+          docker build --platform linux/arm64 -t "$image-frontend" frontend
+          docker build --platform linux/arm64 -t "$image-backend" backend
+          docker push --quiet "$image"
+          docker push --quiet "$image-frontend"
+          docker push --quiet "$image-backend"
+      - name: deploy over SSM (xenia-deploy)
+        env:
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        run: |
+          image="$ECR_REGISTRY/xenia/${GITHUB_REPOSITORY##*/}:sha-$GITHUB_SHA"
+          iid="$(aws ec2 describe-instances --filters Name=tag:xenia-role,Values=docker-box Name=instance-state-name,Values=running \
+            --query 'Reservations[].Instances[].InstanceId' --output text)"
+          if [ -z "$iid" ] || [ "$iid" = "None" ]; then echo "::error::no running Docker box"; exit 1; fi
+          params="$(jq -nc --arg r "$GITHUB_REPOSITORY" --arg s "$GITHUB_SHA" --arg i "$image" --arg d "$APP_DIR" \
+            '{Repo: [$r], Sha: [$s], Image: [$i], AppDir: [$d]}')"
+          cid="$(aws ssm send-command --targets Key=tag:xenia-role,Values=docker-box --document-name xenia-deploy \
+            --parameters "$params" --timeout-seconds 900 --query Command.CommandId --output text)"
+          st=Pending
+          for _ in $(seq 1 120); do
+            sleep 5
+            st="$(aws ssm get-command-invocation --command-id "$cid" --instance-id "$iid" --query Status --output text 2>/dev/null || echo Pending)"
+            case "$st" in Pending|InProgress|Delayed) ;; *) break ;; esac
+          done
+          aws ssm get-command-invocation --command-id "$cid" --instance-id "$iid" \
+            --query '[StandardOutputContent,StandardErrorContent]' --output text | sed -E 's/[0-9]{12}/<account-id>/g'
+          echo "deploy status: $st"
+          test "$st" = Success
+      - name: smoke test
+        run: curl -fsS --retry 10 --retry-delay 6 --retry-all-errors "https://$APP_HOST/api/health"
