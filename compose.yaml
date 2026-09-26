@@ -23,6 +23,10 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: 3000
+      # The SvelteKit server talks to the backend directly; the browser never does.
+      BACKEND_URL: http://backend:3001
+      # adapter-node checks form posts against this origin; it is the app's public URL.
+      ORIGIN: ${BETTER_AUTH_URL:-http://localhost:3000}
 
   backend:
     image: ${IMAGE:-kriket-web:local}-backend
