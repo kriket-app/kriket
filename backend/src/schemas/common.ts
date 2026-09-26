@@ -2,10 +2,9 @@ import { z } from 'zod';
 import { registry } from '../openapi/registry.js';
 
 export const IdParams = z.object({ id: z.string().uuid() });
-export const isoDate = z
-	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}$/, 'use YYYY-MM-DD')
-	.openapi({ example: '2026-10-01' });
+// z.string().date() checks the calendar, not just the shape, so 2026-02-30 is rejected
+// instead of reaching Postgres and 500ing.
+export const isoDate = z.string().date('use YYYY-MM-DD').openapi({ example: '2026-10-01' });
 export const cents = z.number().int().min(0).max(1_000_000_000).openapi({
 	example: 150000,
 	description: 'integer cents'

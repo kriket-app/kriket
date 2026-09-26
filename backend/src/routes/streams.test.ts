@@ -36,6 +36,13 @@ describe.each(['income', 'expense'] as const)('/api/%s-streams', (kind) => {
 		expect(worse.body.error.details[0].path).toBe('maxCents');
 		expect((await a.get(`${base}`)).body.streams[0].maxCents).toBe(120000);
 	});
+	it('rejects a calendar-invalid firstDate', async () => {
+		const a = testAgent();
+		await signUp(a, `${kind}5@example.com`);
+		const res = await a.post(base).send({ ...body, firstDate: '2026-02-30' });
+		expect(res.status).toBe(400);
+		expect(res.body.error.details[0].path).toBe('firstDate');
+	});
 	it('only accepts the caller’s own tag and nulls it when the tag is deleted', async () => {
 		const a = testAgent();
 		await signUp(a, `${kind}3@example.com`);
