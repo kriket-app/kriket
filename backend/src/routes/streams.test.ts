@@ -36,6 +36,14 @@ describe.each(['income', 'expense'] as const)('/api/%s-streams', (kind) => {
 		expect(worse.body.error.details[0].path).toBe('maxCents');
 		expect((await a.get(`${base}`)).body.streams[0].maxCents).toBe(120000);
 	});
+	it('accepts an empty patch and returns the stream unchanged', async () => {
+		const a = testAgent();
+		await signUp(a, `${kind}6@example.com`);
+		const created = await a.post(base).send(body);
+		const patched = await a.patch(`${base}/${created.body.id}`).send({});
+		expect(patched.status).toBe(200);
+		expect(patched.body).toEqual(created.body);
+	});
 	it('rejects a calendar-invalid firstDate', async () => {
 		const a = testAgent();
 		await signUp(a, `${kind}5@example.com`);

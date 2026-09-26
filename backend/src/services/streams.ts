@@ -43,6 +43,9 @@ export function streamService(kind: 'income' | 'expense') {
 		async update(userId: string, id: string, patch: UpdateStreamInput) {
 			const current = await crud.find(userId, id);
 			if (!current) throw new NotFoundError('Stream not found');
+			// An empty patch reaches Drizzle's set({}), which throws, so skip the write and
+			// hand back the row unchanged.
+			if (Object.keys(patch).length === 0) return toStreamDto(current);
 			assertOrdered({ ...current, ...patch });
 			await assertTag(userId, patch.tagId);
 			const row = await crud.update(userId, id, patch);
