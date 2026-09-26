@@ -58,8 +58,8 @@ Erik and Theo, after using the live app (the numbers are the note numbers in the
 
 ## Also proposed for iteration 2
 
-32. **One goal on the overview** (whiteboard item 4): a name, an amount, a date; the sentence in row 5 gains a second line, "Expected $1,240 by Dec 20, $240 over your $1,000 goal", and the chart draws the target as a line. -- Why: goals is the third concept from the pitch and the only way to answer "by the date of the thing I am saving for"; the largest row here, so cut it first if the day runs short.
-33. **The landing page says what changed:** the sentence, the colours, the check-in habit, in three lines, plus the trust line from row 4. -- Why: the landing page still describes iteration 1.
+32. **One goal on the overview** (whiteboard item 4): a name, an amount, a date; the sentence in row 5 gains a second line, "Expected $1,240 by Dec 20, $240 over your $1,000 goal", and the chart draws the target as a line. -- Why: goals is the third concept from the pitch and the only way to answer "by the date of the thing I am saving for"; the largest row here, so cut it first if the day runs short. THEO'S COMMENT: do not include the goal implementation in this iteration. But when the iteration is complete have  plan for implementing goals ready.
+33. **The landing page says what changed:** the sentence, the colours, the check-in habit, in three lines, plus the trust line from row 4. -- Why: the landing page still describes iteration 1. THEO'S COMMENT:  Yes update the landing page. For all features, if applicable, update the landing page. 
 
 ## What stays out of iteration 2
 
@@ -71,11 +71,11 @@ Erik and Theo, after using the live app (the numbers are the note numbers in the
 
 ## Open questions
 
-39. **Investment as a preset:** money in (a dividend, a payout) or money out (what Sam puts away)? The note counts it as income; the prototype shows it in blue, neither green nor orange, until we know.
-40. **Should the check-in ask for a date at all?** Proposed: it saves as today, and a past date is possible from the balances list. Simpler, and it matches row 12.
+39. **Investment as a preset:** money in (a dividend, a payout) or money out (what Sam puts away)? The note counts it as income; the prototype shows it in blue, neither green nor orange, until we know. THEO'S COMMENT: let's change investment to 'side hustle' this will be an income stream 
+40. **Should the check-in ask for a date at all?** Proposed: it saves as today, and a past date is possible from the balances list. Simpler, and it matches row 12. THEO'S COMMENT: No need for the date, always treat it as today
 41. **When a check-in differs from the forecast, should kriket guess why?** ("Groceries cost $30 more than usual this month.") Proposed: only the difference in iteration 2, no guessing.
-42. **Is the goal (row 32) in or out?** Proposed: in, cut first.
+42. **Is the goal (row 32) in or out?** Proposed: in, cut first. THEO'S COMMENT: out
 43. **Coming up as a list grouped by day, or a calendar grid?** Proposed: the list; a grid spends a phone screen on empty days.
-44. **The bottom nav:** Overview, Coming up, Income, Expenses (row 17), or keep Tags and fold Coming up into the overview?
-45. **The month of the first check-in:** are the days before it shown muted with a "Today" divider, or not at all? Proposed: shown, muted.
-46. **Statement import: when, and what is kept?** Theo's plan asks whether v1 keeps seven days of redacted totals or nothing at all (session-only, no table, nothing stored until Accept). Proposed: build it right after the iteration 2 rows, session-only, bank statements first; the plan's last section lists the four decisions.
+44. **The bottom nav:** Overview, Coming up, Income, Expenses (row 17), or keep Tags and fold Coming up into the overview? THEO'S COMMENT: keep tags (make sure that clicking on a tag shows a page that has all of the income/expense streams that are associated with that tag). Coming up should be a part of overview 
+45. **The month of the first check-in:** are the days before it shown muted with a "Today" divider, or not at all? Proposed: shown, muted. THEO'S COMMENT: shown, muted
+46. **Statement import: when, and what is kept?** Theo's plan asks whether v1 keeps seven days of redacted totals or nothing at all (session-only, no table, nothing stored until Accept). Proposed: build it right after the iteration 2 rows, session-only, bank statements first; the plan's last section lists the four decisions. THEO'S COMMENT: more details will be provided once this iteration is complete
