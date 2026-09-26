@@ -9,7 +9,11 @@ import { auth } from './auth.js';
 import { buildOpenApiDocument } from './openapi/document.js';
 import healthRouter from './routes/health.js';
 import meRouter from './routes/me.js';
-import itemsRouter from './routes/items.js';
+import tagsRouter from './routes/tags.js';
+import { streamsRouter } from './routes/streams.js';
+import settingsRouter from './routes/settings.js';
+import forecastRouter from './routes/forecast.js';
+import { InvalidInputError, NotFoundError } from './services/errors.js';
 
 const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
 	.split(',')
@@ -44,7 +48,11 @@ export function createApp() {
 
 	app.use('/api', healthRouter);
 	app.use('/api', meRouter);
-	app.use('/api', itemsRouter);
+	app.use('/api', tagsRouter);
+	app.use('/api', streamsRouter('income'));
+	app.use('/api', streamsRouter('expense'));
+	app.use('/api', settingsRouter);
+	app.use('/api', forecastRouter);
 
 	// Swagger UI with the spec generated from the route registry.
 	const spec = buildOpenApiDocument();
@@ -61,6 +69,14 @@ export function createApp() {
 	// Error handler.
 	app.use(
 		(err: unknown, req: express.Request, res: express.Response, _next: express.NextFunction) => {
+			if (err instanceof NotFoundError) {
+				res.status(404).json({ message: err.message });
+				return;
+			}
+			if (err instanceof InvalidInputError) {
+				res.status(400).json({ error: { message: err.message, details: err.details } });
+				return;
+			}
 			req.log.error({ err }, 'Unhandled error');
 			res.status(500).json({ error: { message: 'Internal server error' } });
 		}
