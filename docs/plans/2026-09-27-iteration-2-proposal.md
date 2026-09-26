@@ -6,7 +6,7 @@
 
 **Companion:** the proposed-prototype tour at https://26.cohack.tetl.ca/tour/2-proposal/ shows the rows below as clickable screens. A proposal to react to, not a promise. Inputs: `docs/feedback/2026-09-26-iteration-1.md` (the notes on iteration 1), the pitch feedback from day 1, the whiteboard, and `docs/handoffs/2026-09-26-iteration-1.md`.
 
-**Reading the rows:** *Kept* means the note is taken as written; *Changed* means we propose something other than the note or than today's app; *Dropped* means not in iteration 2. Each row ends with the one-line why.
+**Reading the rows:** *Kept* means the note is taken as written; *Changed* means we propose something other than the note or than today's app; *Dropped* means not in iteration 2; *Decided* means a founder has answered, and the row says who and what. Each row ends with the one-line why. Theo's edits of 2026-09-26 are folded into rows 9, 17, 19, 20, 23, 27, 32, 33, 39, 40, 42, 44, 45, and 46.
 
 ## Who it is for
 
@@ -21,7 +21,7 @@
 6. **Colour carries meaning everywhere.** Money in is green, money out is expense-orange, and time spent below zero is shaded expense-orange under the line. -- Why: Theo's notes 6, 7, and 8; the contrast between earning and losing is the point of the chart.
 7. **The chart is the product.** Every pay and every bill is a dot on the line that shows its name and amount when tapped; the band is the range; below zero is orange. The tiles shrink to three small ones under the chart: lowest point, expected at the end, worst to best at the end. -- Why: Theo's note 11; a chart you can read without a table is the thing a spreadsheet cannot do.
 8. **The balance check-in is the first thing on the overview,** with a visible "Saved" line and a kept history. -- Why: Theo's note 10 and Erik's note 1; the forecast starts from it, so it belongs at the top.
-9. **Coming up is a month you flip through,** not a list of the next eight rows. -- Why: Theo's note 9; "what is coming this month" is how Sam already thinks.
+9. **Coming up is a month you flip through, on the overview,** not a list of the next eight rows. -- Why: Theo's note 9 and his decision in row 44; "what is coming this month" is how Sam already thinks.
 10. **Forms ask for the least.** Name, usual amount, how often, next date. Range and tag are optional and folded away. -- Why: Erik's note 3; three amount fields per stream was the most spreadsheet-like thing we shipped.
 
 ## The low-lift entry story
@@ -37,20 +37,20 @@ Erik, after the tour:
 
 15. **"Feels like just a spreadsheet." Changed.** Rows 5 to 10 are the answer: a sentence first, colour with meaning, a chart you can read, fewer fields. -- Why: the note names the problem; those rows name what changes on screen.
 16. **The pitch feedback (low lift, the persona, trust, keep the three concepts). Kept.** Rows 1 to 4 and 11 to 14 carry it; goals, the third concept, is row 32. -- Why: it is the product thesis, not a feature request.
-17. **"Does Tags need its own page?" Changed.** Tags leaves the bottom nav; the Income and Expenses pages get a small "Tags" link; the page stays for renaming, recolouring, and deleting; a new tag can also be made from the stream form. -- Why: Sam rarely manages tags, and the four nav slots go to Overview, Coming up, Income, Expenses.
+17. **"Does Tags need its own page?" Decided (Theo): yes, and it stays in the nav.** The nav stays Overview, Income, Expenses, Tags; the Tags page keeps renaming, recolouring, and deleting, and clicking a tag opens a page listing every income and expense stream that carries it; a new tag can also be made from the stream form. -- Why: a tag page is the way to see one category of Sam's money, which is what makes the page worth keeping.
 18. **"Only shades of green is limiting." Changed.** Any colour per tag; see row 22. -- Why: the same ask as Theo's note 4.
 
 Erik and Theo, after using the live app (the numbers are the note numbers in the feedback file):
 
-19. **Note 1, the Save that did nothing. Kept, fixed.** The card shows "Saved · $430.00 as of Sep 26. Your forecast starts here." and the chart redraws at once. -- Why: the save did land in iteration 1; only the confirmation was missing.
-20. **Note 2, the browser date picker. Kept, fixed.** A styled date field with a calendar popover on the stream form and on the check-in, matching the rest of the form. -- Why: the default control breaks the styling differently on every browser.
+19. **Note 1, the Save that did nothing. Kept, fixed.** The card shows "Saved · $430.00. Your forecast starts from today." and the chart redraws at once. -- Why: the save did land in iteration 1; only the confirmation was missing.
+20. **Note 2, the browser date picker. Kept, fixed.** A styled date field with a calendar popover on the stream form, matching the rest of the form; the check-in has no date field at all (row 40). -- Why: the default control breaks the styling differently on every browser.
 21. **Note 3, usual only. Kept.** The stream form asks for the usual amount; minimum and maximum sit behind "Add a range" and equal the usual unless changed. -- Why: most streams are fixed or nearly fixed; the range is for the ones that are not.
 22. **Note 4, a colour picker. Kept.** Any colour per tag from a styled picker (swatches, a hue slider, a hex field), never the browser control; greens and oranges come first in the swatches. -- Why: as asked, and row 6 needs green and orange to keep their meaning.
-23. **Note 5, the presets. Kept.** Pay cheque, Bill, Groceries, Investment; four instead of eight; people who already have tags keep them. -- Why: as asked; row 39 asks what Investment means.
+23. **Note 5, the presets. Kept, with Theo's change.** Pay cheque and Side hustle for money in, Bill and Groceries for money out; four instead of eight; people who already have tags keep them. -- Why: as asked; Theo replaced Investment with Side hustle in row 39.
 24. **Note 6, expense-orange. Kept.** One orange, the same everywhere; a slightly darker shade for text on white so it stays readable. -- Why: as asked, with the readability exception Theo allowed.
 25. **Note 7, orange below zero. Kept.** The area between the expected line and zero is filled expense-orange wherever the line is below zero, and the zero line is always drawn when the band crosses it. -- Why: as asked; the worst-to-best band stays soft green so the two do not blur.
 26. **Note 8, expenses orange in general. Kept.** Expense amounts, dots, cards, and the Bill and Groceries presets are orange; buttons stay green because they are actions, not amounts. -- Why: as asked, with that one exception.
-27. **Note 9, Coming up one month at a time. Kept.** A page of its own with a month switcher, a month summary (in, out, ends at), events grouped by day, and the back arrow stopping at the month of the first check-in. -- Why: as asked.
+27. **Note 9, Coming up one month at a time. Kept, on the overview.** The Coming up card on the overview gets a month switcher, a month summary (in, out, ends at), events grouped by day, past days muted with a "Today" divider, and the back arrow stopping at the month of the first check-in. -- Why: as asked; Theo put it on the overview rather than a page of its own (row 44).
 28. **Note 10.1, the balance near the top. Kept.** Row 8. -- Why: as asked.
 29. **Note 10.2, keep every balance and flip through them. Kept.** Every check-in is stored; a "Your balances" list with arrows redraws the chart from any past check-in and shows how each one compared with the forecast. -- Why: as asked, and it gives Sam a reason to keep checking in (row 12).
 30. **Note 11, a point per occurrence. Kept.** Row 7. -- Why: as asked.
@@ -58,8 +58,8 @@ Erik and Theo, after using the live app (the numbers are the note numbers in the
 
 ## Also proposed for iteration 2
 
-32. **One goal on the overview** (whiteboard item 4): a name, an amount, a date; the sentence in row 5 gains a second line, "Expected $1,240 by Dec 20, $240 over your $1,000 goal", and the chart draws the target as a line. -- Why: goals is the third concept from the pitch and the only way to answer "by the date of the thing I am saving for"; the largest row here, so cut it first if the day runs short. THEO'S COMMENT: do not include the goal implementation in this iteration. But when the iteration is complete have  plan for implementing goals ready.
-33. **The landing page says what changed:** the sentence, the colours, the check-in habit, in three lines, plus the trust line from row 4. -- Why: the landing page still describes iteration 1. THEO'S COMMENT:  Yes update the landing page. For all features, if applicable, update the landing page. 
+32. **Goals stay out of iteration 2; a plan for building them is ready when the iteration is complete. Decided (Theo).** The plan covers whiteboard item 4 as it was sketched here: a name, an amount, a date; a second line under the sentence in row 5, "Expected $1,240 by Dec 20, $240 over your $1,000 goal"; the target drawn on the chart. -- Why: goals is the third concept from the pitch and the only way to answer "by the date of the thing I am saving for", and it is better planned with the new overview in hand than squeezed into the day.
+33. **The landing page follows every feature. Decided (Theo).** It says what changed in iteration 2 (the sentence, the colours, the check-in habit) plus the trust line from row 4, and from now on every feature that ships updates the landing page where it applies. -- Why: the landing page still describes iteration 1, and Theo wants it to keep up.
 
 ## What stays out of iteration 2
 
@@ -71,11 +71,11 @@ Erik and Theo, after using the live app (the numbers are the note numbers in the
 
 ## Open questions
 
-39. **Investment as a preset:** money in (a dividend, a payout) or money out (what Sam puts away)? The note counts it as income; the prototype shows it in blue, neither green nor orange, until we know. THEO'S COMMENT: let's change investment to 'side hustle' this will be an income stream 
-40. **Should the check-in ask for a date at all?** Proposed: it saves as today, and a past date is possible from the balances list. Simpler, and it matches row 12. THEO'S COMMENT: No need for the date, always treat it as today
+39. **The fourth preset. Decided (Theo): Side hustle, money in, instead of Investment.** The prototype shows it in green, next to Pay cheque.
+40. **Does the check-in ask for a date? Decided (Theo): no.** A check-in is always today; the balances list keeps the date each one was saved.
 41. **When a check-in differs from the forecast, should kriket guess why?** ("Groceries cost $30 more than usual this month.") Proposed: only the difference in iteration 2, no guessing.
-42. **Is the goal (row 32) in or out?** Proposed: in, cut first. THEO'S COMMENT: out
+42. **Is the goal (row 32) in or out? Decided (Theo): out,** with the plan for it written when the iteration is complete.
 43. **Coming up as a list grouped by day, or a calendar grid?** Proposed: the list; a grid spends a phone screen on empty days.
-44. **The bottom nav:** Overview, Coming up, Income, Expenses (row 17), or keep Tags and fold Coming up into the overview? THEO'S COMMENT: keep tags (make sure that clicking on a tag shows a page that has all of the income/expense streams that are associated with that tag). Coming up should be a part of overview 
-45. **The month of the first check-in:** are the days before it shown muted with a "Today" divider, or not at all? Proposed: shown, muted. THEO'S COMMENT: shown, muted
-46. **Statement import: when, and what is kept?** Theo's plan asks whether v1 keeps seven days of redacted totals or nothing at all (session-only, no table, nothing stored until Accept). Proposed: build it right after the iteration 2 rows, session-only, bank statements first; the plan's last section lists the four decisions. THEO'S COMMENT: more details will be provided once this iteration is complete
+44. **The bottom nav. Decided (Theo): keep Tags; Coming up is part of the overview.** The nav stays Overview, Income, Expenses, Tags; clicking a tag shows a page with every income and expense stream associated with it (row 17); the month view lives in the overview's Coming up card (row 27).
+45. **The month of the first check-in. Decided (Theo): the days before it are shown, muted,** with a "Today" divider.
+46. **Statement import: when, and what is kept? Open; Theo adds detail once this iteration is complete.** Until then the plan file stands as written, with its four decisions (scope, retention, timing, statement or paystub first) unanswered; nothing from it is built in iteration 2.
