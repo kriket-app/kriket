@@ -876,7 +876,10 @@ export interface components {
             maxCents: number;
             actualCents: number;
             intervalDays: number;
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             firstDate: string;
             /** Format: date-time */
             createdAt: string;
@@ -908,7 +911,10 @@ export interface components {
             actualCents: number;
             /** @example 14 */
             intervalDays: number;
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             firstDate: string;
         };
         UpdateStreamBody: {
@@ -933,24 +939,36 @@ export interface components {
             actualCents?: number;
             /** @example 14 */
             intervalDays?: number;
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             firstDate?: string;
         };
         Settings: {
             /** @example 42000 */
             startingBalanceCents: number;
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             startingDate: string;
         };
         ForecastPoint: {
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             date: string;
             minCents: number;
             actualCents: number;
             maxCents: number;
         };
         ForecastEvent: {
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             date: string;
             /** @enum {string} */
             kind: "income" | "expense";
@@ -961,9 +979,15 @@ export interface components {
             maxCents: number;
         };
         Forecast: {
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             startDate: string;
-            /** @example 2026-10-01 */
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
             endDate: string;
             startingBalanceCents: number;
             points: components["schemas"]["ForecastPoint"][];
