@@ -89,3 +89,22 @@ test('the first-run card and the streams pages link to the import', async ({ pag
 	await page.getByRole('link', { name: 'Import from a statement' }).click();
 	await expect(page).toHaveURL('/app/import');
 });
+
+test('drafts are grouped under Income and Expenses, and Add all adds every one', async ({
+	page
+}) => {
+	await signUpAndSignIn(page);
+	await page.goto('/app/import');
+	await page.getByLabel('Statement PDF').setInputFiles('e2e/fixtures/statement.pdf');
+
+	await expect(page.getByRole('heading', { name: 'Income', exact: true })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Expenses', exact: true })).toBeVisible();
+
+	const drafts = page.getByTestId('draft');
+	const count = await drafts.count();
+	expect(count).toBeGreaterThan(1);
+
+	await page.getByRole('button', { name: 'Add all' }).click();
+	await expect(page.getByText('All added.')).toBeVisible({ timeout: 30_000 });
+	await expect(drafts.filter({ hasText: 'Added' })).toHaveCount(count);
+});
