@@ -43,7 +43,8 @@ export async function sendToUser(userId: string, payload: PushPayload) {
 			try {
 				await webPush.sendNotification(
 					{ endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-					JSON.stringify(payload)
+					JSON.stringify(payload),
+					{ timeout: 10_000 }
 				);
 				sent += 1;
 			} catch (error) {
@@ -55,6 +56,15 @@ export async function sendToUser(userId: string, payload: PushPayload) {
 						: undefined;
 				if (statusCode === 404 || statusCode === 410) {
 					await removeSubscriptionByEndpoint(sub.endpoint);
+				} else {
+					// Log the host only: the full endpoint URL is per-device data.
+					let host = sub.endpoint;
+					try {
+						host = new URL(sub.endpoint).hostname;
+					} catch {
+						// Keep the stored value when it does not parse.
+					}
+					console.error(`Push send failed for ${host}:`, error);
 				}
 			}
 		})

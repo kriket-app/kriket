@@ -51,7 +51,9 @@ self.addEventListener('install', (event) => {
 				// The app shell still works offline without it; navigations fall back
 				// to the cached landing page instead.
 			}
-			await (self as unknown as ServiceWorkerGlobalScope).skipWaiting();
+			// No skipWaiting here: an updated worker stays waiting until the user
+			// accepts the update in the reload prompt (or all tabs close), so the
+			// running page is never pulled out from under itself.
 		})()
 	);
 });

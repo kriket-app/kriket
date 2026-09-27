@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { signUpAndSignIn } from './helpers';
 
 test('the app is installable: manifest, icons, and theme color', async ({ page }) => {
 	await page.goto('/');
@@ -73,10 +74,27 @@ test('no prerendered stub shadows the authed app: anonymous /app redirects', asy
 	expect(res.headers()['location']).toContain('/signin');
 });
 
-test('push config is reachable and reports disabled without VAPID keys', async ({ page }) => {
-	const res = await page.request.get('/api/push/config');
-	// Signed out: the auth middleware rejects before the handler runs.
-	expect([200, 401]).toContain(res.status());
+test('push config reports disabled without VAPID keys, and the card stays hidden', async ({
+	page
+}) => {
+	// Signed out first: the auth middleware rejects before the handler runs.
+	expect((await page.request.get('/api/push/config')).status()).toBe(401);
+
+	// Signed in (page context carries the session cookie): the test backend has
+	// no VAPID keys, so push reports disabled — and the notifications card that
+	// depends on it renders nothing on the overview. Note this holds even though
+	// headless Chromium denies notification permission: the disabled check runs
+	// before the permission check, since there is nothing to enable either way.
+	await signUpAndSignIn(page);
+	const config = await page.evaluate(async () => {
+		const res = await fetch('/api/push/config');
+		return { status: res.status, body: (await res.json()) as unknown };
+	});
+	expect(config.status).toBe(200);
+	expect(config.body).toEqual({ publicKey: '', enabled: false });
+
+	await page.goto('/app');
+	await expect(page.getByText('Notifications', { exact: true })).toHaveCount(0);
 });
 
 test('an update prompt appears when a new service worker waits', async ({ page }) => {

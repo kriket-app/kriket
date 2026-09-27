@@ -5,6 +5,7 @@
 	import { ArrowDownToLine, ArrowUpFromLine, ChartLine, Tags } from '@lucide/svelte';
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
+	import { pushSupported, unsubscribePush } from '$lib/push';
 
 	let { data, children } = $props();
 
@@ -18,6 +19,10 @@
 		href === '/app' ? page.url.pathname === '/app' : page.url.pathname.startsWith(href);
 
 	async function signOut() {
+		// Drop this device's push subscription first: otherwise the next person on
+		// this browser would keep receiving the previous user's notifications.
+		// Best-effort and skipped entirely where push is unavailable.
+		if (pushSupported()) await unsubscribePush().catch(() => undefined);
 		await authClient.signOut();
 		await goto('/');
 	}

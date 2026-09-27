@@ -1,7 +1,8 @@
 // Browser-side Web Push helpers. The browser talks to the same-origin /api
 // (Vite proxy in dev, Caddy in prod), so plain fetch with credentials works.
 
-export type PushStatus = 'unsupported' | 'denied' | 'subscribed' | 'unsubscribed' | 'loading';
+export type PushStatus =
+	'unsupported' | 'disabled' | 'denied' | 'subscribed' | 'unsubscribed' | 'loading';
 
 export function pushSupported() {
 	return (
@@ -45,15 +46,24 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 	return (await res.json()) as T;
 }
 
+export interface PushConfig {
+	publicKey: string;
+	enabled: boolean;
+}
+
+export async function pushConfig(): Promise<PushConfig> {
+	return api<PushConfig>('/api/push/config');
+}
+
 export async function currentSubscription() {
-	const reg = await navigator.serviceWorker.ready;
-	return reg.pushManager.getSubscription();
+	// getRegistration (not .ready): resolves even where no worker is active, so
+	// callers such as sign-out never hang in dev or unsupported contexts.
+	const reg = await navigator.serviceWorker.getRegistration();
+	return reg ? reg.pushManager.getSubscription() : null;
 }
 
 export async function subscribePush(): Promise<void> {
-	const { publicKey, enabled } = await api<{ publicKey: string; enabled: boolean }>(
-		'/api/push/config'
-	);
+	const { publicKey, enabled } = await pushConfig();
 	if (!enabled || !publicKey) throw new Error('Push notifications are not set up yet');
 	const permission = await Notification.requestPermission();
 	if (permission !== 'granted') throw new Error('Notification permission was not granted');
