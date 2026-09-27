@@ -6,6 +6,7 @@
 	import ForecastChart from '$lib/components/forecast-chart.svelte';
 	import ForecastTiles from '$lib/components/forecast-tiles.svelte';
 	import GoalsSection from '$lib/components/goals/goals-section.svelte';
+	import PushSettings from '$lib/components/push-settings.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
@@ -104,3 +105,7 @@
 	hasStreams={data.hasStreams}
 	class="mt-4"
 />
+
+<div class="mt-4">
+	<PushSettings />
+</div>

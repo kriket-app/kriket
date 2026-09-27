@@ -5,6 +5,7 @@
 	import { ArrowDownToLine, ArrowUpFromLine, ChartLine, Tags, Target } from '@lucide/svelte';
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
+	import { pushSupported, unsubscribePush } from '$lib/push';
 
 	let { data, children } = $props();
 
@@ -23,13 +24,17 @@
 			: page.url.pathname.startsWith(href);
 
 	async function signOut() {
+		// Drop this device's push subscription first: otherwise the next person on
+		// this browser would keep receiving the previous user's notifications.
+		// Best-effort and skipped entirely where push is unavailable.
+		if (pushSupported()) await unsubscribePush().catch(() => undefined);
 		await authClient.signOut();
 		await goto('/');
 	}
 </script>
 
 <div class="min-h-dvh bg-background text-foreground">
-	<header class="sticky top-0 z-20 border-b bg-background/90 backdrop-blur">
+	<header class="pt-safe sticky top-0 z-20 border-b bg-background/90 backdrop-blur">
 		<div class="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
 			<a href="/app" class="flex items-center gap-2 font-semibold">
 				<BrandMark class="size-6" /> kriket

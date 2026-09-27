@@ -1,6 +1,6 @@
 {
-  "id": "4a0b5d97-4456-4c50-992f-5144510c038f",
-  "prevId": "e85faed7-3800-40f9-8467-a0d060788d0d",
+  "id": "568f17c1-18c0-4b6b-88ae-558bba899d46",
+  "prevId": "4a0b5d97-4456-4c50-992f-5144510c038f",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -563,6 +563,65 @@
             "id"
           ],
           "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.forecast_alerts": {
+      "name": "forecast_alerts",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "dip_date": {
+          "name": "dip_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sent_on": {
+          "name": "sent_on",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "forecast_alerts_user_id_user_id_fk": {
+          "name": "forecast_alerts_user_id_user_id_fk",
+          "tableFrom": "forecast_alerts",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
