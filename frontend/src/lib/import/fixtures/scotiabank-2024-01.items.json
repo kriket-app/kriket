@@ -1,0 +1,2939 @@
+{
+	"source": "A Scotiabank Day-to-Day Banking e-statement layout (Jan 2024), text items as PDF.js getTextContent() returns them, identifiers replaced. Four running balances are wrong in the original and are kept that way on purpose.",
+	"pages": [
+		[
+			{
+				"str": "----",
+				"x": 0,
+				"y": 789.1,
+				"width": 13.3,
+				"rotated": false
+			},
+			{
+				"str": "|",
+				"x": 0,
+				"y": 784.1,
+				"width": 2.6,
+				"rotated": false
+			},
+			{
+				"str": "continued on next page",
+				"x": 336,
+				"y": 42,
+				"width": 100,
+				"rotated": false
+			},
+			{
+				"str": "Page 1 of 3",
+				"x": 552,
+				"y": 18,
+				"width": 47,
+				"rotated": false
+			},
+			{
+				"str": "*000000000*",
+				"x": 35.8,
+				"y": 391.9,
+				"width": 162.4,
+				"rotated": true
+			},
+			{
+				"str": "SBSAV00000_0000000_000",
+				"x": 25.9,
+				"y": 76.8,
+				"width": 79.2,
+				"rotated": true
+			},
+			{
+				"str": "- 0000000 HRI - - 02 - 02 -",
+				"x": 25.9,
+				"y": 159.6,
+				"width": 97.2,
+				"rotated": true
+			},
+			{
+				"str": "04",
+				"x": 25.9,
+				"y": 260.4,
+				"width": 7.2,
+				"rotated": true
+			},
+			{
+				"str": "-",
+				"x": 25.9,
+				"y": 271.2,
+				"width": 3.6,
+				"rotated": true
+			},
+			{
+				"str": "-",
+				"x": 25.9,
+				"y": 278.4,
+				"width": 3.6,
+				"rotated": true
+			},
+			{
+				"str": "000000",
+				"x": 25.9,
+				"y": 292.8,
+				"width": 21.6,
+				"rotated": true
+			},
+			{
+				"str": "00000",
+				"x": 201.8,
+				"y": 659,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "Your account number:",
+				"x": 454.8,
+				"y": 633.6,
+				"width": 93.8,
+				"rotated": false
+			},
+			{
+				"str": "Questions?",
+				"x": 454.8,
+				"y": 605,
+				"width": 46,
+				"rotated": false
+			},
+			{
+				"str": "Call 1 800 4-SCOTIA",
+				"x": 454.8,
+				"y": 595.7,
+				"width": 91.7,
+				"rotated": false
+			},
+			{
+				"str": "(1 800 472-6842)",
+				"x": 454.8,
+				"y": 586.1,
+				"width": 76.8,
+				"rotated": false
+			},
+			{
+				"str": "For online account access:",
+				"x": 454.8,
+				"y": 567.1,
+				"width": 107.7,
+				"rotated": false
+			},
+			{
+				"str": "www.scotiabank.com",
+				"x": 454.8,
+				"y": 557.5,
+				"width": 102.2,
+				"rotated": false
+			},
+			{
+				"str": "Your Basic Banking Plan account summary",
+				"x": 73,
+				"y": 552,
+				"width": 276.9,
+				"rotated": false
+			},
+			{
+				"str": "Plus total deposits",
+				"x": 85,
+				"y": 488.2,
+				"width": 75.8,
+				"rotated": false
+			},
+			{
+				"str": "Here's what happened in your account this statement period",
+				"x": 73,
+				"y": 423.1,
+				"width": 342,
+				"rotated": false
+			},
+			{
+				"str": "Amounts",
+				"x": 271.9,
+				"y": 403.2,
+				"width": 34.2,
+				"rotated": false
+			},
+			{
+				"str": "Amounts",
+				"x": 336.7,
+				"y": 403.2,
+				"width": 34.2,
+				"rotated": false
+			},
+			{
+				"str": "Date",
+				"x": 73,
+				"y": 394.1,
+				"width": 17.8,
+				"rotated": false
+			},
+			{
+				"str": "Transactions",
+				"x": 112.8,
+				"y": 394.1,
+				"width": 47.1,
+				"rotated": false
+			},
+			{
+				"str": "withdrawn ($)",
+				"x": 252.5,
+				"y": 394.1,
+				"width": 53.5,
+				"rotated": false
+			},
+			{
+				"str": "deposited ($)",
+				"x": 321.8,
+				"y": 394.1,
+				"width": 49.1,
+				"rotated": false
+			},
+			{
+				"str": "Balance ($)",
+				"x": 395.3,
+				"y": 394.1,
+				"width": 40.7,
+				"rotated": false
+			},
+			{
+				"str": "15.00",
+				"x": 283.4,
+				"y": 358.6,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Valley Farms Produceetobicoke ONCA",
+				"x": 112.8,
+				"y": 349.7,
+				"width": 179.6,
+				"rotated": false
+			},
+			{
+				"str": "10.15",
+				"x": 283.4,
+				"y": 332.2,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Dairy Jug Toronto ONCA",
+				"x": 112.8,
+				"y": 323,
+				"width": 124.6,
+				"rotated": false
+			},
+			{
+				"str": "1.68",
+				"x": 288.5,
+				"y": 305.5,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Tim Hortons #3196# Qnorth York ONCD",
+				"x": 112.8,
+				"y": 296.6,
+				"width": 188.7,
+				"rotated": false
+			},
+			{
+				"str": "1.75",
+				"x": 288.5,
+				"y": 279.1,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Gateway News Stand Toronto ONCA",
+				"x": 112.8,
+				"y": 270,
+				"width": 152.7,
+				"rotated": false
+			},
+			{
+				"str": "67.10",
+				"x": 283.4,
+				"y": 226.1,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Spoon & Fork Japanese Etobicoke ONCA",
+				"x": 112.8,
+				"y": 217.2,
+				"width": 168.5,
+				"rotated": false
+			},
+			{
+				"str": "14.94",
+				"x": 283.4,
+				"y": 199.7,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Metro #065 Etobicoke ONCA",
+				"x": 112.8,
+				"y": 190.6,
+				"width": 141.7,
+				"rotated": false
+			},
+			{
+				"str": "33.64",
+				"x": 283.4,
+				"y": 173,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Metro #065 Etobicoke ONCA",
+				"x": 112.8,
+				"y": 164.2,
+				"width": 141.7,
+				"rotated": false
+			},
+			{
+				"str": "400.00",
+				"x": 278.4,
+				"y": 146.6,
+				"width": 27.5,
+				"rotated": false
+			},
+			{
+				"str": "Yorkdale S.C. #2 Toronto ON",
+				"x": 112.8,
+				"y": 137.5,
+				"width": 120.3,
+				"rotated": false
+			},
+			{
+				"str": "1,500.00",
+				"x": 271,
+				"y": 120,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "Credit Card",
+				"x": 112.8,
+				"y": 93.6,
+				"width": 47.6,
+				"rotated": false
+			},
+			{
+				"str": "11.16",
+				"x": 283.4,
+				"y": 76.1,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Humber College Bldg West Etobiconcd",
+				"x": 112.8,
+				"y": 67.2,
+				"width": 183.1,
+				"rotated": false
+			},
+			{
+				"str": "12345 67890 12",
+				"x": 455,
+				"y": 624,
+				"width": 71.9,
+				"rotated": false
+			},
+			{
+				"str": "14,299.50",
+				"x": 395,
+				"y": 332,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "14,297.91",
+				"x": 397,
+				"y": 306,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "14,296.16",
+				"x": 397,
+				"y": 280,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "13,280.52",
+				"x": 397,
+				"y": 121,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,430.52",
+				"x": 397,
+				"y": 103,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,419.36",
+				"x": 397,
+				"y": 77,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "14,324.74",
+				"x": 395,
+				"y": 377,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "14,309.74",
+				"x": 395,
+				"y": 358,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "15,296.16",
+				"x": 396,
+				"y": 252,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "15,229.06",
+				"x": 396,
+				"y": 226,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "15,214.12",
+				"x": 396,
+				"y": 200,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "15,180.52",
+				"x": 397,
+				"y": 174,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "14,780.52",
+				"x": 397,
+				"y": 147,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "$14,324.74",
+				"x": 378,
+				"y": 518,
+				"width": 57,
+				"rotated": false
+			},
+			{
+				"str": "$19,213.83",
+				"x": 391,
+				"y": 503,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "$12,604.30",
+				"x": 391,
+				"y": 489,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "$7,698.25",
+				"x": 385,
+				"y": 469,
+				"width": 50.7,
+				"rotated": false
+			},
+			{
+				"str": "1,017.00",
+				"x": 336,
+				"y": 253,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "850.00",
+				"x": 279,
+				"y": 103,
+				"width": 27.5,
+				"rotated": false
+			},
+			{
+				"str": "1044 Payroll ACME REALTY LTD",
+				"x": 113,
+				"y": 243,
+				"width": 134.2,
+				"rotated": false
+			},
+			{
+				"str": "Minus",
+				"x": 85,
+				"y": 503,
+				"width": 25.5,
+				"rotated": false
+			},
+			{
+				"str": "total",
+				"x": 112,
+				"y": 503,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "withdrawals",
+				"x": 134,
+				"y": 503,
+				"width": 51.5,
+				"rotated": false
+			},
+			{
+				"str": "SBSAV00000_0000000_000",
+				"x": 73,
+				"y": 660,
+				"width": 77.8,
+				"rotated": false
+			},
+			{
+				"str": "E",
+				"x": 151,
+				"y": 660,
+				"width": 3.6,
+				"rotated": false
+			},
+			{
+				"str": "D",
+				"x": 155,
+				"y": 660,
+				"width": 3.6,
+				"rotated": false
+			},
+			{
+				"str": "00000",
+				"x": 160,
+				"y": 660,
+				"width": 18,
+				"rotated": false
+			},
+			{
+				"str": "40 KING ST WEST, 1ST MEZZANINE SOUTH",
+				"x": 73,
+				"y": 718,
+				"width": 125.4,
+				"rotated": false
+			},
+			{
+				"str": "TORONTO",
+				"x": 73,
+				"y": 710,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "ONTARIO",
+				"x": 104,
+				"y": 710,
+				"width": 27.7,
+				"rotated": false
+			},
+			{
+				"str": "M5W",
+				"x": 132,
+				"y": 710,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "2X6",
+				"x": 146,
+				"y": 710,
+				"width": 10.7,
+				"rotated": false
+			},
+			{
+				"str": "Jan 3 Opening Balance",
+				"x": 73,
+				"y": 377,
+				"width": 114,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 359,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "3",
+				"x": 89,
+				"y": 359,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 359,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 359,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 359,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 359,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 333,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "3",
+				"x": 89,
+				"y": 333,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 333,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 333,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 333,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 333,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 306,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "4",
+				"x": 89,
+				"y": 306,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 306,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 306,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 306,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 306,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 280,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "4",
+				"x": 89,
+				"y": 280,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 280,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 280,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 280,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 280,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 253,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "4",
+				"x": 89,
+				"y": 253,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Deposit",
+				"x": 113,
+				"y": 253,
+				"width": 32,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 227,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "4",
+				"x": 89,
+				"y": 227,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 227,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 227,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 227,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 227,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 200,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "5",
+				"x": 89,
+				"y": 200,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 200,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 200,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 200,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 200,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 174,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "5",
+				"x": 89,
+				"y": 174,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 174,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 174,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 174,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 174,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 147,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "5",
+				"x": 89,
+				"y": 147,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "ABM",
+				"x": 113,
+				"y": 147,
+				"width": 20.5,
+				"rotated": false
+			},
+			{
+				"str": "withdrawal",
+				"x": 135,
+				"y": 147,
+				"width": 48,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 121,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "6",
+				"x": 89,
+				"y": 121,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Withdrawal",
+				"x": 111,
+				"y": 121,
+				"width": 49.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 103,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "6",
+				"x": 89,
+				"y": 103,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "PC",
+				"x": 113,
+				"y": 103,
+				"width": 10.5,
+				"rotated": false
+			},
+			{
+				"str": "Transfer",
+				"x": 125,
+				"y": 103,
+				"width": 34.5,
+				"rotated": false
+			},
+			{
+				"str": "to",
+				"x": 161,
+				"y": 103,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 77,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "7",
+				"x": 89,
+				"y": 77,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 77,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 77,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 77,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 77,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Opening Balance on January 3, 2024",
+				"x": 73,
+				"y": 517,
+				"width": 184.1,
+				"rotated": false
+			},
+			{
+				"str": "Closing Balance on February 2, 2024",
+				"x": 73,
+				"y": 469,
+				"width": 186,
+				"rotated": false
+			},
+			{
+				"str": "MS JANE SAMPLE",
+				"x": 73,
+				"y": 644,
+				"width": 92.8,
+				"rotated": false
+			},
+			{
+				"str": "123 SAMPLE ST",
+				"x": 73,
+				"y": 634,
+				"width": 106.7,
+				"rotated": false
+			},
+			{
+				"str": "SAMPLE CITY ON",
+				"x": 73,
+				"y": 624,
+				"width": 68.3,
+				"rotated": false
+			},
+			{
+				"str": "A1A 1A1",
+				"x": 73,
+				"y": 614,
+				"width": 42.2,
+				"rotated": false
+			}
+		],
+		[
+			{
+				"str": "----",
+				"x": 0,
+				"y": 789.1,
+				"width": 13.3,
+				"rotated": false
+			},
+			{
+				"str": "|",
+				"x": 0,
+				"y": 784.1,
+				"width": 2.6,
+				"rotated": false
+			},
+			{
+				"str": "Your Basic Banking Plan account",
+				"x": 169.9,
+				"y": 707,
+				"width": 136.4,
+				"rotated": false
+			},
+			{
+				"str": "Here's what happened in your account (continued)",
+				"x": 72,
+				"y": 627.1,
+				"width": 285.5,
+				"rotated": false
+			},
+			{
+				"str": "Amounts",
+				"x": 271.9,
+				"y": 607.2,
+				"width": 34.2,
+				"rotated": false
+			},
+			{
+				"str": "Amounts",
+				"x": 336.7,
+				"y": 607.2,
+				"width": 34.2,
+				"rotated": false
+			},
+			{
+				"str": "Date",
+				"x": 73,
+				"y": 598.1,
+				"width": 17.8,
+				"rotated": false
+			},
+			{
+				"str": "Transactions",
+				"x": 112.8,
+				"y": 598.1,
+				"width": 47.1,
+				"rotated": false
+			},
+			{
+				"str": "withdrawn ($)",
+				"x": 252.5,
+				"y": 598.1,
+				"width": 53.5,
+				"rotated": false
+			},
+			{
+				"str": "deposited ($)",
+				"x": 321.8,
+				"y": 598.1,
+				"width": 49.1,
+				"rotated": false
+			},
+			{
+				"str": "Balance ($)",
+				"x": 395.3,
+				"y": 598.1,
+				"width": 40.7,
+				"rotated": false
+			},
+			{
+				"str": "continued on next page",
+				"x": 336,
+				"y": 42,
+				"width": 100,
+				"rotated": false
+			},
+			{
+				"str": "Page 2 of 3",
+				"x": 552,
+				"y": 18,
+				"width": 47,
+				"rotated": false
+			},
+			{
+				"str": "12.87",
+				"x": 283.4,
+				"y": 580.6,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Pho House Toronto ONCA",
+				"x": 112.8,
+				"y": 571.7,
+				"width": 108.5,
+				"rotated": false
+			},
+			{
+				"str": "90000001 MB-Email Money Trf",
+				"x": 112.8,
+				"y": 545,
+				"width": 128.4,
+				"rotated": false
+			},
+			{
+				"str": "90000002 MB-Email Money Trf",
+				"x": 112.8,
+				"y": 518.6,
+				"width": 128.4,
+				"rotated": false
+			},
+			{
+				"str": "8.98",
+				"x": 288.5,
+				"y": 501.1,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Szechuan Express Toronto ONCA",
+				"x": 112.8,
+				"y": 492,
+				"width": 158,
+				"rotated": false
+			},
+			{
+				"str": "5.65",
+				"x": 288.5,
+				"y": 474.7,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Yogen Fruz Eaton Ctrtoronto ONCD",
+				"x": 112.8,
+				"y": 465.6,
+				"width": 171.4,
+				"rotated": false
+			},
+			{
+				"str": "Town Shoes # 12 Toronto ONCA",
+				"x": 112.8,
+				"y": 439.2,
+				"width": 134.2,
+				"rotated": false
+			},
+			{
+				"str": "1,000.00",
+				"x": 336,
+				"y": 421.7,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "90000003 MB-Email Money Trf",
+				"x": 112.8,
+				"y": 412.6,
+				"width": 128.4,
+				"rotated": false
+			},
+			{
+				"str": "Ramen Raijin Toronto ONCA",
+				"x": 112.8,
+				"y": 386.2,
+				"width": 119.1,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Uniqlo Eaton Ctr#200Toronto ONCA",
+				"x": 112.8,
+				"y": 359.5,
+				"width": 172.9,
+				"rotated": false
+			},
+			{
+				"str": "5.03",
+				"x": 288.5,
+				"y": 342,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "1,000.00",
+				"x": 271,
+				"y": 315.6,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "Credit Card",
+				"x": 112.8,
+				"y": 306.7,
+				"width": 47.6,
+				"rotated": false
+			},
+			{
+				"str": "8.00",
+				"x": 288.5,
+				"y": 289.2,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Dairy Jug Toronto ONCA",
+				"x": 112.8,
+				"y": 280.1,
+				"width": 124.6,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 288.5,
+				"y": 262.6,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Opos Google *Youtube Videg.co/payhelnsca",
+				"x": 112.8,
+				"y": 253.7,
+				"width": 185.6,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 288.5,
+				"y": 236.2,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Opos Google *Youtube Videg.co/payhelnsca",
+				"x": 112.8,
+				"y": 227,
+				"width": 185.6,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 288.5,
+				"y": 209.5,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Opos Google *Youtube Videg.co/payhelnsca",
+				"x": 112.8,
+				"y": 200.6,
+				"width": 185.6,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 288.5,
+				"y": 183.1,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Opos Google *Youtube Videg.co/payhelnsca",
+				"x": 112.8,
+				"y": 174,
+				"width": 185.6,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 288.5,
+				"y": 156.7,
+				"width": 17.5,
+				"rotated": false
+			},
+			{
+				"str": "Opos Google *Youtube Videg.co/payhelnsca",
+				"x": 112.8,
+				"y": 147.6,
+				"width": 185.6,
+				"rotated": false
+			},
+			{
+				"str": "19.99",
+				"x": 283.4,
+				"y": 130.1,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Opos Google *Youtube Videg.co/payhelnsca",
+				"x": 112.8,
+				"y": 121.2,
+				"width": 185.6,
+				"rotated": false
+			},
+			{
+				"str": "Fpos Lush Eaton Centre Toronto ONCA",
+				"x": 112.8,
+				"y": 94.6,
+				"width": 162.1,
+				"rotated": false
+			},
+			{
+				"str": "SBSAV00000_0000000_000",
+				"x": 25.9,
+				"y": 76.8,
+				"width": 79.2,
+				"rotated": true
+			},
+			{
+				"str": "- 0000000",
+				"x": 25.9,
+				"y": 159.6,
+				"width": 32.4,
+				"rotated": true
+			},
+			{
+				"str": "000000",
+				"x": 25.9,
+				"y": 199.2,
+				"width": 21.6,
+				"rotated": true
+			},
+			{
+				"str": "12,406.49",
+				"x": 396,
+				"y": 582,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,506.49",
+				"x": 396,
+				"y": 555,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,556.49",
+				"x": 396,
+				"y": 528,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,547.51",
+				"x": 396,
+				"y": 502,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,541.86",
+				"x": 396,
+				"y": 477,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,289.33",
+				"x": 396,
+				"y": 449,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,289.33",
+				"x": 396,
+				"y": 423,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,230.24",
+				"x": 396,
+				"y": 396,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,068.40",
+				"x": 396,
+				"y": 369,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,063.37",
+				"x": 396,
+				"y": 343,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,063.37",
+				"x": 396,
+				"y": 316,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,055.37",
+				"x": 396,
+				"y": 290,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,052.88",
+				"x": 396,
+				"y": 263,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,050.39",
+				"x": 397,
+				"y": 236,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,047.90",
+				"x": 397,
+				"y": 210,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,045.41",
+				"x": 397,
+				"y": 184,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,042.92",
+				"x": 397,
+				"y": 157,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,022.93",
+				"x": 397,
+				"y": 131,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "8,631.69",
+				"x": 401,
+				"y": 104,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "12345 67890 12",
+				"x": 386,
+				"y": 697,
+				"width": 52.3,
+				"rotated": false
+			},
+			{
+				"str": "100.00",
+				"x": 343,
+				"y": 555,
+				"width": 27.5,
+				"rotated": false
+			},
+			{
+				"str": "50.00",
+				"x": 348,
+				"y": 528,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "59.09",
+				"x": 283,
+				"y": 396,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "161.84",
+				"x": 283,
+				"y": 369,
+				"width": 27.5,
+				"rotated": false
+			},
+			{
+				"str": "2,391.24",
+				"x": 285,
+				"y": 104,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "1,252.53",
+				"x": 278,
+				"y": 449,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "MS JANE SAMPLE",
+				"x": 170,
+				"y": 727,
+				"width": 91.6,
+				"rotated": false
+			},
+			{
+				"str": "January",
+				"x": 170,
+				"y": 696,
+				"width": 32.5,
+				"rotated": false
+			},
+			{
+				"str": "02",
+				"x": 204,
+				"y": 696,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "2024",
+				"x": 216,
+				"y": 696,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "to",
+				"x": 238,
+				"y": 696,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "February",
+				"x": 249,
+				"y": 696,
+				"width": 37,
+				"rotated": false
+			},
+			{
+				"str": "03,",
+				"x": 288,
+				"y": 696,
+				"width": 12.5,
+				"rotated": false
+			},
+			{
+				"str": "2024",
+				"x": 302,
+				"y": 696,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "Fpos",
+				"x": 113,
+				"y": 334,
+				"width": 19,
+				"rotated": false
+			},
+			{
+				"str": "Starbucks",
+				"x": 133,
+				"y": 334,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "#4497",
+				"x": 175,
+				"y": 334,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "Toronto",
+				"x": 202,
+				"y": 334,
+				"width": 34,
+				"rotated": false
+			},
+			{
+				"str": "ONCD",
+				"x": 238,
+				"y": 334,
+				"width": 25.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 581,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "9",
+				"x": 89,
+				"y": 581,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 581,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 581,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 581,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 581,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 555,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "10",
+				"x": 89,
+				"y": 555,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "12",
+				"x": 111,
+				"y": 555,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Deposit",
+				"x": 123,
+				"y": 555,
+				"width": 32,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 528,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "14",
+				"x": 89,
+				"y": 528,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Deposit",
+				"x": 113,
+				"y": 528,
+				"width": 32,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 502,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "14",
+				"x": 89,
+				"y": 502,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 502,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 502,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 502,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 502,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 475,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "17",
+				"x": 89,
+				"y": 475,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 475,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 475,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 475,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 475,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 449,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "18",
+				"x": 89,
+				"y": 449,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 449,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 449,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 449,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 449,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 422,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "18",
+				"x": 89,
+				"y": 422,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Deposit",
+				"x": 113,
+				"y": 422,
+				"width": 32,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 396,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "19",
+				"x": 89,
+				"y": 396,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 396,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 396,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 396,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 396,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 369,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "19",
+				"x": 89,
+				"y": 369,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 369,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 369,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 369,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 369,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 343,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "19",
+				"x": 89,
+				"y": 343,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 343,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 343,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 343,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 343,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 316,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "20",
+				"x": 89,
+				"y": 316,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "PC",
+				"x": 113,
+				"y": 316,
+				"width": 10.5,
+				"rotated": false
+			},
+			{
+				"str": "Transfer",
+				"x": 125,
+				"y": 316,
+				"width": 34.5,
+				"rotated": false
+			},
+			{
+				"str": "to",
+				"x": 161,
+				"y": 316,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 290,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "21",
+				"x": 89,
+				"y": 290,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 290,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 290,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 290,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 290,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 263,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "21",
+				"x": 89,
+				"y": 263,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 263,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 263,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 263,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 263,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 237,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "21",
+				"x": 89,
+				"y": 237,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 237,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 237,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 237,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 237,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 210,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "22",
+				"x": 89,
+				"y": 210,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 210,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 210,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 210,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 210,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 184,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "22",
+				"x": 89,
+				"y": 184,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 184,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 184,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 184,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 184,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 157,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "23",
+				"x": 89,
+				"y": 157,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 157,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 157,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 157,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 157,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 131,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "24",
+				"x": 89,
+				"y": 131,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 131,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 131,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 131,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 131,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 104,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "27",
+				"x": 89,
+				"y": 104,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 104,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 104,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 104,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 104,
+				"width": 37.5,
+				"rotated": false
+			}
+		],
+		[
+			{
+				"str": "----",
+				"x": 0,
+				"y": 789.1,
+				"width": 13.3,
+				"rotated": false
+			},
+			{
+				"str": "|",
+				"x": 0,
+				"y": 784.1,
+				"width": 2.6,
+				"rotated": false
+			},
+			{
+				"str": "Your Basic Banking Plan account",
+				"x": 169.9,
+				"y": 657.1,
+				"width": 136.4,
+				"rotated": false
+			},
+			{
+				"str": "Here's what happened in your account (continued)",
+				"x": 72,
+				"y": 627.1,
+				"width": 285.5,
+				"rotated": false
+			},
+			{
+				"str": "Amounts",
+				"x": 271.9,
+				"y": 607.2,
+				"width": 34.2,
+				"rotated": false
+			},
+			{
+				"str": "Amounts",
+				"x": 336.7,
+				"y": 607.2,
+				"width": 34.2,
+				"rotated": false
+			},
+			{
+				"str": "Date",
+				"x": 73,
+				"y": 598.1,
+				"width": 17.8,
+				"rotated": false
+			},
+			{
+				"str": "Transactions",
+				"x": 112.8,
+				"y": 598.1,
+				"width": 47.1,
+				"rotated": false
+			},
+			{
+				"str": "withdrawn ($)",
+				"x": 252.5,
+				"y": 598.1,
+				"width": 53.5,
+				"rotated": false
+			},
+			{
+				"str": "deposited ($)",
+				"x": 321.8,
+				"y": 598.1,
+				"width": 49.1,
+				"rotated": false
+			},
+			{
+				"str": "Balance ($)",
+				"x": 395.3,
+				"y": 598.1,
+				"width": 40.7,
+				"rotated": false
+			},
+			{
+				"str": "Page 3 of 3",
+				"x": 552,
+				"y": 18,
+				"width": 47,
+				"rotated": false
+			},
+			{
+				"str": "15.95",
+				"x": 283.4,
+				"y": 474.7,
+				"width": 22.5,
+				"rotated": false
+			},
+			{
+				"str": "Monthly Fees",
+				"x": 112.8,
+				"y": 465.6,
+				"width": 55.9,
+				"rotated": false
+			},
+			{
+				"str": "*000000000*",
+				"x": 35.8,
+				"y": 391.9,
+				"width": 162.4,
+				"rotated": true
+			},
+			{
+				"str": "SBSAV00000_0000000_000",
+				"x": 25.9,
+				"y": 76.8,
+				"width": 79.2,
+				"rotated": true
+			},
+			{
+				"str": "- 0000000 HRI - - 02 - 01 -",
+				"x": 25.9,
+				"y": 159.6,
+				"width": 97.2,
+				"rotated": true
+			},
+			{
+				"str": "03",
+				"x": 25.9,
+				"y": 260.4,
+				"width": 7.2,
+				"rotated": true
+			},
+			{
+				"str": "-",
+				"x": 25.9,
+				"y": 271.2,
+				"width": 3.6,
+				"rotated": true
+			},
+			{
+				"str": "-",
+				"x": 25.9,
+				"y": 278.4,
+				"width": 3.6,
+				"rotated": true
+			},
+			{
+				"str": "000000",
+				"x": 25.9,
+				"y": 292.8,
+				"width": 21.6,
+				"rotated": true
+			},
+			{
+				"str": "18,135.55",
+				"x": 396,
+				"y": 582,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "19,068.99",
+				"x": 397,
+				"y": 555,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,114.20",
+				"x": 397,
+				"y": 529,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "7,714.20",
+				"x": 401,
+				"y": 502,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "7,698.25",
+				"x": 401,
+				"y": 475,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "$7,698.25",
+				"x": 391,
+				"y": 449,
+				"width": 45.1,
+				"rotated": false
+			},
+			{
+				"str": "12345 67890 12",
+				"x": 386,
+				"y": 647,
+				"width": 52.3,
+				"rotated": false
+			},
+			{
+				"str": "933.44",
+				"x": 355,
+				"y": 555,
+				"width": 27.5,
+				"rotated": false
+			},
+			{
+				"str": "3,400.00",
+				"x": 273,
+				"y": 502,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "9,503.86",
+				"x": 347,
+				"y": 581,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "7,954.79",
+				"x": 273,
+				"y": 528,
+				"width": 35,
+				"rotated": false
+			},
+			{
+				"str": "MS JANE SAMPLE",
+				"x": 170,
+				"y": 677,
+				"width": 91.6,
+				"rotated": false
+			},
+			{
+				"str": "January",
+				"x": 170,
+				"y": 646,
+				"width": 32.5,
+				"rotated": false
+			},
+			{
+				"str": "02",
+				"x": 204,
+				"y": 646,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "2024",
+				"x": 216,
+				"y": 646,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "to",
+				"x": 238,
+				"y": 646,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "February",
+				"x": 249,
+				"y": 646,
+				"width": 37,
+				"rotated": false
+			},
+			{
+				"str": "03,",
+				"x": 288,
+				"y": 646,
+				"width": 12.5,
+				"rotated": false
+			},
+			{
+				"str": "2024",
+				"x": 302,
+				"y": 646,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "1044 Payroll ACME REALTY LTD",
+				"x": 113,
+				"y": 572,
+				"width": 134.2,
+				"rotated": false
+			},
+			{
+				"str": "1044 Payroll ACME REALTY LTD",
+				"x": 113,
+				"y": 545,
+				"width": 134.2,
+				"rotated": false
+			},
+			{
+				"str": "Maison",
+				"x": 113,
+				"y": 519,
+				"width": 30.5,
+				"rotated": false
+			},
+			{
+				"str": "Birks",
+				"x": 145,
+				"y": 519,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "#741",
+				"x": 167,
+				"y": 519,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "Qtoronto",
+				"x": 189,
+				"y": 519,
+				"width": 39.5,
+				"rotated": false
+			},
+			{
+				"str": "ONCD",
+				"x": 230,
+				"y": 519,
+				"width": 25.5,
+				"rotated": false
+			},
+			{
+				"str": "0000",
+				"x": 113,
+				"y": 493,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 581,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "29",
+				"x": 89,
+				"y": 581,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Deposit",
+				"x": 113,
+				"y": 581,
+				"width": 32,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 555,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "29",
+				"x": 89,
+				"y": 555,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Deposit",
+				"x": 113,
+				"y": 555,
+				"width": 32,
+				"rotated": false
+			},
+			{
+				"str": "Jan",
+				"x": 73,
+				"y": 528,
+				"width": 14,
+				"rotated": false
+			},
+			{
+				"str": "30",
+				"x": 89,
+				"y": 528,
+				"width": 10,
+				"rotated": false
+			},
+			{
+				"str": "Point",
+				"x": 113,
+				"y": 528,
+				"width": 22,
+				"rotated": false
+			},
+			{
+				"str": "of",
+				"x": 137,
+				"y": 528,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "sale",
+				"x": 148,
+				"y": 528,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "purchase",
+				"x": 166,
+				"y": 528,
+				"width": 37.5,
+				"rotated": false
+			},
+			{
+				"str": "Feb",
+				"x": 73,
+				"y": 502,
+				"width": 15,
+				"rotated": false
+			},
+			{
+				"str": "1",
+				"x": 90,
+				"y": 502,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "PC",
+				"x": 114,
+				"y": 502,
+				"width": 10.5,
+				"rotated": false
+			},
+			{
+				"str": "Transfer",
+				"x": 126,
+				"y": 502,
+				"width": 34.5,
+				"rotated": false
+			},
+			{
+				"str": "to",
+				"x": 162,
+				"y": 502,
+				"width": 9,
+				"rotated": false
+			},
+			{
+				"str": "ScotiaLine",
+				"x": 173,
+				"y": 502,
+				"width": 42.5,
+				"rotated": false
+			},
+			{
+				"str": "Feb",
+				"x": 73,
+				"y": 475,
+				"width": 15,
+				"rotated": false
+			},
+			{
+				"str": "3",
+				"x": 90,
+				"y": 475,
+				"width": 5,
+				"rotated": false
+			},
+			{
+				"str": "Service",
+				"x": 114,
+				"y": 475,
+				"width": 29,
+				"rotated": false
+			},
+			{
+				"str": "charge",
+				"x": 145,
+				"y": 475,
+				"width": 28.5,
+				"rotated": false
+			},
+			{
+				"str": "Feb 3 Closing Balance",
+				"x": 73,
+				"y": 449,
+				"width": 99.1,
+				"rotated": false
+			}
+		],
+		[
+			{
+				"str": "----",
+				"x": 0,
+				"y": 789.1,
+				"width": 13.3,
+				"rotated": false
+			},
+			{
+				"str": "|",
+				"x": 0,
+				"y": 784.1,
+				"width": 2.6,
+				"rotated": false
+			},
+			{
+				"str": "SBSAV00000_0000000_000",
+				"x": 25.9,
+				"y": 76.8,
+				"width": 79.2,
+				"rotated": true
+			},
+			{
+				"str": "- 0000000",
+				"x": 25.9,
+				"y": 159.6,
+				"width": 32.4,
+				"rotated": true
+			},
+			{
+				"str": "005178",
+				"x": 25.9,
+				"y": 199.2,
+				"width": 21.6,
+				"rotated": true
+			}
+		]
+	]
+}
