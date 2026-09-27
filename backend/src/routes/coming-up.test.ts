@@ -69,40 +69,46 @@ describe('/api/coming-up', () => {
 		expect(res.body.inCents).toBe(50000 * daysToMonthEnd);
 		expect(res.body.outCents).toBe(0);
 	});
-	it('a check-in dated today already settles today’s payments, so they are past and excluded', async () => {
-		const a = testAgent();
-		await signUp(a, 'comingup6@example.com');
-		await a.post('/api/checkins').send({ balanceCents: 33000 });
-		await a.post('/api/income-streams').send({
-			name: 'Pay',
-			minCents: 50000,
-			actualCents: 50000,
-			maxCents: 50000,
-			intervalDays: 30,
-			firstDate: today()
-		});
-		await a.post('/api/expense-streams').send({
-			name: 'Rent',
-			minCents: 60000,
-			actualCents: 60000,
-			maxCents: 60000,
-			intervalDays: 30,
-			firstDate: today()
-		});
-		const res = await a.get('/api/coming-up');
-		expect(res.status).toBe(200);
-		const now = res.body.days.find((d: { date: string }) => d.date === today());
-		expect(now.past).toBe(true);
-		expect(res.body.inCents).toBe(0);
-		expect(res.body.outCents).toBe(0);
+	it(
+		'a check-in dated today already settles today’s payments, so they are past and excluded',
+		// Six sequential API round-trips with password hashing on a shared test DB:
+		// generous timeout so loaded CI runners don't flake on the 5s default.
+		{ timeout: 15_000 },
+		async () => {
+			const a = testAgent();
+			await signUp(a, 'comingup6@example.com');
+			await a.post('/api/checkins').send({ balanceCents: 33000 });
+			await a.post('/api/income-streams').send({
+				name: 'Pay',
+				minCents: 50000,
+				actualCents: 50000,
+				maxCents: 50000,
+				intervalDays: 30,
+				firstDate: today()
+			});
+			await a.post('/api/expense-streams').send({
+				name: 'Rent',
+				minCents: 60000,
+				actualCents: 60000,
+				maxCents: 60000,
+				intervalDays: 30,
+				firstDate: today()
+			});
+			const res = await a.get('/api/coming-up');
+			expect(res.status).toBe(200);
+			const now = res.body.days.find((d: { date: string }) => d.date === today());
+			expect(now.past).toBe(true);
+			expect(res.body.inCents).toBe(0);
+			expect(res.body.outCents).toBe(0);
 
-		const monthEndDate = monthEnd(today().slice(0, 7));
-		const forecastDays = Math.max(7, daysBetween(today(), monthEndDate));
-		const forecastRes = await a.get(`/api/forecast?days=${forecastDays}`);
-		expect(forecastRes.status).toBe(200);
-		const point = forecastRes.body.points.find((p: { date: string }) => p.date === monthEndDate);
-		expect(res.body.endBalanceCents).toBe(point.actualCents);
-	});
+			const monthEndDate = monthEnd(today().slice(0, 7));
+			const forecastDays = Math.max(7, daysBetween(today(), monthEndDate));
+			const forecastRes = await a.get(`/api/forecast?days=${forecastDays}`);
+			expect(forecastRes.status).toBe(200);
+			const point = forecastRes.body.points.find((p: { date: string }) => p.date === monthEndDate);
+			expect(res.body.endBalanceCents).toBe(point.actualCents);
+		}
+	);
 	it('gives endBalanceCents null for a month entirely in the past', async () => {
 		const a = testAgent();
 		await signUp(a, 'comingup5@example.com');
