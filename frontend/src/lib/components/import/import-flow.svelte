@@ -58,6 +58,41 @@
 		}
 	}
 
+	const incomeDrafts = $derived(preview?.drafts.filter((d) => d.kind === 'income') ?? []);
+	const expenseDrafts = $derived(preview?.drafts.filter((d) => d.kind === 'expense') ?? []);
+	const remaining = $derived(preview?.drafts.filter((d) => !added[d.id]).length ?? 0);
+
+	// "Add all" submits each remaining draft's own form, one at a time, so edits the user
+	// made to a draft are kept and each add goes through the same action as its button.
+	let list: HTMLElement | undefined = $state();
+	let addingAll = $state(false);
+	const waiting = new Map<string, () => void>();
+	function saved(id: string) {
+		added[id] = true;
+		waiting.get(id)?.();
+		waiting.delete(id);
+	}
+	async function addAll() {
+		if (!list || !preview) return;
+		addingAll = true;
+		try {
+			for (const draft of preview.drafts) {
+				if (added[draft.id]) continue;
+				const formEl = list.querySelector<HTMLFormElement>(`[data-draft-id="${draft.id}"] form`);
+				if (!formEl) continue;
+				// Resolve on save, or give up on this draft after 10 s (a validation error leaves it open).
+				await new Promise<void>((resolve) => {
+					waiting.set(draft.id, resolve);
+					setTimeout(resolve, 10_000);
+					formEl.requestSubmit();
+				});
+				waiting.delete(draft.id);
+			}
+		} finally {
+			addingAll = false;
+		}
+	}
+
 	const evidence = (draft: Draft) =>
 		`${draft.count} ${draft.kind === 'income' ? 'deposit' : 'payment'}${draft.count === 1 ? '' : 's'} this statement, ${formatCents(draft.totalCents)}`;
 </script>
@@ -127,42 +162,26 @@
 		<p class="mt-1 text-sm text-muted-foreground">
 			Change anything, then add the ones you want. Skip the rest.
 		</p>
-		<ul class="mt-4 grid gap-4 md:grid-cols-2">
-			{#each preview.drafts as draft (draft.id)}
-				<li data-testid="draft">
-					<Card.Root>
-						<Card.Header>
-							<Card.Title>{draft.name}</Card.Title>
-							<Card.Description>{evidence(draft)}</Card.Description>
-						</Card.Header>
-						<Card.Content>
-							{#if added[draft.id]}
-								<p class="flex items-center gap-1.5 text-sm text-brand-strong">
-									<Check class="size-4" /> Added
-								</p>
-							{:else}
-								<StreamForm
-									kind={draft.kind}
-									{tags}
-									initial={{
-										name: draft.name,
-										tagId: tagIdFor(draft),
-										minCents: draft.minCents,
-										maxCents: draft.maxCents,
-										actualCents: draft.actualCents,
-										intervalDays: draft.intervalDays,
-										firstDate: draft.firstDate
-									}}
-									hidden={{ kind: draft.kind, draftId: draft.id }}
-									details={form?.values?.draftId === draft.id ? form.details : undefined}
-									onsaved={() => (added[draft.id] = true)}
-								/>
-							{/if}
-						</Card.Content>
-					</Card.Root>
-				</li>
+		<div class="mt-4 flex items-center justify-between gap-3">
+			<p class="text-sm text-muted-foreground" aria-live="polite">
+				{remaining === 0 ? 'All added.' : `${remaining} left to add`}
+			</p>
+			<Button onclick={addAll} disabled={addingAll || remaining === 0}>
+				{addingAll ? 'Adding…' : 'Add all'}
+			</Button>
+		</div>
+		<div bind:this={list}>
+			{#each [{ title: 'Income', drafts: incomeDrafts }, { title: 'Expenses', drafts: expenseDrafts }] as section (section.title)}
+				{#if section.drafts.length}
+					<h3 class="mt-6 text-base font-semibold">{section.title}</h3>
+					<ul class="mt-3 grid gap-4 md:grid-cols-2">
+						{#each section.drafts as draft (draft.id)}
+							{@render draftCard(draft)}
+						{/each}
+					</ul>
+				{/if}
 			{/each}
-		</ul>
+		</div>
 	{/if}
 
 	{#if doneHref}
@@ -171,3 +190,38 @@
 		</div>
 	{/if}
 {/if}
+
+{#snippet draftCard(draft: Draft)}
+	<li data-testid="draft" data-draft-id={draft.id}>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>{draft.name}</Card.Title>
+				<Card.Description>{evidence(draft)}</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				{#if added[draft.id]}
+					<p class="flex items-center gap-1.5 text-sm text-brand-strong">
+						<Check class="size-4" /> Added
+					</p>
+				{:else}
+					<StreamForm
+						kind={draft.kind}
+						{tags}
+						initial={{
+							name: draft.name,
+							tagId: tagIdFor(draft),
+							minCents: draft.minCents,
+							maxCents: draft.maxCents,
+							actualCents: draft.actualCents,
+							intervalDays: draft.intervalDays,
+							firstDate: draft.firstDate
+						}}
+						hidden={{ kind: draft.kind, draftId: draft.id }}
+						details={form?.values?.draftId === draft.id ? form.details : undefined}
+						onsaved={() => saved(draft.id)}
+					/>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+	</li>
+{/snippet}

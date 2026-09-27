@@ -303,7 +303,7 @@
 				Add a range
 			</Button>
 			<p class="text-xs text-muted-foreground">
-				If you skip this, minimum and maximum equal the usual amount
+				Without a range, the minimum and maximum both equal the usual amount.
 			</p>
 		{:else}
 			<Button
