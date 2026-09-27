@@ -89,17 +89,16 @@ test('no prerendered stub shadows the authed app: anonymous /app redirects', asy
 	expect(res.headers()['location']).toContain('/signin');
 });
 
-test('push config reports disabled without VAPID keys, and the card stays hidden', async ({
-	page
-}) => {
+test('push config reports disabled without VAPID keys, and the card says so', async ({ page }) => {
 	// Signed out first: the auth middleware rejects before the handler runs.
 	expect((await page.request.get('/api/push/config')).status()).toBe(401);
 
 	// Signed in (page context carries the session cookie): the test backend has
-	// no VAPID keys, so push reports disabled — and the notifications card that
-	// depends on it renders nothing on the overview. Note this holds even though
-	// headless Chromium denies notification permission: the disabled check runs
-	// before the permission check, since there is nothing to enable either way.
+	// no VAPID keys, so push reports disabled — and the settings card says push
+	// isn't set up instead of offering a button that can only fail. Note this
+	// holds even though headless Chromium denies notification permission: the
+	// disabled check runs before the permission check, since there is nothing to
+	// enable either way.
 	await signUpAndSignIn(page);
 	const config = await page.evaluate(async () => {
 		const res = await fetch('/api/push/config');
@@ -108,22 +107,23 @@ test('push config reports disabled without VAPID keys, and the card stays hidden
 	expect(config.status).toBe(200);
 	expect(config.body).toEqual({ publicKey: '', enabled: false });
 
-	await page.goto('/app');
-	await expect(page.getByText('Notifications', { exact: true })).toHaveCount(0);
+	await page.goto('/app/settings');
+	await expect(page.getByText('Notifications', { exact: true })).toBeVisible();
+	await expect(page.getByText(/aren't set up on this server yet/i)).toBeVisible();
+	await expect(page.getByRole('button', { name: /enable notifications/i })).toHaveCount(0);
 });
 
-test('the card stays hidden while push is off, even where the browser has no push', async ({
-	page
-}) => {
+test('the card explains the server state even where the browser has no push', async ({ page }) => {
 	// Like iPhone Safari outside the Home Screen: no PushManager at all.
 	await page.addInitScript(() => {
 		delete (window as { PushManager?: unknown }).PushManager;
 	});
 	await signUpAndSignIn(page);
-	await expect(page.getByRole('heading', { name: /your next \d+ days/i })).toBeVisible();
-	// The card decides after the config request; give it a moment to (not) appear.
-	await page.waitForLoadState('networkidle');
-	await expect(page.getByText('Notifications', { exact: true })).toHaveCount(0);
+	await page.goto('/app/settings');
+	// The card decides after the config request; the server-side disabled state
+	// wins over the missing PushManager, so the setup hint shows instead of the
+	// unsupported-browser text.
+	await expect(page.getByText(/aren't set up on this server yet/i)).toBeVisible();
 	await expect(page.getByText(/doesn't support push/i)).toHaveCount(0);
 });
 

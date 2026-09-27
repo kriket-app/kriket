@@ -115,6 +115,23 @@ test('settings replays the walkthrough without asking for consent again', async 
 	await expect(page).toHaveURL('/app/onboarding');
 });
 
+test('policies open in an in-app dialog during consent', async ({ page }) => {
+	await signUpToOnboarding(page, 'legal-dialog');
+
+	await page.getByRole('button', { name: 'privacy statement' }).click();
+	await expect(page.getByRole('dialog')).toContainText('never uploaded anywhere');
+	await page.getByRole('dialog').getByRole('button', { name: 'Close' }).first().click();
+	await expect(page.getByRole('dialog')).toHaveCount(0);
+
+	await page.getByRole('button', { name: 'terms of use' }).click();
+	await expect(page.getByRole('dialog')).toContainText('not financial advice');
+	await page.keyboard.press('Escape');
+	await expect(page.getByRole('dialog')).toHaveCount(0);
+
+	// Still on the consent step: nothing navigated away.
+	await expect(page.getByRole('button', { name: 'Accept and continue' })).toBeVisible();
+});
+
 test('privacy and terms pages render signed out', async ({ page }) => {
 	await page.goto('/privacy');
 	await expect(page.getByText('Privacy statement', { exact: true })).toBeVisible();

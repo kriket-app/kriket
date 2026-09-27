@@ -5,8 +5,7 @@
 	import type { ActionState, Tag } from '$lib/api/types';
 	import type { components } from '$lib/api/schema';
 	import ImportFlow from '$lib/components/import/import-flow.svelte';
-	import PrivacyContent from '$lib/components/legal/privacy-content.svelte';
-	import TermsContent from '$lib/components/legal/terms-content.svelte';
+	import LegalDialog from '$lib/components/legal/legal-dialog.svelte';
 	import StreamForm from '$lib/components/streams/stream-form.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -28,6 +27,7 @@
 	// After the consent post reloads the data, consented users start at the choice.
 	// untrack: the step is owned by the wizard from here on, not by the data.
 	let step = $state<Step>(untrack(() => (data.status.needsConsent ? 'consent' : 'choice')));
+	let legalDoc = $state<'privacy' | 'terms' | null>(null);
 	let guideStep = $state<GuideStep>('balance');
 	let privacyOk = $state(false);
 	let termsOk = $state(false);
@@ -84,33 +84,10 @@
 					><ShieldCheck class="size-5" /> First, the ground rules</Card.Title
 				>
 				<Card.Description>
-					Read both, accept both, and you're in. You'll only ever see this again if the texts
-					change.
+					Accept both and you're in. You'll only ever see this again if the texts change.
 				</Card.Description>
 			</Card.Header>
 			<Card.Content class="grid gap-6">
-				<div class="grid gap-2">
-					<h2 class="font-medium">Privacy statement</h2>
-					<div class="max-h-64 overflow-y-auto rounded-md border p-4">
-						<PrivacyContent />
-					</div>
-					<p class="text-sm text-muted-foreground">
-						The full page: <a href="/privacy" class="font-medium text-brand-strong hover:underline"
-							>Privacy statement</a
-						>.
-					</p>
-				</div>
-				<div class="grid gap-2">
-					<h2 class="font-medium">Terms of use</h2>
-					<div class="max-h-64 overflow-y-auto rounded-md border p-4">
-						<TermsContent />
-					</div>
-					<p class="text-sm text-muted-foreground">
-						The full page: <a href="/terms" class="font-medium text-brand-strong hover:underline"
-							>Terms of use</a
-						>.
-					</p>
-				</div>
 				<form
 					method="POST"
 					action="?/consent"
@@ -129,7 +106,13 @@
 							bind:checked={privacyOk}
 							class="mt-1 size-4 shrink-0 accent-brand"
 						/>
-						<span>I have read and accept the privacy statement.</span>
+						<span
+							>I have read and accept the <button
+								type="button"
+								class="font-medium text-brand-strong hover:underline"
+								onclick={() => (legalDoc = 'privacy')}>privacy statement</button
+							>.</span
+						>
 					</label>
 					{#if consentErrors('privacyAccepted')}
 						<p class="text-xs text-destructive">{consentErrors('privacyAccepted')}</p>
@@ -142,7 +125,13 @@
 							bind:checked={termsOk}
 							class="mt-1 size-4 shrink-0 accent-brand"
 						/>
-						<span>I have read and accept the terms of use.</span>
+						<span
+							>I have read and accept the <button
+								type="button"
+								class="font-medium text-brand-strong hover:underline"
+								onclick={() => (legalDoc = 'terms')}>terms of use</button
+							>.</span
+						>
 					</label>
 					{#if consentErrors('termsAccepted')}
 						<p class="text-xs text-destructive">{consentErrors('termsAccepted')}</p>
@@ -155,6 +144,7 @@
 				</form>
 			</Card.Content>
 		</Card.Root>
+		<LegalDialog bind:which={legalDoc} />
 	{:else if step === 'choice'}
 		<div class="mt-6 grid gap-4 md:grid-cols-2">
 			<Card.Root>

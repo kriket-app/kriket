@@ -22,10 +22,10 @@
 
 	onMount(() => {
 		// The server runs without VAPID keys until push is configured (production
-		// included): render nothing instead of a button that can only fail. The
-		// config comes first, before browser support and permission, so the card
-		// stays hidden everywhere while push is off, and nothing flashes while it
-		// loads. A config request that fails also hides it.
+		// included). The config comes first, before browser support and permission,
+		// so a server without push shows the "not set up" state everywhere instead
+		// of a button that can only fail. Nothing renders while it loads, and a
+		// config request that fails reads as not set up.
 		void pushConfig()
 			.then(async (config) => {
 				if (!config.enabled) {
@@ -55,7 +55,20 @@
 		try {
 			await subscribePush();
 			status = 'subscribed';
-			notice = 'Notifications are on for this device.';
+			// Prove it works straight away: the example below doubles as the
+			// delivery check, so enabling and verifying are one step.
+			try {
+				const result = await sendTestPush(
+					'Notifications are on',
+					'This is an example — kriket can now reach this device.'
+				);
+				notice =
+					result.sent > 0
+						? 'Notifications are on — an example just went out, it should pop up in a moment.'
+						: 'Notifications are on, but the example could not be delivered. Try Send test below.';
+			} catch {
+				notice = 'Notifications are on for this device.';
+			}
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Could not enable notifications';
 			if (Notification.permission === 'denied') status = 'denied';
@@ -98,7 +111,7 @@
 	const showIosHint = $derived(isIos() && !isInstalled());
 </script>
 
-{#if status !== 'disabled' && status !== 'loading'}
+{#if status !== 'loading'}
 	<Card.Root>
 		<Card.Header>
 			<Card.Title class="flex items-center gap-2 text-base">
@@ -115,7 +128,14 @@
 			</Card.Description>
 		</Card.Header>
 		<Card.Content class="grid gap-3">
-			{#if status === 'unsupported'}
+			{#if status === 'disabled'}
+				<p class="text-sm text-muted-foreground">
+					Push notifications aren't set up on this server yet, so there's nothing to enable here.
+					They need VAPID keys (<code>VAPID_PUBLIC_KEY</code> and
+					<code>VAPID_PRIVATE_KEY</code>) — generate them with
+					<code>npx web-push generate-vapid-keys</code> in <code>backend/</code> and restart the server.
+				</p>
+			{:else if status === 'unsupported'}
 				<!-- iPhone and iPad Safari expose push only to apps added to the Home Screen. -->
 				<p class="text-sm text-muted-foreground">
 					{#if showIosHint}
