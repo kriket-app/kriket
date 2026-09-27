@@ -5,22 +5,28 @@ describe('/api/tags', () => {
 	it('rejects signed-out callers', async () => {
 		expect((await testApp().get('/api/tags')).status).toBe(401);
 	});
-	it('seeds eight presets on the first list, then keeps them', async () => {
+	it('seeds four presets sorted by name on the first list, then keeps them', async () => {
 		const a = testAgent();
 		await signUp(a, 'tags1@example.com');
 		const first = await a.get('/api/tags');
 		expect(first.status).toBe(200);
-		expect(first.body.tags).toHaveLength(8);
+		expect(first.body.tags).toHaveLength(4);
 		expect(first.body.tags.every((t: { isPreset: boolean }) => t.isPreset)).toBe(true);
-		expect((await a.get('/api/tags')).body.tags).toHaveLength(8);
+		expect(first.body.tags.map((t: { name: string }) => t.name)).toEqual([
+			'Bill',
+			'Groceries',
+			'Pay cheque',
+			'Side hustle'
+		]);
+		expect((await a.get('/api/tags')).body.tags).toHaveLength(4);
 	});
-	it('seeds exactly 8 presets even when two first requests race', async () => {
+	it('seeds exactly 4 presets even when two first requests race', async () => {
 		const a = testAgent();
 		await signUp(a, 'tags5@example.com');
 		const [first, second] = await Promise.all([a.get('/api/tags'), a.get('/api/tags')]);
-		expect(first.body.tags).toHaveLength(8);
-		expect(second.body.tags).toHaveLength(8);
-		expect((await a.get('/api/tags')).body.tags).toHaveLength(8);
+		expect(first.body.tags).toHaveLength(4);
+		expect(second.body.tags).toHaveLength(4);
+		expect((await a.get('/api/tags')).body.tags).toHaveLength(4);
 	});
 	it('creates, renames, and deletes a tag, and hides it from other users', async () => {
 		const a = testAgent();

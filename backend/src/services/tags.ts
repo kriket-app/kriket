@@ -5,16 +5,12 @@ import { tags } from '../db/tables.js';
 import type { TagDto } from '../schemas/tags.js';
 import { NotFoundError } from './errors.js';
 
-// Seeded once per user, the first time they list tags with none stored. Greens and teals on purpose.
+// Seeded once per user, the first time they list tags with none stored.
 export const PRESET_TAGS = [
 	{ name: 'Pay cheque', color: '#16a34a' },
-	{ name: 'Shifts', color: '#22c55e' },
-	{ name: 'Rent', color: '#0f766e' },
-	{ name: 'Groceries', color: '#65a30d' },
-	{ name: 'Subscriptions', color: '#0891b2' },
-	{ name: 'Transport', color: '#4d7c0f' },
-	{ name: 'Fun', color: '#84cc16' },
-	{ name: 'Savings', color: '#15803d' }
+	{ name: 'Side hustle', color: '#059669' },
+	{ name: 'Bill', color: '#ea580c' },
+	{ name: 'Groceries', color: '#d97706' }
 ];
 
 export const toTagDto = (row: TagRow): TagDto => ({
@@ -42,7 +38,7 @@ export async function listTagsWithPresets(userId: string): Promise<TagDto[]> {
 			.insert(tags)
 			.values(PRESET_TAGS.map((t) => ({ ...t, isPreset: true, userId })))
 			.returning();
-		return inserted.map(toTagDto);
+		return inserted.map(toTagDto).sort((a, b) => a.name.localeCompare(b.name));
 	});
 }
 export async function createTag(userId: string, body: { name: string; color?: string }) {

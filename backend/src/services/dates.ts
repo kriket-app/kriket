@@ -15,3 +15,13 @@ export const today = () =>
 		month: '2-digit',
 		day: '2-digit'
 	}).format(new Date());
+
+/** "2026-09" -> "2026-10", "2026-12" -> "2027-01": string arithmetic, no calendar math needed. */
+const nextMonth = (month: string): string => {
+	const [year, monthNum] = month.split('-').map(Number);
+	return monthNum === 12 ? `${year + 1}-01` : `${year}-${String(monthNum + 1).padStart(2, '0')}`;
+};
+/** The first day of a "YYYY-MM" month. */
+export const monthStart = (month: string): string => `${month}-01`;
+/** The last day of a "YYYY-MM" month: the day before the next month's first day. */
+export const monthEnd = (month: string): string => addDays(monthStart(nextMonth(month)), -1);

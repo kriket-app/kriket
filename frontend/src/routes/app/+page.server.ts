@@ -10,16 +10,16 @@ export const load: PageServerLoad = async (event) => {
 	const days = WINDOWS.includes(requested) ? requested : 90;
 	const client = api(event);
 	// The stream lists only decide whether to show the first-run panel instead of the forecast.
-	const [forecast, settings, incomes, expenses] = await Promise.all([
+	const [forecast, checkins, incomes, expenses] = await Promise.all([
 		client.GET('/api/forecast', { params: { query: { days } } }),
-		client.GET('/api/settings'),
+		client.GET('/api/checkins'),
 		client.GET('/api/income-streams'),
 		client.GET('/api/expense-streams')
 	]);
 	return {
 		days,
 		forecast: dataOf(forecast),
-		settings: dataOf(settings),
+		checkins: dataOf(checkins).checkins,
 		hasStreams: dataOf(incomes).streams.length + dataOf(expenses).streams.length > 0
 	};
 };
@@ -27,18 +27,16 @@ export const load: PageServerLoad = async (event) => {
 export const actions = {
 	async settings(event) {
 		const values = await formValues(event.request);
-		const startingBalanceCents = parseDollars(values.balance ?? '');
-		if (startingBalanceCents === null) {
+		const balanceCents = parseDollars(values.balance ?? '');
+		if (balanceCents === null) {
 			return invalid('settings', values, [
 				{
-					path: 'startingBalanceCents',
+					path: 'balanceCents',
 					message: 'Enter an amount like 420.00, or -50.00 if overdrawn'
 				}
 			]);
 		}
-		const result = await api(event).PUT('/api/settings', {
-			body: { startingBalanceCents, startingDate: values.asOf ?? '' }
-		});
+		const result = await api(event).POST('/api/checkins', { body: { balanceCents } });
 		return actionResult('settings', values, result);
 	}
 } satisfies Actions;
