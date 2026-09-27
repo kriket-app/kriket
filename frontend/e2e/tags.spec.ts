@@ -1,12 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { signUpAndSignIn } from './helpers';
 
-test('a new user sees the four presets, and a tag opens its own page', async ({ page }) => {
+test('a new user sees the five presets, and a tag opens its own page', async ({ page }) => {
 	await signUpAndSignIn(page);
 
 	await page.goto('/app/tags');
 	await expect(page.getByText('Pay cheque')).toBeVisible();
 	await expect(page.getByText('Side hustle')).toBeVisible();
+	await expect(page.getByText('Subscriptions', { exact: true })).toBeVisible();
 	await expect(page.getByText('Bill')).toBeVisible();
 	await expect(page.getByText('Groceries')).toBeVisible();
 

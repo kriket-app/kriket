@@ -64,6 +64,27 @@
       "when": 1790496361243,
       "tag": "0008_onboarding",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790517051451,
+      "tag": "0009_subscriptions",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790517143547,
+      "tag": "0010_subscription_reviews",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790517454645,
+      "tag": "0011_calendar_recurrence",
+      "breakpoints": true
     }
   ]
 }

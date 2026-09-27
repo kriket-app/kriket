@@ -35,13 +35,19 @@ export const tags = pgTable(
 		name: text('name').notNull(),
 		color: text('color'),
 		isPreset: boolean('is_preset').default(false).notNull(),
+		presetKey: text('preset_key', { enum: ['subscriptions'] }),
 		...timestamps()
 	},
-	(t) => [index('tags_user_idx').on(t.userId)]
+	(t) => [
+		index('tags_user_idx').on(t.userId),
+		uniqueIndex('tags_user_preset_idx').on(t.userId, t.presetKey)
+	]
 );
 
 // Income and expense streams have the same shape; two tables keep the queries and the
 // foreign keys simple. Amounts are integer cents; 0 <= min <= actual <= max is enforced in the service.
+// `isSubscription` marks an expense stream as a subscription (income rows always stay false);
+// the Subscriptions preset tag groups them visually while the flag drives reminders.
 const streamColumns = () => ({
 	id: idColumn(),
 	userId: userIdColumn(),
@@ -51,7 +57,13 @@ const streamColumns = () => ({
 	maxCents: integer('max_cents').notNull(),
 	actualCents: integer('actual_cents').notNull(),
 	intervalDays: integer('interval_days').notNull(),
+	// Calendar schedules use firstDate's day as an anchor; intervalDays is only used for 'days'.
+	recurrence: text('recurrence', { enum: ['days', 'monthly', 'yearly'] })
+		.default('days')
+		.notNull(),
 	firstDate: date('first_date', { mode: 'string' }).notNull(),
+	isSubscription: boolean('is_subscription').default(false).notNull(),
+	subscriptionSince: date('subscription_since', { mode: 'string' }),
 	...timestamps()
 });
 export const incomeStreams = pgTable('income_streams', streamColumns(), (t) => [
@@ -119,6 +131,17 @@ export const userOnboarding = pgTable('user_onboarding', {
 });
 
 export type UserOnboardingRow = typeof userOnboarding.$inferSelect;
+
+// Delivery and acknowledgement are separate: a push never hides an unanswered review.
+export const subscriptionDigests = pgTable('subscription_digests', {
+	userId: text('user_id')
+		.primaryKey()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	sentOn: date('sent_on', { mode: 'string' }),
+	nextReviewOn: date('next_review_on', { mode: 'string' }).notNull(),
+	lastAttemptOn: date('last_attempt_on', { mode: 'string' }),
+	...timestamps()
+});
 
 // Goals are balances to reach on a date, not money set aside: the forecast is
 // unchanged and the status compares the forecast's point on targetDate.

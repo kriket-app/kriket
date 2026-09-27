@@ -12,6 +12,7 @@
 	import * as Popover from '$lib/components/ui/popover';
 	import * as Select from '$lib/components/ui/select';
 	import { centsToDollars } from '$lib/money';
+	import SubscriptionName from '$lib/components/subscription-name.svelte';
 
 	let {
 		kind,
@@ -20,7 +21,8 @@
 		initial,
 		hidden,
 		details,
-		onsaved
+		onsaved,
+		subscriptionMode = false
 	}: {
 		kind: StreamKind;
 		tags: Tag[];
@@ -34,6 +36,8 @@
 		details?: FieldError[];
 		/** Runs after a successful save, so the dialog around the form can close. */
 		onsaved?: () => void;
+		/** When true the form opens as "add a subscription": flag on, monthly default. */
+		subscriptionMode?: boolean;
 	} = $props();
 
 	/** Where the initial field values come from: the stream being edited, else the prefill. */
@@ -47,12 +51,23 @@
 	const REPEAT_OPTIONS = [
 		{ days: 7, label: 'Weekly' },
 		{ days: 14, label: 'Every 2 weeks' },
-		{ days: 30, label: 'Monthly' }
+		{ days: 'monthly', label: 'Monthly' },
+		{ days: 'yearly', label: 'Yearly' }
 	] as const;
-	type RepeatChoice = 7 | 14 | 30 | 'custom';
+	type RepeatChoice = 7 | 14 | 'monthly' | 'yearly' | 'custom';
 
 	// The form mounts fresh each time its dialog opens, so it starts from the stream as it is then.
 	let tagId = $state(untrack(() => seed()?.tagId ?? ''));
+	let isSubscription = $state(
+		untrack(() => kind === 'expense' && (stream?.isSubscription ?? subscriptionMode))
+	);
+	let name = $state(untrack(() => seed()?.name ?? ''));
+	const subscriptionTag = $derived(tags.find((tag) => tag.presetKey === 'subscriptions'));
+	function toggleSubscription(checked: boolean) {
+		isSubscription = checked;
+		if (checked) tagId = subscriptionTag?.id ?? '';
+		else if (tagId === subscriptionTag?.id) tagId = '';
+	}
 	let usual = $state(untrack(() => (seed() ? centsToDollars(seed()!.actualCents) : '')));
 	let minimum = $state(untrack(() => (seed() ? centsToDollars(seed()!.minCents) : '')));
 	let maximum = $state(untrack(() => (seed() ? centsToDollars(seed()!.maxCents) : '')));
@@ -65,15 +80,17 @@
 	);
 	let repeatChoice = $state<RepeatChoice>(
 		untrack(() => {
+			const recurrence = seed()?.recurrence;
+			if (recurrence === 'monthly' || recurrence === 'yearly') return recurrence;
 			const days = seed()?.intervalDays;
-			if (days === 7 || days === 14 || days === 30) return days;
-			return days === undefined ? 7 : 'custom';
+			if (days === 7 || days === 14) return days;
+			return days === undefined ? (subscriptionMode ? 'monthly' : 7) : 'custom';
 		})
 	);
 	let customDays = $state<number | null>(
 		untrack(() => {
 			const days = seed()?.intervalDays;
-			return days !== undefined && days !== 7 && days !== 14 && days !== 30 ? days : null;
+			return days !== undefined && days !== 7 && days !== 14 ? days : null;
 		})
 	);
 	let nextDate = $state<DateValue | undefined>(
@@ -131,29 +148,67 @@
 	class="grid gap-4"
 >
 	{#if stream}<input type="hidden" name="id" value={stream.id} />{/if}
+	{#if kind === 'expense'}<input
+			type="hidden"
+			name="isSubscription"
+			value={String(isSubscription)}
+		/>{/if}
 	<input type="hidden" name="firstDate" value={nextDateIso} />
 	{#each Object.entries(hidden ?? {}) as [name, value] (name)}
 		<input type="hidden" {name} {value} />
 	{/each}
 	{#if repeatChoice !== 'custom'}
-		<input type="hidden" name="intervalDays" value={repeatChoice} />
+		<input
+			type="hidden"
+			name="intervalDays"
+			value={repeatChoice === 'monthly' ? 30 : repeatChoice === 'yearly' ? 365 : repeatChoice}
+		/>
 	{/if}
+	<input
+		type="hidden"
+		name="recurrence"
+		value={repeatChoice === 'monthly' || repeatChoice === 'yearly' ? repeatChoice : 'days'}
+	/>
 
 	<div class="grid gap-2">
 		<Label for="{id}-name">Name</Label>
-		<Input
-			id="{id}-name"
-			name="name"
-			required
-			maxlength={100}
-			autocomplete="off"
-			placeholder={kind === 'income' ? 'Pay cheque' : 'Rent'}
-			value={seed()?.name ?? ''}
-			aria-invalid={errorFor('name') ? true : undefined}
-			aria-describedby={describedBy('name')}
-		/>
+		{#if isSubscription}
+			<SubscriptionName
+				id="{id}-name"
+				bind:value={name}
+				invalid={errorFor('name') ? true : undefined}
+				describedBy={describedBy('name')}
+			/>
+		{:else}
+			<Input
+				id="{id}-name"
+				name="name"
+				required
+				maxlength={100}
+				autocomplete="off"
+				placeholder={kind === 'income' ? 'Pay cheque' : 'Rent'}
+				bind:value={name}
+				aria-invalid={errorFor('name') ? true : undefined}
+				aria-describedby={describedBy('name')}
+			/>
+		{/if}
 		{@render fieldError('name')}
 	</div>
+	{#if kind === 'expense'}
+		<div class="grid gap-1">
+			<label class="flex items-center gap-2 text-sm font-medium">
+				<input
+					type="checkbox"
+					checked={isSubscription}
+					onchange={(event) => toggleSubscription(event.currentTarget.checked)}
+				/>
+				Subscription
+			</label>
+			<p class="text-xs text-muted-foreground">
+				A two-minute cleanup reminder every 90 days. Uses your normal expense forecast.
+			</p>
+		</div>
+	{/if}
 
 	<div class="grid gap-2">
 		<Label for="{id}-usual">Usual amount</Label>
@@ -215,6 +270,12 @@
 			</div>
 		{/if}
 		{@render fieldError('intervalDays')}
+		{#if repeatChoice === 'monthly' || repeatChoice === 'yearly'}
+			<p class="text-xs text-muted-foreground">
+				Same calendar day each {repeatChoice === 'monthly' ? 'month' : 'year'}. Shorter months use
+				their last day, then return to the original day.
+			</p>
+		{/if}
 	</div>
 
 	<div class="grid gap-2">
@@ -241,55 +302,75 @@
 			</Popover.Content>
 		</Popover.Root>
 		{@render fieldError('firstDate')}
-	</div>
-
-	<div class="grid gap-2">
-		<Label for="{id}-tag">Tag</Label>
-		<Select.Root type="single" name="tagId" bind:value={tagId}>
-			<Select.Trigger
-				id="{id}-tag"
-				class="w-full"
-				aria-invalid={errorFor('tagId') ? true : undefined}
-				aria-describedby={describedBy('tagId')}
-			>
-				<span class="flex items-center gap-2">
-					{#if selectedTag}
-						<TagDot color={selectedTag.color} />{selectedTag.name}
-					{:else if newTagChosen}
-						New tag…
-					{:else}
-						No tag
-					{/if}
-				</span>
-			</Select.Trigger>
-			<Select.Content>
-				<Select.Item value="" label="No tag" />
-				{#each tags as tag (tag.id)}
-					<Select.Item value={tag.id} label={tag.name}>
-						<TagDot color={tag.color} class="self-center" />{tag.name}
-					</Select.Item>
-				{/each}
-				<Select.Item value={NEW_TAG_VALUE} label="New tag…" />
-			</Select.Content>
-		</Select.Root>
-		{@render fieldError('tagId')}
-		{#if newTagChosen}
-			<div class="grid gap-2">
-				<Label for="{id}-new-tag-name">New tag name</Label>
-				<Input
-					id="{id}-new-tag-name"
-					name="newTagName"
-					required
-					maxlength={40}
-					autocomplete="off"
-					placeholder="Coffee"
-					aria-invalid={errorFor('newTagName') ? true : undefined}
-					aria-describedby={describedBy('newTagName')}
-				/>
-				{@render fieldError('newTagName')}
-			</div>
+		{#if repeatChoice === 'monthly' || repeatChoice === 'yearly'}
+			<p class="text-xs text-muted-foreground">
+				This date anchors the billing day. Keep it when editing other details to preserve the
+				schedule.
+			</p>
 		{/if}
 	</div>
+
+	{#if isSubscription}
+		<input type="hidden" name="tagId" value={subscriptionTag?.id ?? ''} />
+		<p class="text-sm text-muted-foreground">Tag: {subscriptionTag?.name ?? 'Subscriptions'}</p>
+	{:else}
+		<div class="grid gap-2">
+			<Label for="{id}-tag">Tag</Label>
+			<Select.Root
+				type="single"
+				name="tagId"
+				bind:value={tagId}
+				onValueChange={(value) => {
+					if (kind === 'expense' && value === subscriptionTag?.id) toggleSubscription(true);
+				}}
+			>
+				<Select.Trigger
+					id="{id}-tag"
+					class="w-full"
+					aria-invalid={errorFor('tagId') ? true : undefined}
+					aria-describedby={describedBy('tagId')}
+				>
+					<span class="flex items-center gap-2">
+						{#if selectedTag}
+							<TagDot color={selectedTag.color} />{selectedTag.name}
+						{:else if newTagChosen}
+							New tag…
+						{:else}
+							No tag
+						{/if}
+					</span>
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Item value="" label="No tag" />
+					{#each tags as tag (tag.id)}
+						{#if kind === 'expense' || tag.presetKey !== 'subscriptions'}
+							<Select.Item value={tag.id} label={tag.name}>
+								<TagDot color={tag.color} class="self-center" />{tag.name}
+							</Select.Item>
+						{/if}
+					{/each}
+					<Select.Item value={NEW_TAG_VALUE} label="New tag…" />
+				</Select.Content>
+			</Select.Root>
+			{@render fieldError('tagId')}
+			{#if newTagChosen}
+				<div class="grid gap-2">
+					<Label for="{id}-new-tag-name">New tag name</Label>
+					<Input
+						id="{id}-new-tag-name"
+						name="newTagName"
+						required
+						maxlength={40}
+						autocomplete="off"
+						placeholder="Coffee"
+						aria-invalid={errorFor('newTagName') ? true : undefined}
+						aria-describedby={describedBy('newTagName')}
+					/>
+					{@render fieldError('newTagName')}
+				</div>
+			{/if}
+		</div>
+	{/if}
 
 	<div class="grid gap-2">
 		{#if !rangeOpen}
@@ -352,7 +433,13 @@
 
 	<div class="flex justify-end">
 		<Button type="submit" disabled={saving} class="w-full sm:w-auto">
-			{stream ? 'Save' : kind === 'income' ? 'Add income' : 'Add expense'}
+			{stream
+				? 'Save'
+				: isSubscription
+					? 'Add subscription'
+					: kind === 'income'
+						? 'Add income'
+						: 'Add expense'}
 		</Button>
 	</div>
 </form>

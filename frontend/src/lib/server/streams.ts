@@ -1,5 +1,5 @@
 import { error, type Actions, type RequestEvent } from '@sveltejs/kit';
-import type { FieldError, StreamKind } from '$lib/api/types';
+import type { FieldError, Stream, StreamKind } from '$lib/api/types';
 import { parseDollars } from '$lib/money';
 import { api, dataOf, messageOf } from './api';
 import { actionResult, formValues, invalid } from './forms';
@@ -12,11 +12,17 @@ const NEW_TAG_VALUE = '__new__';
 
 export const streamsLoad = (kind: StreamKind) => async (event: RequestEvent) => {
 	const client = api(event);
-	const [streams, tags] = await Promise.all([
+	const [streams, tags, digest] = await Promise.all([
 		client.GET(`/api/${kind}-streams`),
-		client.GET('/api/tags')
+		client.GET('/api/tags'),
+		kind === 'expense' ? client.GET('/api/subscriptions/digest') : null
 	]);
-	return { kind, streams: dataOf(streams).streams, tags: dataOf(tags).tags };
+	return {
+		kind,
+		streams: dataOf(streams).streams,
+		tags: dataOf(tags).tags,
+		digest: digest ? dataOf(digest) : null
+	};
 };
 
 /**
@@ -49,6 +55,15 @@ export function streamBody(values: Record<string, string>) {
 	}
 
 	if (!values.firstDate) details.push({ path: 'firstDate', message: 'Pick the next date.' });
+	const recurrence = values.recurrence;
+	if (
+		recurrence !== undefined &&
+		recurrence !== 'days' &&
+		recurrence !== 'monthly' &&
+		recurrence !== 'yearly'
+	) {
+		return { details: [...details, { path: 'recurrence', message: 'Choose a repeat schedule.' }] };
+	}
 
 	if (details.length) return { details };
 	return {
@@ -59,7 +74,10 @@ export function streamBody(values: Record<string, string>) {
 			actualCents: actualCents!,
 			maxCents,
 			intervalDays: Number(values.intervalDays),
-			firstDate: values.firstDate ?? ''
+			recurrence: recurrence as Stream['recurrence'] | undefined,
+			firstDate: values.firstDate ?? '',
+			isSubscription:
+				values.isSubscription === undefined ? undefined : values.isSubscription === 'true'
 		}
 	};
 }
@@ -106,6 +124,13 @@ export async function createStream(
 
 export const streamsActions = (kind: StreamKind) =>
 	({
+		async dismissSubscriptions(event) {
+			return actionResult(
+				'dismissSubscriptions',
+				{},
+				await api(event).POST('/api/subscriptions/dismiss')
+			);
+		},
 		async create(event) {
 			return createStream(event, kind, await formValues(event.request));
 		},

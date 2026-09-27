@@ -29,6 +29,44 @@ const stream = (
 });
 
 describe('occurrences', () => {
+	it('clamps monthly dates without drifting after February, including leap years', () => {
+		expect(
+			occurrences(
+				stream({ firstDate: '2026-01-31', recurrence: 'monthly' }),
+				'2026-01-01',
+				'2026-05-31'
+			)
+		).toEqual(['2026-01-31', '2026-02-28', '2026-03-31', '2026-04-30', '2026-05-31']);
+		expect(
+			occurrences(
+				stream({ firstDate: '2024-01-30', recurrence: 'monthly' }),
+				'2024-02-01',
+				'2024-03-31'
+			)
+		).toEqual(['2024-02-29', '2024-03-30']);
+	});
+	it('restores leap day on yearly schedules and skips ahead across centuries correctly', () => {
+		expect(
+			occurrences(
+				stream({ firstDate: '2024-02-29', recurrence: 'yearly' }),
+				'2025-01-01',
+				'2028-12-31'
+			)
+		).toEqual(['2025-02-28', '2026-02-28', '2027-02-28', '2028-02-29']);
+		expect(
+			occurrences(
+				stream({ firstDate: '2000-02-29', recurrence: 'yearly' }),
+				'2100-01-01',
+				'2100-12-31'
+			)
+		).toEqual(['2100-02-28']);
+	});
+	it('honours calendar window boundaries and a future anchor', () => {
+		const s = stream({ firstDate: '2026-12-31', recurrence: 'monthly' });
+		expect(occurrences(s, '2026-01-01', '2026-12-30')).toEqual([]);
+		expect(occurrences(s, '2027-02-28', '2027-03-31')).toEqual(['2027-02-28', '2027-03-31']);
+		expect(occurrences(s, '2027-03-01', '2027-03-30')).toEqual([]);
+	});
 	it('starts at the first date when it is inside the window', () => {
 		expect(occurrences(stream({ intervalDays: 14 }), '2026-09-26', '2026-10-31')).toEqual([
 			'2026-10-01',
@@ -54,6 +92,25 @@ describe('occurrences', () => {
 });
 
 describe('computeForecast', () => {
+	it('deducts calendar expenses once per month in all forecast cases', () => {
+		const f = computeForecast({
+			startDate: '2026-02-01',
+			days: 58,
+			startingBalanceCents: 10000,
+			incomes: [],
+			expenses: [
+				stream({
+					firstDate: '2026-01-31',
+					recurrence: 'monthly',
+					minCents: 800,
+					actualCents: 1000,
+					maxCents: 1200
+				})
+			]
+		});
+		expect(f.events.map((e) => e.date)).toEqual(['2026-02-28', '2026-03-31']);
+		expect(f.endBalance).toEqual({ minCents: 7600, actualCents: 8000, maxCents: 8400 });
+	});
 	it('walks worst, actual, and best balances day by day', () => {
 		const f = computeForecast({
 			startDate: '2026-09-26',

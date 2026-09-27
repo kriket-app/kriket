@@ -2,7 +2,13 @@ import type { ForecastDto, ForecastEventDto, ForecastPointDto } from '../schemas
 import { listCheckins } from '../crud/checkins.js';
 import { expenseCrud, incomeCrud } from '../crud/streams.js';
 import { NotFoundError } from './errors.js';
-import { addDays, daysBetween, today } from './dates.js';
+import {
+	addCalendarMonths,
+	calendarMonthDifference,
+	addDays,
+	daysBetween,
+	today
+} from './dates.js';
 
 export type StreamInput = {
 	id: string;
@@ -12,6 +18,7 @@ export type StreamInput = {
 	actualCents: number;
 	maxCents: number;
 	intervalDays: number;
+	recurrence?: 'days' | 'monthly' | 'yearly';
 	firstDate: string;
 };
 export type ForecastInput = {
@@ -29,15 +36,22 @@ type ForecastCore = Omit<ForecastDto, 'checkin' | 'lowest' | 'firstBelowZero' | 
 
 /** Dates on which the stream pays inside [start, end], inclusive: firstDate + k * intervalDays, k >= 0. */
 export function occurrences(
-	stream: Pick<StreamInput, 'firstDate' | 'intervalDays'>,
+	stream: Pick<StreamInput, 'firstDate' | 'intervalDays' | 'recurrence'>,
 	start: string,
 	end: string
 ): string[] {
 	const offset = daysBetween(stream.firstDate, start);
-	let k = offset <= 0 ? 0 : Math.ceil(offset / stream.intervalDays);
+	const months = stream.recurrence === 'monthly' ? 1 : stream.recurrence === 'yearly' ? 12 : 0;
+	let k = months
+		? Math.max(0, Math.floor(calendarMonthDifference(stream.firstDate, start) / months))
+		: offset <= 0
+			? 0
+			: Math.ceil(offset / stream.intervalDays);
 	const out: string[] = [];
 	for (;;) {
-		const date = addDays(stream.firstDate, k * stream.intervalDays);
+		const date = months
+			? addCalendarMonths(stream.firstDate, k * months)
+			: addDays(stream.firstDate, k * stream.intervalDays);
 		if (date > end) return out;
 		if (date >= start) out.push(date);
 		k += 1;

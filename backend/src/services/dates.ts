@@ -6,6 +6,26 @@ export const addDays = (iso: string, n: number) =>
 	toIso(new Date(toUtc(iso).getTime() + n * DAY_MS));
 export const daysBetween = (from: string, to: string) =>
 	Math.round((toUtc(to).getTime() - toUtc(from).getTime()) / DAY_MS);
+
+/** Always offset from the original anchor: clamping February must not shift March. */
+export function addCalendarMonths(anchor: string, months: number): string {
+	const date = toUtc(anchor);
+	const day = date.getUTCDate();
+	date.setUTCDate(1);
+	date.setUTCMonth(date.getUTCMonth() + months);
+	const end = new Date(date);
+	end.setUTCMonth(end.getUTCMonth() + 1, 0);
+	date.setUTCDate(Math.min(day, end.getUTCDate()));
+	return toIso(date);
+}
+
+export function calendarMonthDifference(from: string, to: string) {
+	return (
+		(Number(to.slice(0, 4)) - Number(from.slice(0, 4))) * 12 +
+		Number(to.slice(5, 7)) -
+		Number(from.slice(5, 7))
+	);
+}
 // Fixed to the team's timezone for now, so "today" doesn't roll over to tomorrow (UTC) hours
 // before evening in Saskatoon.
 export const today = () =>

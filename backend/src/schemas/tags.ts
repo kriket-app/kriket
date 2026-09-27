@@ -8,6 +8,7 @@ export const Tag = registry.register(
 		name: z.string(),
 		color: z.string().nullable(),
 		isPreset: z.boolean(),
+		presetKey: z.enum(['subscriptions']).nullable(),
 		createdAt: z.string().openapi({ format: 'date-time' })
 	})
 );

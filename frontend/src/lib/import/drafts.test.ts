@@ -4,6 +4,7 @@ import { classify } from './classify';
 import { buildPreview, draftsFrom } from './drafts';
 import { parseStatement } from './statement';
 import type { Classified, Statement, TextItem } from './types';
+import { nextOccurrence } from '../dates';
 
 const TODAY = '2026-09-26';
 const statement = parseStatement(fixture.pages as TextItem[][], TODAY);
@@ -61,10 +62,15 @@ describe('buildPreview on the Scotiabank fixture', () => {
 		expect(preview.drafts.some((d) => d.hint === 'cash' || d.hint === 'transfer')).toBe(false);
 	});
 
-	it('puts the next date on or after today, stepping from the last time it was seen', () => {
-		for (const draft of preview.drafts) expect(draft.firstDate >= TODAY).toBe(true);
-		// 2024-01-29 is 971 days before today; the next multiple of 30 is 990 days, 2026-10-15.
-		expect(preview.drafts[0].firstDate).toBe('2026-10-15');
+	it('preserves the observed calendar anchor, while weekly drafts advance to today', () => {
+		for (const draft of preview.drafts) {
+			if (draft.recurrence === 'monthly') expect(draft.firstDate).toBe(draft.lastSeen);
+			else expect(draft.firstDate >= TODAY).toBe(true);
+		}
+		const pay = preview.drafts[0];
+		expect(nextOccurrence(pay.firstDate, pay.intervalDays, TODAY, pay.recurrence)).toBe(
+			'2026-09-29'
+		);
 	});
 
 	it('says the amounts are one statement’s totals', () => {

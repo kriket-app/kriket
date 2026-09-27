@@ -13,6 +13,7 @@ import '../routes/push.js';
 import '../routes/coming-up.js';
 import '../routes/goals.js';
 import '../routes/onboarding.js';
+import '../routes/subscriptions.js';
 
 streamsRouter('income');
 streamsRouter('expense');

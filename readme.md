@@ -126,6 +126,32 @@ npm install
 npm run dev
 ```
 
+## Subscriptions and recurrence
+
+On **Expenses**, choose **Add subscription** (or mark an existing expense as a
+subscription). The name field suggests common services and accepts custom names.
+Brand icons load from Simple Icons, with a local emoji fallback. Subscriptions use
+the normal expense forecast and a dedicated preset tag, which is created or reused
+automatically; renaming it keeps its identity.
+
+The first cleanup is due 90 days after tracking begins. A card on the overview and
+the subscriptions filter stays visible until **All good — remind me in 90 days**
+is selected. Users with web push enabled also receive a quarterly nudge using the
+existing VAPID configuration. Sending a push does not dismiss the card. Failed
+delivery retries at most once a day, with database locking across server instances.
+
+Streams now offer calendar **Monthly** and **Yearly** schedules. Their first date
+anchors the billing day: January 31 → February 28 → March 31; February 29 yearly
+uses February 28 in non-leap years and returns to February 29 in leap years.
+Existing fixed-day streams retain their intervals and display **Every 30 days**
+where applicable; edit them to select a calendar schedule. Imported monthly drafts
+retain the last observed payment date as their anchor. Subscription totals show
+an approximate monthly equivalent (annual charges divided by 12).
+
+API clients may supply `recurrence: "monthly" | "yearly"` without `intervalDays`.
+Omitting `recurrence` on creation means fixed-day recurrence (`"days"`), which
+requires `intervalDays`. Editing only other fields preserves the schedule.
+
 ## Testing
 
 Both test suites need the Postgres database running (`docker compose up db`).

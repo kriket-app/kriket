@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Plus } from '@lucide/svelte';
-	import type { ActionState, Stream, StreamKind, Tag } from '$lib/api/types';
+	import type { ActionState, Stream, StreamKind, Tag, SubscriptionDigest } from '$lib/api/types';
+	import { page } from '$app/state';
+	import SubscriptionReview from '$lib/components/subscription-review.svelte';
+	import { formatCents } from '$lib/money';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import Chirp from '$lib/components/chirp.svelte';
@@ -10,7 +13,10 @@
 	let {
 		data,
 		form
-	}: { data: { kind: StreamKind; streams: Stream[]; tags: Tag[] }; form: ActionState } = $props();
+	}: {
+		data: { kind: StreamKind; streams: Stream[]; tags: Tag[]; digest?: SubscriptionDigest | null };
+		form: ActionState;
+	} = $props();
 
 	const COPY = {
 		income: {
@@ -29,12 +35,33 @@
 	};
 	const copy = $derived(COPY[data.kind]);
 	let adding = $state(false);
+	let subscriptionMode = $state(false);
+	const subscriptionsOnly = $derived(
+		data.kind === 'expense' && page.url.searchParams.get('filter') === 'subscriptions'
+	);
+	const visibleStreams = $derived(
+		subscriptionsOnly ? data.streams.filter((s) => s.isSubscription) : data.streams
+	);
 </script>
 
 <svelte:head><title>{copy.title} · kriket</title></svelte:head>
 
 {#snippet addButton()}
-	<Button onclick={() => (adding = true)}><Plus />{copy.add}</Button>
+	<div class="flex flex-wrap gap-2">
+		<Button
+			onclick={() => {
+				subscriptionMode = false;
+				adding = true;
+			}}><Plus />{copy.add}</Button
+		>
+		{#if data.kind === 'expense'}<Button
+				variant="outline"
+				onclick={() => {
+					subscriptionMode = true;
+					adding = true;
+				}}><Plus />Add subscription</Button
+			>{/if}
+	</div>
 {/snippet}
 
 <div class="flex flex-wrap items-end justify-between gap-4">
@@ -51,20 +78,50 @@
 	{@render addButton()}
 </div>
 
-{#if data.streams.length === 0}
+{#if data.kind === 'expense'}
+	<nav class="mt-4 flex gap-2" aria-label="Expense filter">
+		<Button
+			href="/app/expenses"
+			variant={subscriptionsOnly ? 'outline' : 'secondary'}
+			aria-current={!subscriptionsOnly ? 'page' : undefined}>All expenses</Button
+		>
+		<Button
+			href="/app/expenses?filter=subscriptions"
+			variant={subscriptionsOnly ? 'secondary' : 'outline'}
+			aria-current={subscriptionsOnly ? 'page' : undefined}>Subscriptions</Button
+		>
+	</nav>
+	{#if data.digest}
+		{#if subscriptionsOnly && data.digest.count > 0}
+			<p class="mt-4 text-sm text-muted-foreground">
+				{data.digest.count}
+				{data.digest.count === 1 ? 'subscription' : 'subscriptions'} · about {formatCents(
+					data.digest.monthlyCents
+				)}/month
+			</p>
+		{/if}
+		<SubscriptionReview digest={data.digest} />
+	{/if}
+{/if}
+
+{#if visibleStreams.length === 0}
 	<div
 		class="mt-6 flex flex-col items-center gap-4 rounded-xl border border-dashed p-8 text-center"
 	>
 		<Chirp class="size-8" />
 		<div class="grid gap-1">
 			<p class="font-medium">Quiet in here… just crickets.</p>
-			<p class="max-w-sm text-muted-foreground">{copy.empty}</p>
+			<p class="max-w-sm text-muted-foreground">
+				{subscriptionsOnly
+					? 'No subscriptions yet. Add one, or edit an existing expense and mark it as a subscription.'
+					: copy.empty}
+			</p>
 		</div>
 		{@render addButton()}
 	</div>
 {:else}
 	<ul class="mt-6 grid gap-4 md:grid-cols-2">
-		{#each data.streams as stream (stream.id)}
+		{#each visibleStreams as stream (stream.id)}
 			<li><StreamCard kind={data.kind} {stream} tags={data.tags} {form} /></li>
 		{/each}
 	</ul>
@@ -72,9 +129,13 @@
 
 <Dialog.Root bind:open={adding}>
 	<Dialog.Content class="max-h-[calc(100dvh-2rem)] overflow-y-auto">
-		<Dialog.Header><Dialog.Title>{copy.add}</Dialog.Title></Dialog.Header>
+		<Dialog.Header
+			><Dialog.Title>{subscriptionMode ? 'Add subscription' : copy.add}</Dialog.Title
+			></Dialog.Header
+		>
 		<StreamForm
 			kind={data.kind}
+			{subscriptionMode}
 			tags={data.tags}
 			details={form?.action === 'create' ? form.details : undefined}
 			onsaved={() => (adding = false)}
