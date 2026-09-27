@@ -24,6 +24,8 @@
 	let status = $state<'idle' | 'reading' | 'ready' | 'failed'>('idle');
 	let preview = $state<Preview | null>(null);
 	let problem = $state('');
+	// The raw error behind the generic message, shown small so a phone user can report it.
+	let problemDetail = $state('');
 	// Draft ids the user has added this visit; a fresh file starts over. Never stored anywhere.
 	let added = $state<Record<string, boolean>>({});
 
@@ -48,6 +50,7 @@
 		status = 'reading';
 		preview = null;
 		problem = '';
+		problemDetail = '';
 		added = {};
 		try {
 			preview = await importStatement(file);
@@ -55,6 +58,8 @@
 		} catch (err) {
 			// Not an ImportError means something unexpected; keep the cause for whoever debugs it.
 			if (!(err instanceof ImportError)) console.error('Statement import failed', err);
+			if (!(err instanceof ImportError))
+				problemDetail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
 			problem = err instanceof ImportError ? err.message : 'That file could not be read.';
 			status = 'failed';
 		}
@@ -116,6 +121,9 @@
 			<p class="text-sm text-muted-foreground" aria-live="polite">Reading…</p>
 		{:else if status === 'failed'}
 			<p class="text-sm text-destructive" role="alert">{problem}</p>
+			{#if problemDetail}
+				<p class="font-mono text-xs break-all text-muted-foreground">{problemDetail}</p>
+			{/if}
 		{/if}
 	</Card.Content>
 </Card.Root>
