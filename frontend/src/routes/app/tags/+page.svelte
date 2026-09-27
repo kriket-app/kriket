@@ -3,7 +3,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { enhance } from '$app/forms';
 	import type { Tag } from '$lib/api/types';
-	import TagDot from '$lib/components/tag-dot.svelte';
+	import ColorPicker from '$lib/components/color-picker.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
@@ -14,19 +14,9 @@
 
 	let { data, form } = $props();
 
-	// The preset tags' colours (PRESET_TAGS in the backend's tags service), offered for new tags.
-	const SWATCHES = [
-		{ color: '#16a34a', label: 'Green' },
-		{ color: '#22c55e', label: 'Bright green' },
-		{ color: '#0f766e', label: 'Teal' },
-		{ color: '#65a30d', label: 'Lime' },
-		{ color: '#0891b2', label: 'Cyan' },
-		{ color: '#4d7c0f', label: 'Olive' },
-		{ color: '#84cc16', label: 'Light lime' },
-		{ color: '#15803d', label: 'Forest green' }
-	];
-	const swatchClass =
-		'cursor-pointer rounded-full p-0.5 ring-offset-2 ring-offset-background has-checked:ring-2 has-checked:ring-foreground has-focus-visible:outline-2 has-focus-visible:outline-offset-4 has-focus-visible:outline-ring';
+	// The "Add a tag" row's colour, until the user picks one; the first swatch is as good a
+	// default as any (colours only ever come from the API now, never a copy of the presets).
+	let newColor = $state('#22c55e');
 
 	// One rename dialog and one delete dialog serve every row; `target` is the row they act on.
 	let target = $state<Tag | null>(null);
@@ -54,18 +44,28 @@
 			await update();
 			if (result.type === 'success') deleting = false;
 		};
+
+	// A row's colour picker submits itself the moment a colour is chosen, via the form
+	// surrounding it: each row keeps its own form element here to call requestSubmit() on.
+	const submitRecolor: SubmitFunction =
+		() =>
+		async ({ update }) =>
+			update();
+	let recolorForms: Record<string, HTMLFormElement> = {};
 </script>
 
 <svelte:head><title>Tags · kriket</title></svelte:head>
 
 <h1 class="text-2xl font-semibold tracking-tight">Tags</h1>
-<p class="mt-1 text-sm text-muted-foreground">
-	Group your income and expenses. Eight come ready to use; add your own.
-</p>
+<p class="mt-1 text-sm text-muted-foreground">Four presets to start. Any colour you like.</p>
 
 <Card.Root class="mt-6">
 	<Card.Content>
-		<form method="POST" action="?/create" use:enhance class="flex flex-wrap items-start gap-4">
+		<form method="POST" action="?/create" use:enhance class="flex flex-wrap items-end gap-4">
+			<div class="grid gap-2">
+				<Label>Colour</Label>
+				<ColorPicker name="color" bind:value={newColor} />
+			</div>
 			<div class="grid min-w-48 grow basis-56 gap-2">
 				<Label for="new-tag-name">New tag</Label>
 				<Input
@@ -85,28 +85,7 @@
 					</p>
 				{/if}
 			</div>
-			<fieldset>
-				<legend class="mb-2 text-sm leading-none font-medium">Colour</legend>
-				<div class="flex flex-wrap items-center gap-1.5">
-					<label class={swatchClass}>
-						<input type="radio" name="color" value="" checked class="sr-only" />
-						<span class="block rounded-full border px-2.5 py-1 text-xs">None</span>
-					</label>
-					{#each SWATCHES as swatch (swatch.color)}
-						<label class={swatchClass}>
-							<input type="radio" name="color" value={swatch.color} class="sr-only" />
-							<span class="block size-7 rounded-full" style:background-color={swatch.color}></span>
-							<span class="sr-only">{swatch.label}</span>
-						</label>
-					{/each}
-				</div>
-				{#if errorFor('create', 'color')}
-					<p class="mt-2 text-xs text-destructive first-letter:uppercase">
-						{errorFor('create', 'color')}
-					</p>
-				{/if}
-			</fieldset>
-			<Button type="submit" class="self-end"><Plus />Add tag</Button>
+			<Button type="submit"><Plus />Add tag</Button>
 		</form>
 	</Card.Content>
 </Card.Root>
@@ -118,8 +97,22 @@
 		<ul class="divide-y">
 			{#each data.tags as tag (tag.id)}
 				<li class="flex items-center gap-3 px-4 py-3">
-					<TagDot color={tag.color} class="size-3" />
-					<span class="min-w-0 flex-1 truncate font-medium">{tag.name}</span>
+					<form
+						method="POST"
+						action="?/update"
+						use:enhance={submitRecolor}
+						bind:this={recolorForms[tag.id]}
+					>
+						<input type="hidden" name="id" value={tag.id} />
+						<ColorPicker
+							name="color"
+							value={tag.color ?? ''}
+							onchange={() => recolorForms[tag.id]?.requestSubmit()}
+						/>
+					</form>
+					<a href="/app/tags/{tag.id}" class="min-w-0 flex-1 truncate font-medium hover:underline">
+						{tag.name}
+					</a>
 					{#if tag.isPreset}<Badge variant="secondary">preset</Badge>{/if}
 					<Button
 						variant="ghost"
