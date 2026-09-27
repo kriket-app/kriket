@@ -1109,7 +1109,7 @@
         "tags": [
           "forecast"
         ],
-        "summary": "Project the balance forward from the stored settings and streams",
+        "summary": "Project the balance forward from the latest check-in and streams",
         "security": [
           {
             "cookieAuth": []
@@ -1160,6 +1160,16 @@
           },
           "401": {
             "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
             "content": {
               "application/json": {
                 "schema": {

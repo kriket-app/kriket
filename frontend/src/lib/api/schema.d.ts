@@ -401,7 +401,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Project the balance forward from the stored settings and streams */
+        /** Project the balance forward from the latest check-in and streams */
         get: {
             parameters: {
                 query?: {
@@ -434,6 +434,15 @@ export interface paths {
                 };
                 /** @description Not authenticated */
                 401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
                     headers: {
                         [name: string]: unknown;
                     };
