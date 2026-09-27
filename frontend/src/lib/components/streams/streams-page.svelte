@@ -15,11 +15,13 @@
 		income: {
 			title: 'Income',
 			add: 'Add income',
+			subtitle: 'Add what comes in on a rhythm. Just the usual amount is enough.',
 			empty: 'No income streams yet. Add your pay, shifts, or any money that comes in on a rhythm.'
 		},
 		expense: {
 			title: 'Expenses',
 			add: 'Add expense',
+			subtitle: 'Add what goes out on a rhythm. Just the usual amount is enough.',
 			empty:
 				'No expenses yet. Add rent, groceries, subscriptions, or anything that goes out on a rhythm.'
 		}
@@ -37,9 +39,7 @@
 <div class="flex flex-wrap items-end justify-between gap-4">
 	<div>
 		<h1 class="text-2xl font-semibold tracking-tight">{copy.title}</h1>
-		<p class="mt-1 text-sm text-muted-foreground">
-			Set the range you really see: minimum, usual, maximum.
-		</p>
+		<p class="mt-1 text-sm text-muted-foreground">{copy.subtitle}</p>
 	</div>
 	{@render addButton()}
 </div>
