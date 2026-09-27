@@ -51,6 +51,17 @@ describe.each(['income', 'expense'] as const)('/api/%s-streams', (kind) => {
 		expect(res.status).toBe(400);
 		expect(res.body.error.details[0].path).toBe('firstDate');
 	});
+	it('stores minCents and maxCents equal to actualCents when they are omitted', async () => {
+		const a = testAgent();
+		await signUp(a, `${kind}7@example.com`);
+		const { minCents, maxCents, ...withoutMinMax } = body;
+		void minCents;
+		void maxCents;
+		const created = await a.post(base).send(withoutMinMax);
+		expect(created.status).toBe(201);
+		expect(created.body.minCents).toBe(body.actualCents);
+		expect(created.body.maxCents).toBe(body.actualCents);
+	});
 	it('only accepts the caller’s own tag and nulls it when the tag is deleted', async () => {
 		const a = testAgent();
 		await signUp(a, `${kind}3@example.com`);

@@ -24,8 +24,9 @@
 		form?.action === 'settings'
 			? form.details?.find((detail) => detail.path === path)?.message
 			: undefined;
-	const balanceError = $derived(errorFor('startingBalanceCents'));
-	const dateError = $derived(errorFor('startingDate'));
+	const balanceError = $derived(errorFor('balanceCents'));
+	const latestCheckin = $derived(data.checkins[0]);
+	const saved = $derived(form?.ok ? formatCents(latestCheckin?.balanceCents ?? 0) : null);
 </script>
 
 <svelte:head><title>Overview · kriket</title></svelte:head>
@@ -106,45 +107,29 @@
 						update({ reset: false })}
 				class="grid gap-4"
 			>
-				<div class="grid gap-4 sm:grid-cols-2">
-					<div class="grid content-start gap-2">
-						<Label for="balance">Balance</Label>
-						<!-- No inputmode="decimal": the iOS decimal pad has no minus key, and balances can be negative. -->
-						<Input
-							id="balance"
-							name="balance"
-							autocomplete="off"
-							required
-							value={centsToDollars(data.settings.startingBalanceCents)}
-							aria-invalid={balanceError ? true : undefined}
-							aria-describedby={balanceError ? 'balance-error' : undefined}
-						/>
-						{#if balanceError}
-							<p id="balance-error" class="text-xs text-destructive first-letter:uppercase">
-								{balanceError}
-							</p>
-						{/if}
-					</div>
-					<div class="grid content-start gap-2">
-						<Label for="as-of">As of</Label>
-						<Input
-							id="as-of"
-							name="asOf"
-							type="date"
-							required
-							value={data.settings.startingDate}
-							aria-invalid={dateError ? true : undefined}
-							aria-describedby={dateError ? 'as-of-error' : undefined}
-						/>
-						{#if dateError}
-							<p id="as-of-error" class="text-xs text-destructive first-letter:uppercase">
-								{dateError}
-							</p>
-						{/if}
-					</div>
+				<div class="grid content-start gap-2">
+					<Label for="balance">Balance</Label>
+					<!-- No inputmode="decimal": the iOS decimal pad has no minus key, and balances can be negative. -->
+					<Input
+						id="balance"
+						name="balance"
+						autocomplete="off"
+						required
+						value={centsToDollars(latestCheckin?.balanceCents ?? 0)}
+						aria-invalid={balanceError ? true : undefined}
+						aria-describedby={balanceError ? 'balance-error' : undefined}
+					/>
+					{#if balanceError}
+						<p id="balance-error" class="text-xs text-destructive first-letter:uppercase">
+							{balanceError}
+						</p>
+					{/if}
 				</div>
-				<div class="flex justify-end">
-					<Button type="submit" class="w-full sm:w-auto">Save</Button>
+				<div class="flex items-center justify-between gap-3">
+					{#if saved}
+						<p class="text-brand-strong">Saved · {saved}. Your forecast starts from today.</p>
+					{/if}
+					<Button type="submit" class="ml-auto w-full sm:w-auto">Save</Button>
 				</div>
 			</form>
 		</Card.Content>

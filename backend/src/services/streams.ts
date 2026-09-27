@@ -36,9 +36,14 @@ export function streamService(kind: 'income' | 'expense') {
 	return {
 		list: async (userId: string) => (await crud.list(userId)).map(toStreamDto),
 		async create(userId: string, body: CreateStreamInput) {
-			assertOrdered(body);
-			await assertTag(userId, body.tagId);
-			return toStreamDto(await crud.insert(userId, { ...body, tagId: body.tagId ?? null }));
+			const values = {
+				...body,
+				minCents: body.minCents ?? body.actualCents,
+				maxCents: body.maxCents ?? body.actualCents
+			};
+			assertOrdered(values);
+			await assertTag(userId, values.tagId);
+			return toStreamDto(await crud.insert(userId, { ...values, tagId: values.tagId ?? null }));
 		},
 		async update(userId: string, id: string, patch: UpdateStreamInput) {
 			const current = await crud.find(userId, id);
