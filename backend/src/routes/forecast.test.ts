@@ -155,6 +155,8 @@ describe('/api/forecast', () => {
 		const res = await a.get('/api/forecast?days=30');
 		expect(res.status).toBe(200);
 		expect(res.body.lowest).toEqual({ date: addDays(today(), 5), cents: -25500 });
+		// Still under on today+7 (−$35) and today+12 (−$42); first back above zero on today+14,
+		// and no second dip before the next rent on today+35, outside these 30 days.
 		expect(res.body.recoversOn).toBe(addDays(today(), 14));
 	});
 });

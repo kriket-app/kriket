@@ -139,18 +139,28 @@ describe('summarize', () => {
 		}));
 
 	it('finds the lowest point, first dip below zero, and the day it recovers', () => {
-		const s = summarize(points([100, -50, -200, -10, 30]), addDays('2026-09-26', 4));
+		const s = summarize(points([100, -50, -200, -10, 30]));
 		expect(s.lowest).toEqual({ date: addDays('2026-09-26', 2), cents: -200 });
 		expect(s.firstBelowZero).toBe(addDays('2026-09-26', 1));
 		expect(s.recoversOn).toBe(addDays('2026-09-26', 4));
 	});
+	it('ends recoversOn at the first dip when the balance dips again later', () => {
+		const s = summarize(points([100, -50, 20, 40, -300, -10, 50]));
+		expect(s.lowest).toEqual({ date: addDays('2026-09-26', 4), cents: -300 });
+		expect(s.firstBelowZero).toBe(addDays('2026-09-26', 1));
+		expect(s.recoversOn).toBe(addDays('2026-09-26', 2));
+	});
+	it('counts a balance of exactly zero as recovered', () => {
+		const s = summarize(points([100, -50, 0, -20]));
+		expect(s.recoversOn).toBe(addDays('2026-09-26', 2));
+	});
 	it('gives recoversOn null when the series ends below zero', () => {
-		const s = summarize(points([100, -50, -200]), addDays('2026-09-26', 2));
+		const s = summarize(points([100, -50, -200]));
 		expect(s.firstBelowZero).toBe(addDays('2026-09-26', 1));
 		expect(s.recoversOn).toBeNull();
 	});
 	it('gives both null when the series never dips below zero', () => {
-		const s = summarize(points([100, 50, 200]), addDays('2026-09-26', 2));
+		const s = summarize(points([100, 50, 200]));
 		expect(s.firstBelowZero).toBeNull();
 		expect(s.recoversOn).toBeNull();
 	});

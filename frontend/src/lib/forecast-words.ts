@@ -33,17 +33,22 @@ export type Answer = {
 /**
  * The answer to "am I going to be OK?" over the next `days` days: when and how far the expected
  * balance goes under zero, or that it never does. `lowest`, `firstBelowZero`, and `recoversOn`
- * come from the API as they are; this only puts them into words.
+ * (the end of the first dip) come from the API as they are; `points` only tells whether the
+ * balance goes under again after that.
  */
 export function forecastWords(
-	forecast: Pick<Forecast, 'lowest' | 'firstBelowZero' | 'recoversOn'>,
+	forecast: Pick<Forecast, 'points' | 'lowest' | 'firstBelowZero' | 'recoversOn'>,
 	days: number
 ): Answer {
-	const { lowest, firstBelowZero, recoversOn } = forecast;
+	const { points, lowest, firstBelowZero, recoversOn } = forecast;
 	if (firstBelowZero) {
-		const until = recoversOn
-			? `until ${formatDate(recoversOn)}.`
-			: `and still under at the end of these ${days} days.`;
+		const dipsAgain =
+			recoversOn !== null && points.some((p) => p.date > recoversOn && p.actualCents < 0);
+		const until = !recoversOn
+			? `and still under at the end of these ${days} days.`
+			: dipsAgain
+				? `until ${formatDate(recoversOn)}, and again later.`
+				: `until ${formatDate(recoversOn)}.`;
 		return {
 			tone: 'short',
 			headline: `You go ${dollars(Math.abs(lowest.cents))} short on ${formatDate(lowest.date)}.`,

@@ -11,7 +11,7 @@
 		days,
 		class: className
 	}: {
-		forecast: Pick<Forecast, 'lowest' | 'firstBelowZero' | 'recoversOn'>;
+		forecast: Pick<Forecast, 'points' | 'lowest' | 'firstBelowZero' | 'recoversOn'>;
 		/** The forecast's length, as the page asked for it. */
 		days: number;
 		class?: string;
