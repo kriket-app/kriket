@@ -27,8 +27,12 @@ jobs:
         # The gitleaks GitHub Action demands a paid licence key on organisation accounts; the CLI
         # in the project's own container image does not, and scans the same history with the
         # same rules.
+        # Pinned to the digest ghcr.io/gitleaks/gitleaks:latest resolved to (docker buildx
+        # imagetools inspect ghcr.io/gitleaks/gitleaks:latest), so a compromised `latest` tag
+        # can't silently change what this step runs.
         run: >-
-          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest
+          docker run --rm -v "$PWD:/repo"
+          ghcr.io/gitleaks/gitleaks@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
           detect --source /repo --config /repo/.gitleaks.toml --redact --no-banner
       - uses: actions/setup-node@v4
         with:
