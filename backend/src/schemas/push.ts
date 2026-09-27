@@ -1,24 +1,29 @@
 import { z } from 'zod';
 import { registry } from '../openapi/registry.js';
 
-// Subscribing stores an endpoint the server later POSTs to (test sends and,
-// eventually, forecast alerts). Restrict it to the browser vendors' push
-// services so a signed-in user cannot point the server at an arbitrary host.
+// Subscribing stores an endpoint the server later POSTs to (test sends and forecast
+// alerts). Restrict it to the browser vendors' push services so a signed-in user
+// cannot point the server at an arbitrary host. Google-owned hosts are allowed as a
+// whole: FCM is the documented one, and a vendor host is not a probe target.
 const PUSH_HOSTS = [
-	/^fcm\.googleapis\.com$/,
+	/(^|\.)googleapis\.com$/,
+	/(^|\.)google\.com$/,
 	/(^|\.)push\.services\.mozilla\.com$/,
 	/(^|\.)push\.apple\.com$/,
 	/(^|\.)notify\.windows\.com$/
 ];
 
+// The host is checked exactly as written. web-push sends with Node's legacy url.parse,
+// which reads unusual hosts differently from new URL: "attacker.example%2Epush.apple.com"
+// is an Apple host to new URL but "attacker.example" to url.parse. Only a plain DNS name
+// with no port, credentials, or escapes passes, so both parsers agree on the host.
+const LITERAL_HTTPS_HOST = /^https:\/\/([a-z0-9.-]+)(?=[/?#]|$)/i;
+
 export function isAllowedPushEndpoint(value: string) {
-	let url: URL;
-	try {
-		url = new URL(value);
-	} catch {
-		return false;
-	}
-	return url.protocol === 'https:' && PUSH_HOSTS.some((re) => re.test(url.hostname.toLowerCase()));
+	const match = LITERAL_HTTPS_HOST.exec(value);
+	if (!match) return false;
+	const host = match[1].toLowerCase();
+	return PUSH_HOSTS.some((re) => re.test(host));
 }
 
 const pushEndpoint = z
