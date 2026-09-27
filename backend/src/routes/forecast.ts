@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { registry } from '../openapi/registry.js';
 import { requireAuth } from '../middleware/require-auth.js';
-import { badRequest, unauthorized } from '../schemas/common.js';
+import { badRequest, notFound, unauthorized } from '../schemas/common.js';
 import { Forecast, ForecastQuery } from '../schemas/forecast.js';
 import { getForecast } from '../services/forecast.js';
 
@@ -13,10 +13,15 @@ registry.registerPath({
 	method: 'get',
 	path: '/api/forecast',
 	tags: ['forecast'],
-	summary: 'Project the balance forward from the stored settings and streams',
+	summary: 'Project the balance forward from the latest check-in and streams',
 	security: [{ cookieAuth: [] }],
 	request: { query: ForecastQuery },
-	responses: { 200: { description: 'Forecast', ...json(Forecast) }, ...badRequest, ...unauthorized }
+	responses: {
+		200: { description: 'Forecast', ...json(Forecast) },
+		...badRequest,
+		...unauthorized,
+		...notFound
+	}
 });
 
 const router = Router();
