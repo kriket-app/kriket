@@ -26,8 +26,8 @@ test('tags are seeded, a stream forecasts, and the mobile nav sits at the bottom
 		.getByRole('button', { name: /add income/i })
 		.last()
 		.click();
-	// getByText('Shifts') alone is ambiguous once the stream also carries a tag named
-	// "Shifts" (the tag's Badge renders the same text); scope to the stream card's title.
+	// getByText('Shifts') alone would also match the name still sitting in the form above,
+	// so scope to the stream card's title.
 	await expect(
 		page.locator('[data-slot="card-title"]').filter({ hasText: 'Shifts' })
 	).toBeVisible();

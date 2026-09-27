@@ -32,6 +32,9 @@
 
 	const id = $props.id();
 
+	/** The Tag select's "New tag…" option; a made-up id no real tag ever has. */
+	const NEW_TAG_VALUE = '__new__';
+
 	const REPEAT_OPTIONS = [
 		{ days: 7, label: 'Weekly' },
 		{ days: 14, label: 'Every 2 weeks' },
@@ -74,6 +77,7 @@
 
 	const nextDateIso = $derived(nextDate?.toString() ?? '');
 	const selectedTag = $derived(tags.find((tag) => tag.id === tagId));
+	const newTagChosen = $derived(tagId === NEW_TAG_VALUE);
 	const errorFor = (path: string) =>
 		submitted ? details?.find((detail) => detail.path === path)?.message : undefined;
 	const describedBy = (path: string) => (errorFor(path) ? `${id}-${path}-error` : undefined);
@@ -239,6 +243,8 @@
 				<span class="flex items-center gap-2">
 					{#if selectedTag}
 						<TagDot color={selectedTag.color} />{selectedTag.name}
+					{:else if newTagChosen}
+						New tag…
 					{:else}
 						No tag
 					{/if}
@@ -251,14 +257,37 @@
 						<TagDot color={tag.color} class="self-center" />{tag.name}
 					</Select.Item>
 				{/each}
+				<Select.Item value={NEW_TAG_VALUE} label="New tag…" />
 			</Select.Content>
 		</Select.Root>
 		{@render fieldError('tagId')}
+		{#if newTagChosen}
+			<div class="grid gap-2">
+				<Label for="{id}-new-tag-name">New tag name</Label>
+				<Input
+					id="{id}-new-tag-name"
+					name="newTagName"
+					required
+					maxlength={40}
+					autocomplete="off"
+					placeholder="Coffee"
+					aria-invalid={errorFor('newTagName') ? true : undefined}
+					aria-describedby={describedBy('newTagName')}
+				/>
+				{@render fieldError('newTagName')}
+			</div>
+		{/if}
 	</div>
 
 	<div class="grid gap-2">
 		{#if !rangeOpen}
-			<Button type="button" variant="link" class="justify-start px-0" onclick={openRange}>
+			<Button
+				type="button"
+				variant="link"
+				class="justify-start px-0"
+				aria-expanded="false"
+				onclick={openRange}
+			>
 				Add a range
 			</Button>
 			<p class="text-xs text-muted-foreground">
@@ -272,7 +301,7 @@
 				aria-expanded="true"
 				onclick={() => (rangeOpen = false)}
 			>
-				Add a range
+				Remove the range
 			</Button>
 			<div class="grid grid-cols-2 gap-3">
 				<div class="grid content-start gap-2">

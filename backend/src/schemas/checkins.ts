@@ -24,4 +24,3 @@ export const CheckinCreate = registry.register(
 	z.object({ balanceCents: balance.openapi({ example: 42000 }) })
 );
 export type CheckinDto = z.infer<typeof Checkin>;
-export type CheckinCreateInput = z.infer<typeof CheckinCreate>;

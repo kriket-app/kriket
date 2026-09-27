@@ -67,8 +67,9 @@
 		`${signed(change)} from today`,
 		change < 0 ? 'text-expense-strong' : 'text-brand-strong'
 	)}
-	{@render tile(`Worst to best on ${end}`, [
-		money(forecast.endBalance.minCents),
-		money(forecast.endBalance.maxCents)
-	])}
+	{@render tile(
+		`Worst to best on ${end}`,
+		[money(forecast.endBalance.minCents), money(forecast.endBalance.maxCents)],
+		balanceClass(forecast.endBalance.minCents)
+	)}
 </div>

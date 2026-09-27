@@ -99,12 +99,17 @@
 							href={href(checkin.id)}
 							aria-current={i === data.selectedIndex ? 'page' : undefined}
 							class={cn(
-								'flex items-center justify-between gap-3 rounded-md px-3 py-2 text-sm',
+								'flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 rounded-md px-3 py-2 text-sm',
 								i === data.selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-muted'
 							)}
 						>
 							<span class="font-medium tabular-nums">{formatDate(checkin.checkedOn)}</span>
-							<span class="tabular-nums">{money(checkin.balanceCents)}</span>
+							<span
+								class={cn(
+									'tabular-nums',
+									checkin.balanceCents < 0 ? 'text-expense-strong' : undefined
+								)}>{money(checkin.balanceCents)}</span
+							>
 							<span class={cn('ml-auto text-xs tabular-nums', diff.class)}>{diff.label}</span>
 						</a>
 					</li>

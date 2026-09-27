@@ -19,10 +19,24 @@ export const load: PageServerLoad = async (event) => {
 		return { days, checkins, forecast: null, selectedIndex: -1, previousId: null, nextId: null };
 	}
 
-	const checkinId = event.url.searchParams.get('checkin') ?? checkins[0].id;
-	const forecast = dataOf(
-		await client.GET('/api/forecast', { params: { query: { checkinId, days } } })
-	);
+	const requestedCheckinId = event.url.searchParams.get('checkin');
+	async function loadForecast(checkinId: string) {
+		const result = await client.GET('/api/forecast', { params: { query: { checkinId, days } } });
+		// A malformed or unknown checkin id (an old link, an edited address) falls back to the
+		// latest check-in instead of an error page, the same way Coming up falls back for `month`.
+		if (result.response.status === 400 || result.response.status === 404) {
+			return {
+				checkinId: checkins[0].id,
+				forecast: dataOf(
+					await client.GET('/api/forecast', {
+						params: { query: { checkinId: checkins[0].id, days } }
+					})
+				)
+			};
+		}
+		return { checkinId, forecast: dataOf(result) };
+	}
+	const { checkinId, forecast } = await loadForecast(requestedCheckinId ?? checkins[0].id);
 
 	const selectedIndex = Math.max(
 		checkins.findIndex((checkin) => checkin.id === checkinId),
