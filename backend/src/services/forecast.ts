@@ -183,19 +183,29 @@ export async function getForecast(
 	const checkinDto = anchorRow
 		? { id: anchorRow.id, balanceCents: anchorRow.balanceCents, checkedOn: anchorRow.checkedOn }
 		: null;
-	const anchor = anchorRow ?? { balanceCents: 0, checkedOn: today() };
 
 	let forecast: ForecastCore;
 	let endDate: string;
 	if (checkinId) {
 		// An older check-in: the forecast starts on its checkedOn and is not trimmed.
+		const anchor = anchorRow!;
 		forecast = forecastFromCheckin(anchor, days, incomes, expenses);
 		endDate = forecast.endDate;
-	} else {
-		// Latest check-in or none: rolled forward so startDate = today() and endDate = today() + days.
-		const totalDays = daysBetween(anchor.checkedOn, today()) + days;
-		const full = forecastFromCheckin(anchor, totalDays, incomes, expenses);
+	} else if (anchorRow) {
+		// The latest check-in: rolled forward so startDate = today() and endDate = today() + days.
+		const totalDays = daysBetween(anchorRow.checkedOn, today()) + days;
+		const full = forecastFromCheckin(anchorRow, totalDays, incomes, expenses);
 		forecast = trimForecast(full, today());
+		endDate = addDays(today(), days);
+	} else {
+		// No check-in at all: start from the beginning of today with a zero balance.
+		forecast = computeForecast({
+			startDate: today(),
+			days,
+			startingBalanceCents: 0,
+			incomes,
+			expenses
+		});
 		endDate = addDays(today(), days);
 	}
 
