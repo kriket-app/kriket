@@ -2,11 +2,27 @@
 	import { ChartLine, Repeat, Target } from '@lucide/svelte';
 	import BrandMark from '$lib/components/brand-mark.svelte';
 	import InstallPrompt from '$lib/components/install-prompt.svelte';
+	import IosInstallHint from '$lib/components/ios-install-hint.svelte';
+	import Seo from '$lib/components/seo.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { formatCents } from '$lib/money';
+	import { SITE_DESCRIPTION, SITE_URL } from '$lib/site';
 
 	const REPO_URL = 'https://github.com/kriket-app/kriket';
+
+	// Structured data for search engines: kriket is a free budgeting web app.
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'WebApplication',
+		name: 'kriket',
+		url: SITE_URL,
+		description: SITE_DESCRIPTION,
+		applicationCategory: 'FinanceApplication',
+		operatingSystem: 'Any',
+		browserRequirements: 'Requires JavaScript',
+		offers: { '@type': 'Offer', price: '0', priceCurrency: 'CAD' }
+	};
 
 	// A made-up 91-day forecast for the hero: paid every two weeks, rent twice, weekly groceries.
 	// The worst case (lowest pay, biggest grocery bill) dips below zero before the second pay day.
@@ -95,12 +111,9 @@
 </script>
 
 <svelte:head>
-	<title>kriket · Budgeting for bumpy income</title>
-	<meta
-		name="description"
-		content="Kriket forecasts where your money is heading from the income and expenses you actually have, ranges included."
-	/>
+	{@html `<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>`}
 </svelte:head>
+<Seo title="kriket · Budgeting for bumpy income" path="/" />
 
 <div class="min-h-dvh bg-background text-foreground">
 	<header
@@ -145,6 +158,7 @@
 					<p class="mt-4 max-w-xl text-sm text-muted-foreground">
 						Email and password only. No bank access, nothing sold, your data is yours alone.
 					</p>
+					<IosInstallHint class="mt-6 max-w-xl" />
 				</div>
 
 				<Card.Root class="shadow-lg">

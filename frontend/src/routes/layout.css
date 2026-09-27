@@ -3,7 +3,6 @@
 @import 'shadcn-svelte/tailwind.css';
 @import '@fontsource-variable/inter';
 
-@custom-variant dark (&:is(.dark *));
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
@@ -40,40 +39,6 @@
 	--sidebar-accent-foreground: oklch(0.205 0 0);
 	--sidebar-border: oklch(0.922 0 0);
 	--sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.205 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: var(--brand);
-	--primary-foreground: var(--brand-foreground);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.556 0 0);
-	--chart-1: oklch(0.87 0 0);
-	--chart-2: oklch(0.556 0 0);
-	--chart-3: oklch(0.439 0 0);
-	--chart-4: oklch(0.371 0 0);
-	--chart-5: oklch(0.269 0 0);
-	--sidebar: oklch(0.205 0 0);
-	--sidebar-foreground: oklch(0.985 0 0);
-	--sidebar-primary: oklch(0.488 0.243 264.376);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.269 0 0);
-	--sidebar-accent-foreground: oklch(0.985 0 0);
-	--sidebar-border: oklch(1 0 0 / 10%);
-	--sidebar-ring: oklch(0.556 0 0);
 }
 
 @theme inline {
@@ -124,9 +89,212 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		/* Phones: no grey flash on tap, no double-tap zoom delay. */
+		-webkit-tap-highlight-color: transparent;
+		touch-action: manipulation;
 	}
 	html {
 		@apply font-sans;
+	}
+	nav[aria-label='Primary'] {
+		user-select: none;
+		-webkit-user-select: none;
+	}
+}
+
+/* Desktop: everything clickable shows the pointer so its affordance is obvious. */
+/* Touch screens keep the default (no hover, no cursor). */
+@media (hover: hover) and (pointer: fine) {
+	button:not(:disabled),
+	a[href],
+	[role='button'],
+	summary,
+	select,
+	label[for] {
+		cursor: pointer;
+	}
+}
+
+/* Native-like screen change: a short fade with a slight rise on the incoming
+   screen. The outgoing screen just fades. Honours reduced motion. */
+::view-transition-old(root) {
+	animation: kriket-view-out 160ms ease-out both;
+}
+::view-transition-new(root) {
+	animation: kriket-view-in 180ms ease-out both;
+}
+@keyframes kriket-view-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+@keyframes kriket-view-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+	}
+}
+
+/* Hoppiness: one gentle overshoot easing for every springy moment. Subtle by
+   design: short distances, short durations, always gated on reduced motion. */
+:root {
+	--ease-hop: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* A small entrance hop: scale up with overshoot plus a slight rise. */
+.animate-hop-in {
+	animation: kriket-hop-in 200ms var(--ease-hop) both;
+}
+@keyframes kriket-hop-in {
+	from {
+		opacity: 0;
+		transform: scale(0.9) translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* The cricket hop: squash, leap, and land with overshoot. transform-box keeps
+   the squash centred on the tile instead of the SVG viewport. */
+.animate-chirp {
+	animation: kriket-chirp 600ms var(--ease-hop) both;
+	transform-box: fill-box;
+	transform-origin: 50% 100%;
+}
+@keyframes kriket-chirp {
+	0% {
+		transform: scale(1, 1) translateY(0);
+	}
+	25% {
+		transform: scale(1.15, 0.8) translateY(6%);
+	}
+	55% {
+		transform: scale(0.94, 1.08) translateY(-16%);
+	}
+	75% {
+		transform: scale(1.03, 0.96) translateY(2%);
+	}
+	100% {
+		transform: scale(1, 1) translateY(0);
+	}
+}
+
+/* Staggered chirps: each "chirp" pulses in after the previous one. */
+.chirp-word {
+	display: inline-block;
+	animation: kriket-chirp-word 1.8s ease-in-out infinite;
+}
+.chirp-word:nth-child(2) {
+	animation-delay: 0.25s;
+}
+.chirp-word:nth-child(3) {
+	animation-delay: 0.5s;
+}
+@keyframes kriket-chirp-word {
+	0%,
+	100% {
+		opacity: 0.45;
+		transform: none;
+	}
+	12% {
+		opacity: 1;
+		transform: translateY(-2px);
+	}
+	24% {
+		opacity: 0.45;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.animate-hop-in,
+	.animate-chirp,
+	.chirp-word {
+		animation: none;
+	}
+}
+
+/* Springy press everywhere: taps squash with the default easing and spring
+   back with overshoot, because the release transition reads the timing
+   function from the pressed state. Touch and mouse alike, motion-safe. */
+@media (prefers-reduced-motion: no-preference) {
+	a:active,
+	button:active {
+		transition-timing-function: var(--ease-hop);
+	}
+}
+
+/* Dialogs and popovers pop in: same zoom/fade keyframes, springy easing. */
+[data-slot='dialog-content'],
+[data-slot='alert-dialog-content'],
+[data-slot='popover-content'],
+[data-slot='select-content'] {
+	transition-timing-function: var(--ease-hop);
+}
+
+/* Forecast window change (30/90/180 days): the incoming figures fade with a
+   slight rise so the swap reads as a transition, not a flicker. */
+.animate-window-in {
+	animation: kriket-window-in 220ms ease-out both;
+}
+@keyframes kriket-window-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.animate-window-in {
+		animation: none;
+	}
+}
+
+/* Thin brand progress bar under the app header while a navigation is in flight.
+   The entrance delay keeps instant navigations from flashing. */
+.nav-pending {
+	animation: kriket-nav-pending-in 120ms ease-out both;
+}
+.nav-pending-bar {
+	animation: kriket-nav-pending-slide 1s ease-in-out infinite;
+}
+@keyframes kriket-nav-pending-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes kriket-nav-pending-slide {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(300%);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.nav-pending-bar {
+		animation: none;
 	}
 }
 

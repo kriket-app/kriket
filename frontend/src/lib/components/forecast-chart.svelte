@@ -82,12 +82,12 @@
 					.join(' ')} Z`
 			: ''
 	);
-	// The area between the expected line and the zero line; a clip path at zero keeps only the
-	// part under zero, which is filled expense-orange.
-	const goesUnder = $derived(points.some((p) => p.actualCents < 0));
+	// The area between the worst-case line and the zero line; a clip path at zero keeps
+	// only the part under zero, which is filled expense-orange.
+	const goesUnder = $derived(points.some((p) => p.minCents < 0));
 	const underPath = $derived(
 		goesUnder
-			? `${actualPath} L${x(points.length - 1).toFixed(1)} ${y(0).toFixed(1)} ` +
+			? `${minPath} L${x(points.length - 1).toFixed(1)} ${y(0).toFixed(1)} ` +
 					`L${x(0).toFixed(1)} ${y(0).toFixed(1)} Z`
 			: ''
 	);

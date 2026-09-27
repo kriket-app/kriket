@@ -32,22 +32,43 @@
 	</Card.Header>
 	{#if goals.length > 0}
 		<Card.Content>
-			<ul class="grid gap-3">
+			<ul class="grid gap-4">
 				{#each shown as goal (goal.id)}
 					{@const words = goalWords(goal, todayValue)}
 					{@const monthly = monthlyWords(goal)}
-					<li class="flex items-baseline justify-between gap-3">
-						<div class="min-w-0">
-							<a href="/app/goals/{goal.id}" class="font-medium hover:underline">{goal.name}</a>
-							<p class="truncate text-sm text-muted-foreground">
-								{dollars(goal.amountCents)} by {formatGoalDate(goal.targetDate, todayValue)} ·
+					{@const badge =
+						words.tone === 'over'
+							? { label: 'On track', class: 'bg-brand-soft text-brand-strong' }
+							: words.tone === 'short'
+								? { label: 'Off track', class: 'bg-expense-soft text-expense-strong' }
+								: { label: 'No forecast', class: 'bg-muted text-muted-foreground' }}
+					<li class="flex items-start justify-between gap-3">
+						<div class="min-w-0 flex-1">
+							<p class="flex items-center gap-2">
+								<a
+									href="/app/goals/{goal.id}"
+									class="min-w-0 flex-1 truncate font-medium hover:underline">{goal.name}</a
+								>
+								<span
+									class="shrink-0 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap {badge.class}"
+									>{badge.label}</span
+								>
+							</p>
+							<p class="mt-0.5 truncate text-sm text-muted-foreground tabular-nums">
+								{dollars(goal.amountCents)} by {formatGoalDate(goal.targetDate, todayValue)}
+							</p>
+							<p
+								class="mt-0.5 line-clamp-2 text-sm break-words {words.tone === 'short'
+									? 'text-expense-strong'
+									: ''}"
+							>
 								{words.text}
 								{#if monthly}· {monthly}{/if}
 							</p>
 						</div>
 						<a
 							href="/app/goals/{goal.id}"
-							class="shrink-0 text-sm text-muted-foreground hover:text-foreground"
+							class="shrink-0 self-center rounded-md p-2 text-muted-foreground hover:text-foreground"
 							aria-label="Open {goal.name}">›</a
 						>
 					</li>

@@ -1,11 +1,30 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { onNavigate } from '$app/navigation';
 	import './layout.css';
 	import ReloadPrompt from '$lib/components/reload-prompt.svelte';
 
 	// Each area brings its own chrome: the landing page and auth pages have their own header,
 	// and /app has the app shell with the responsive nav.
 	let { children } = $props();
+
+	// Native-like screen change: a short crossfade instead of an instant swap. Skipped
+	// where the browser or the user (reduced motion) doesn't want it.
+	onNavigate((navigation) => {
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		const start = (
+			document as Document & {
+				startViewTransition?: (update: () => Promise<void>) => void;
+			}
+		).startViewTransition;
+		if (!start) return;
+		return new Promise<void>((resolve) => {
+			start.call(document, async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 
 	onMount(() => {
 		// A push may have badged the app icon while it was closed; opening the app

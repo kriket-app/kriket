@@ -16,7 +16,10 @@ test('sign up, sign out, and sign back in', async ({ page }) => {
 	await signUp(page, email);
 	await expect(page.getByRole('heading', { name: /your next \d+ days/i })).toBeVisible();
 
+	await page.getByRole('link', { name: 'Settings' }).click();
+	await page.waitForURL('/app/settings');
 	await page.getByRole('button', { name: 'Sign out' }).click();
+	await page.getByRole('alertdialog').getByRole('button', { name: 'Sign out' }).click();
 	await page.waitForURL('/');
 
 	await page.goto('/signin');
