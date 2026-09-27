@@ -14,14 +14,23 @@ title = "Kriket App Tour"   # keep exactly this: the published artifact is match
 name = "kriket"
 headline = "Budgeting for bumpy income."
 idea = "Add what comes in and what goes out once, as ranges, and kriket forecasts your daily balance at the worst, expected, and best case."
-as_built = "As built at 14:00 on day 1"
-branch = "feat/first-pass"
-commit = "a430426"
+as_built = "As built at end of iteration 2 (Sat 26 Sep 2026)"
+branch = "i2/tour"
+commit = "50fc3af"
 public_url = "https://app.26.cohack.tetl.ca"
 public_note = "live since 14:36 on day 1; every merge to main deploys"
 repo_url = "https://github.com/kriket-app/kriket"
 
 # ---------------------------------------------------------------- iterations (newest first)
+
+[[iteration]]
+number = 2
+when = "Iteration 2 (Sat 26 Sep 2026)"
+branch = "i2/tour"
+commit = "50fc3af"
+changed = "The overview leads with a sentence (\"You go $255 short on Oct 1\") instead of tiles; green for money in, expense-orange for money out, and the time under zero shaded orange on the chart. The balance check-in is first on the overview, with a visible \"Saved\" line and a kept history on a new balances page. Stream forms ask for the usual amount only, with an optional range folded behind \"Add a range\", and a styled calendar for the next date. Tags get any colour from a picker and their own pages; the four presets are now Pay cheque, Side hustle, Bill, and Groceries. Coming up moved onto the overview as a month you flip through."
+screenshots = "All fourteen, refreshed for the new overview, streams, tags, and balances pages."
+snapshot = "/tour/2/"   # this iteration's page, kept as it was; the latest is always at /tour/
 
 [[iteration]]
 number = 1
@@ -37,25 +46,25 @@ snapshot = "/tour/1/"   # this iteration's page, kept as it was; the latest is a
 [[built]]
 item = 0
 title = "Tags"
-text = "Eight presets are there on first visit. Add your own with a colour, rename, or delete; deleting a tag leaves its streams untagged instead of breaking them."
+text = "Four presets on first visit: Pay cheque and Side hustle for money in, Bill and Groceries for money out. Any colour from a styled picker (swatches, a hue slider, a hex field); rename or delete leaves a tag's streams untagged instead of breaking them. Each tag has its own page listing every stream that carries it."
 
 [[built]]
 item = 1
-title = "Income streams"
-text = "Add, edit, and delete money that comes in on a rhythm: minimum, usual, and maximum amount, repeat every N days, a first payment date, an optional tag. Each card shows the range and the next payment."
+title = "Income and expense streams"
+text = "Add, edit, and delete money on a rhythm: a name, the usual amount, how often (Weekly, Every 2 weeks, Monthly, or every N days), a next date from a styled calendar, and an optional tag. \"Add a range\" folds open a minimum and maximum when a stream is not fixed. Expense amounts are expense-orange everywhere."
 
 [[built]]
 item = 2
-title = "Expense streams"
-text = "The same form and cards for money going out: rent, groceries, subscriptions."
+title = "The balance check-in"
+text = "The first thing on the overview: type today's balance and Save, and a \"Saved\" line confirms it while the forecast redraws. Every check-in is kept; the balances page flips through them, redraws the forecast from any of them, and says how each compared with what the previous one expected."
 
 [[built]]
 item = 3
-title = "Forecast"
-text = "Enter today's balance, pick 30, 90, or 180 days, and see the end balance at worst, expected, and best case, a chart with the range as a band, and the next eight payments in and out."
+title = "The overview"
+text = "A sentence answers \"am I going to be OK?\" first (\"You go $255 short on Oct 2. You are under zero from Oct 2 until Oct 11.\"), then the chart: a dot per payment, the band from worst to best case, the time under zero shaded expense-orange. Three small tiles below hold the lowest point, the expected end balance, and the worst-to-best range. Coming up lists the month's payments by day, with a switcher to flip months and a \"Today\" divider."
 
 [also]
-text = "Also working: sign up, sign in, and sign out, with every `/app` page behind sign-in; the landing page; a top bar on desktop and a bottom tab bar on phones; an install manifest for the phone app."
+text = "Also working: sign up, sign in, and sign out, with every `/app` page behind sign-in; the landing page, updated for this iteration; a top bar on desktop and a bottom tab bar on phones; an install manifest for the phone app."
 
 # ---------------------------------------------------------------- the tour
 # One [[stop]] per screen. device is "desktop" or "phone"; file is the screenshot name in shots/png
@@ -67,7 +76,7 @@ intro = "Real screenshots of the running app, seeded through its own forms. Fram
 [[stop]]
 id = "landing"
 title = "Landing page"
-caption = "What a visitor sees first: the crickets headline, a sample forecast, and three steps, with Goals marked as next."
+caption = "What a visitor sees first: the crickets headline, a sample forecast, and the trust line about email, password, and no bank access."
   [[stop.shot]]
   file = "landing-desktop"
   device = "desktop"
@@ -79,94 +88,138 @@ caption = "What a visitor sees first: the crickets headline, a sample forecast, 
   alt = "The kriket landing page on a phone"
 
 [[stop]]
-id = "signup"
-title = "Sign-up"
-caption = "Name, email, and password, then straight to the overview; the eight preset tags are waiting there."
+id = "checkin"
+title = "The balance check-in"
+caption = "The first thing on the overview: type today's balance and Save, and \"Saved\" confirms it while the forecast redraws."
   [[stop.shot]]
-  file = "signup-phone"
-  device = "phone"
-  alt = "The sign-up form on a phone"
-
-[[stop]]
-id = "overview"
-title = "Overview, 90 days"
-caption = "Sam's next 90 days: the three end balances, the forecast band, today's balance, and what is coming up."
-note = "The worst case dips below $0 on Oct 1, when rent lands before the first café shift; the three tiles only show day 90, so that dip is visible in the chart alone."
-  [[stop.shot]]
-  file = "overview-desktop"
+  file = "checkin-saved-desktop"
   device = "desktop"
   path = "/app?days=90"
-  alt = "The overview with worst, expected, and best case tiles, the forecast chart, the balance form, and upcoming payments"
+  alt = "The overview just after saving a balance check-in, with the Saved line showing"
+
+[[stop]]
+id = "overview-30"
+title = "Overview, 30 days"
+caption = "The sentence leads: \"You go $255 short on Oct 2. You are under zero from Oct 2 until Oct 11.\" Money in is green, money out and the time under zero are expense-orange."
+  [[stop.shot]]
+  file = "overview-30-desktop"
+  device = "desktop"
+  path = "/app?days=30"
+  alt = "The overview at 30 days with the answer sentence, the chart, and the tiles"
+
+[[stop]]
+id = "overview-90"
+title = "Overview, 90 days, with Coming up"
+caption = "At 90 days the same sentence and chart, with Coming up below: this month's payments by day, a switcher to flip to next month, and a \"Today\" divider."
+note = "The worst case dips below $0 from Oct 2 to Oct 11, when Rent and the bills land before enough café shifts have paid; the chart shades that stretch expense-orange."
+  [[stop.shot]]
+  file = "overview-90-desktop"
+  device = "desktop"
+  path = "/app?days=90"
+  alt = "The overview at 90 days with Coming up showing this month"
+  [[stop.shot]]
+  file = "overview-90-next-desktop"
+  device = "desktop"
+  path = "/app?days=90&month=2026-10"
+  alt = "Coming up after clicking the next-month arrow, showing October's payments"
   [[stop.shot]]
   file = "overview-phone"
   device = "phone"
   alt = "The overview on a phone with the bottom tab bar"
 
 [[stop]]
-id = "income"
-title = "Income"
-caption = "Each income stream as a card with its range and next payment; on a phone, Add income opens this form."
+id = "stream-form"
+title = "Adding a stream"
+caption = "Name, usual amount, how often, and a next date from a styled calendar; \"Add a range\" folds open a minimum and maximum for streams that are not fixed."
+  [[stop.shot]]
+  file = "stream-form-usual-desktop"
+  device = "desktop"
+  path = "/app/expenses"
+  alt = "The Add expense form with just the usual amount, before Add a range is opened"
+  [[stop.shot]]
+  file = "stream-form-range-desktop"
+  device = "desktop"
+  path = "/app/income"
+  alt = "The Add income form with Add a range open, showing minimum and maximum fields"
+
+[[stop]]
+id = "streams"
+title = "Income and expenses"
+caption = "Each stream as a card with its amount, how often, and next date; expense amounts are expense-orange, income amounts are green."
   [[stop.shot]]
   file = "income-desktop"
   device = "desktop"
   path = "/app/income"
   alt = "The income page listing Café shifts and Tutoring"
   [[stop.shot]]
-  file = "income-add-phone"
-  device = "phone"
-  alt = "The Add income form open on a phone"
-
-[[stop]]
-id = "expenses"
-title = "Expenses on a phone"
-caption = "Rent, groceries, and subscriptions, with the bottom tab bar in thumb reach and clear of the last card."
-  [[stop.shot]]
-  file = "expenses-phone"
-  device = "phone"
-  alt = "The expenses page on a phone with three expense cards"
+  file = "expenses-desktop"
+  device = "desktop"
+  path = "/app/expenses"
+  alt = "The expenses page listing Rent, Groceries, and Phone"
 
 [[stop]]
 id = "tags"
 title = "Tags"
-caption = "The eight presets with their colours, and a row for adding your own."
+caption = "The four presets, each with a styled colour picker: swatches, a hue slider, and a hex field, open here on Bill."
   [[stop.shot]]
   file = "tags-desktop"
   device = "desktop"
   path = "/app/tags"
-  alt = "The tags page with the eight preset tags"
+  alt = "The tags page with Bill's colour picker open"
+
+[[stop]]
+id = "tag-page"
+title = "A tag's page"
+caption = "Clicking a tag opens a page listing every income and expense stream that carries it, with a one-line summary when they share a rhythm."
+  [[stop.shot]]
+  file = "tag-bill-desktop"
+  device = "desktop"
+  path = "/app/tags/{id}"
+  alt = "The Bill tag's page listing Rent and Phone"
+
+[[stop]]
+id = "balances"
+title = "Your balances"
+caption = "Every check-in, kept and flippable: pick one to see the answer sentence and chart as they were then, and how that check-in compared with what the previous one expected."
+  [[stop.shot]]
+  file = "balances-desktop"
+  device = "desktop"
+  path = "/app/balances"
+  alt = "The balances page with the forecast from the first check-in and a list of every check-in"
 
 # ---------------------------------------------------------------- how it works
 
 [[how]]
 title = "Streams, not receipts"
 text = """
-Every income and expense is a **stream**: a name, an optional tag, three amounts (minimum ≤ usual ≤ maximum), a repeat interval of 1 to 366 days, and a first payment date. A fixed bill such as rent puts the same number in all three. Amounts out of order are refused with a message on the field, and nothing is saved.
+Every income and expense is a **stream**: a name, an optional tag, three amounts (minimum ≤ usual ≤ maximum), a repeat interval of 1 to 366 days, and a next payment date. The form only ever asks for the usual amount; minimum and maximum default to it and only appear once "Add a range" is opened. Amounts out of order are refused with a message on the field, and nothing is saved.
 """
 
 [[how]]
 title = "The forecast rule"
 text = """
-A stream pays on `firstDate + k × intervalDays` for k = 0, 1, 2, and so on. Only dates inside the window count, and the math jumps straight to the first one, so a stream that started years ago costs nothing extra. Each day gets three balances:
+A stream pays on `firstDate + k × intervalDays` for k = 0, 1, 2, and so on. The forecast always starts from the latest balance check-in and rolls forward to today, so it never goes stale. Each day gets three balances:
 
 - **Worst case:** every income at its minimum, every expense at its maximum.
 - **Expected:** everything at its usual amount.
 - **Best case:** incomes at their maximum, expenses at their minimum.
+
+The overview leads with the answer in words: the lowest point of the expected line, and when (if ever) it recovers.
 """
 
 [[how]]
 title = "Presets"
 text = """
-The first time someone opens the app, eight tags are created for them, all in the green family so the app stays on brand:
+The first time someone opens the app, four tags are created for them: two for money in, two for money out.
 """
 presets = [
-  ["Pay cheque", "#16a34a"], ["Shifts", "#22c55e"], ["Rent", "#0f766e"], ["Groceries", "#65a30d"],
-  ["Subscriptions", "#0891b2"], ["Transport", "#4d7c0f"], ["Fun", "#84cc16"], ["Savings", "#15803d"],
+  ["Pay cheque", "#16a34a"], ["Side hustle", "#059669"], ["Bill", "#ea580c"], ["Groceries", "#d97706"],
 ]
 
 [[how]]
 title = "Where the data lives"
 text = """
-One Postgres database: tags, income streams, expense streams, and each person's starting balance, with every query limited to the signed-in person. The browser only ever talks to the SvelteKit server, which fetches from the Express API with the session cookie; that keeps the door open for an offline-capable phone app. Accounts are email and password through Better Auth.
+One Postgres database: tags, income streams, expense streams, and every balance check-in a person has saved, with every query limited to the signed-in person. The browser only ever talks to the SvelteKit server, which fetches from the Express API with the session cookie; that keeps the door open for an offline-capable phone app. Accounts are email and password through Better Auth.
 """
 
 [[how]]
@@ -181,32 +234,57 @@ Every amount is stored and sent as whole cents (`110000` is $1,100.00), so nothi
 intro = "Every route needs the session cookie and answers `401` when signed out; bad input gets `400` naming the field that failed, and a missing row `404`."
 footnote = "Also there: `GET /api/health` (open, for the deploy), `GET /api/me`, sign-up and sign-in under `/api/auth/*`, and interactive docs at `/api/docs`."
 rows = [
-  ["GET",    "/api/tags",                 "",                                                   "`{ tags }`; creates the 8 presets on first call"],
+  ["GET",    "/api/tags",                 "",                                                   "`{ tags }`; creates the 4 presets on first call"],
   ["POST",   "/api/tags",                 "`name`, `color?`",                                   "`201` the new tag"],
   ["PATCH",  "/api/tags/:id",             "`name?`, `color?`",                                  "the updated tag"],
   ["DELETE", "/api/tags/:id",             "",                                                   "`204`; its streams become untagged"],
   ["GET",    "/api/income-streams",       "",                                                   "`{ streams }`"],
-  ["POST",   "/api/income-streams",       "`name`, `tagId?`, `minCents`, `actualCents`, `maxCents`, `intervalDays`, `firstDate`", "`201` the new stream"],
+  ["POST",   "/api/income-streams",       "`name`, `tagId?`, `minCents?`, `actualCents`, `maxCents?`, `intervalDays`, `firstDate`", "`201` the new stream; min and max default to the usual amount"],
   ["PATCH",  "/api/income-streams/:id",   "any of the above",                                   "the updated stream"],
   ["DELETE", "/api/income-streams/:id",   "",                                                   "`204`"],
   ["Same 4", "/api/expense-streams[/:id]", "same as income",                                    "same as income"],
-  ["GET",    "/api/settings",             "",                                                   "`startingBalanceCents`, `startingDate` (0 and today until set)"],
-  ["PUT",    "/api/settings",             "`startingBalanceCents`, `startingDate`",             "the saved settings"],
-  ["GET",    "/api/forecast?days=90",     "`days` 7 to 366",                                    "one point per day (worst, expected, best), every event, the end balance"],
+  ["GET",    "/api/checkins",             "",                                                   "`{ checkins }`, newest first"],
+  ["POST",   "/api/checkins",             "`balanceCents`",                                     "`201` the check-in, always dated today; a second save the same day replaces it"],
+  ["GET",    "/api/forecast",             "`days` 7 to 366, `checkinId?`",                      "one point per day (worst, expected, best), every event, the end balance, the lowest point, and when the balance goes under and recovers"],
+  ["GET",    "/api/coming-up",            "`month?` YYYY-MM",                                   "the month's events by day, with totals in, out, and the expected end balance"],
 ]
 
-# ---------------------------------------------------------------- next steps (whiteboard items 4 to 9)
+# ---------------------------------------------------------------- next steps (whiteboard items 4, 9, and beyond)
 
 [next]
-intro = "Items 4 to 9 from the whiteboard. Sizes are rough: **S** is a few hours, **M** most of a day, **L** several days."
+intro = "Iteration 2 shipped the overview sentence, the check-in habit, styled forms and colours, and tag pages. What is left, in the order the iteration 2 proposal puts it."
 
 [[next.item]]
 item = 4
 title = "Goals"
 size = "M"
-model = "A `goals` table: name, target amount in cents, start date, end date. The forecast answers one question per goal: at the end date, is the balance above the target in the worst, expected, and best case?"
-screen = "A goal card on the overview (“Expected: $4,470 by Dec 25, $470 over your $4,000 goal”) and a target line on the chart, plus a small list to add and edit goals."
+model = "A `goals` table: name, target amount in cents, start date, end date. The forecast answers one question per goal: at the end date, is the balance above the target in the worst, expected, and best case? Planned in `docs/plans/2026-09-27-goals.md`."
+screen = "A goal line under the answer sentence (\"Expected $1,240 by Dec 20, $240 over your $1,000 goal\"), a target line on the chart, and a small page to add and edit goals."
 smallest = "One goal, set on the overview, drawn as a line on the chart with a met or short-by sentence for each case."
+
+[[next.item]]
+item = 14
+title = "Statement import"
+size = "L"
+model = "A PDF statement or paystub, parsed on the box only, stripped to dates, amounts, and categories, turned into suggested streams that Sam accepts or discards. A stream is exactly what that detector produces, so the model needs no change. Planned in `docs/plans/2026-09-27-statement-import-plan.md`."
+screen = "Upload a statement, review the suggested streams next to what they were parsed from, accept or discard each one."
+smallest = "One paystub, parsed into one suggested income stream that Sam accepts as is."
+
+[[next.item]]
+item = 34
+title = "Bank connections"
+size = "L"
+model = "A connection is consent, syncing, and a provider contract; out until statement import proves the low-lift story works without one."
+screen = "Not designed yet."
+smallest = "n/a"
+
+[[next.item]]
+item = 6
+title = "One-time expenses and incomes"
+size = "S"
+model = "Either a “just once” flag on streams (the first date is the date, the interval is ignored) or a small table of dated items with the same minimum, usual, and maximum. The forecast adds each one on its day."
+screen = "A “Just once” checkbox on the stream form that hides the repeat field; the card reads “Once, on Nov 14”."
+smallest = "Add “Concert tickets, $90 to $120, Nov 14” and watch the dip appear in the band."
 
 [[next.item]]
 item = 5
@@ -217,42 +295,18 @@ screen = "Installs to the home screen and opens full screen on the overview with
 smallest = "Open the live URL on a phone, add it to the home screen, and launch it like any other app."
 
 [[next.item]]
-item = 6
-title = "One-time expenses"
-size = "S"
-model = "Either a “just once” flag on streams (the first date is the date, the interval is ignored) or a small table of dated items with the same minimum, usual, and maximum. The forecast adds each one on its day."
-screen = "A “Just once” checkbox on the expense form that hides the repeat field; the card reads “Once, on Nov 14”."
-smallest = "Add “Concert tickets, $90 to $120, Nov 14” and watch the dip appear in the band."
-
-[[next.item]]
-item = 7
-title = "One-time incomes"
-size = "S"
-model = "The same mechanics as item 6 on the income side; built together, it comes nearly free."
-screen = "The same checkbox on the income form; the Coming up list shows the payment once."
-smallest = "Add “Tax refund, $300 to $500, Oct 20” and watch the expected line step up."
-
-[[next.item]]
-item = 8
-title = "Suggestions to meet a goal"
-size = "M"
-model = "No new tables, but it needs goals first. A service works out the gap at the goal date and tries levers against the streams: more occurrences of an income, an expense closer to its minimum, a later end date."
-screen = "Two or three plain sentences under the goal card: “Two more café shifts”, “Groceries at $280 instead of $360 closes $560 by Dec 25”."
-smallest = "Rules only: the gap divided by the biggest income's usual amount gives the extra shifts; each expense's usual minus its minimum shows what trimming it saves."
-
-[[next.item]]
 item = 9
 title = "Subscription reminders"
 size = "S, then L"
 model = "Manual first: a subscription flag and a reminder lead time on an expense stream. Later, bank or provider connections that spot recurring charges and fill in streams, a project of its own (accounts, consent, syncing)."
-screen = "“Renews in 3 days: Phone and subscriptions, $80” on the overview; a notification on the phone once the PWA can receive them."
+screen = "“Renews in 3 days: Phone, $42” on the overview; a notification on the phone once the PWA can receive them."
 smallest = "Flag an expense as a subscription and see a renewal strip on the overview."
 
 [[question]]
 text = "**Does a goal belong to the whole balance or to a tag?** The whole balance matches today's forecast and is simplest; a tag such as Savings means money has to be set aside for it."
 
 [[question]]
-text = "**Do one-time items need their own screen,** or is a “Just once” checkbox on the existing income and expense forms enough?"
+text = "**When a check-in differs from the forecast, should kriket guess why?** (“Groceries cost $30 more than usual this month.”) Proposed for a later iteration: only the difference for now, no guessing."
 
 [[question]]
-text = "**Are manual subscription reminders a flag on an expense stream,** and should they remind inside the app only, or by notification, which waits on the phone app?"
+text = "**Statement import: when, and what is kept?** Open; the plan file stands with its four decisions (scope, retention, timing, statement or paystub first) unanswered until this iteration is reviewed."
