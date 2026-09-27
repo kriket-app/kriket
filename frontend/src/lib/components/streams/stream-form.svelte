@@ -258,7 +258,13 @@
 
 	<div class="grid gap-2">
 		{#if !rangeOpen}
-			<Button type="button" variant="link" class="justify-start px-0" onclick={openRange}>
+			<Button
+				type="button"
+				variant="link"
+				class="justify-start px-0"
+				aria-expanded="false"
+				onclick={openRange}
+			>
 				Add a range
 			</Button>
 			<p class="text-xs text-muted-foreground">
@@ -272,7 +278,7 @@
 				aria-expanded="true"
 				onclick={() => (rangeOpen = false)}
 			>
-				Add a range
+				Remove the range
 			</Button>
 			<div class="grid grid-cols-2 gap-3">
 				<div class="grid content-start gap-2">
