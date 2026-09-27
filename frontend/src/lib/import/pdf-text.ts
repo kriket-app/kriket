@@ -1,4 +1,7 @@
-import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+// The legacy build, not the default one: the default build calls very new APIs such as
+// Map.prototype.getOrInsertComputed without a fallback, and iOS Safari lacks them, so every
+// read failed there. The legacy build polyfills them.
+import workerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { ImportError, type TextItem } from './types';
 
 export const MAX_BYTES = 10 * 1024 * 1024;
@@ -27,7 +30,7 @@ export async function readPdfText(file: File): Promise<TextItem[][]> {
 	const bytes = new Uint8Array(await file.arrayBuffer());
 	if (!isPdfBytes(bytes)) throw new ImportError('not-pdf', 'That isn’t a PDF.');
 
-	const pdfjs = await import('pdfjs-dist');
+	const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
 	pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 	const loadingTask = pdfjs.getDocument({ data: bytes, disableFontFace: true });
 	let doc;

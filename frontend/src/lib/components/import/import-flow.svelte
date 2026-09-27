@@ -53,6 +53,8 @@
 			preview = await importStatement(file);
 			status = 'ready';
 		} catch (err) {
+			// Not an ImportError means something unexpected; keep the cause for whoever debugs it.
+			if (!(err instanceof ImportError)) console.error('Statement import failed', err);
 			problem = err instanceof ImportError ? err.message : 'That file could not be read.';
 			status = 'failed';
 		}
