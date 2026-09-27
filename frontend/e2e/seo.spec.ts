@@ -51,7 +51,9 @@ test('the sitemap lists the crawlable pages and robots points at it', async ({ p
 	for (const path of ['/', '/signin', '/signup']) {
 		expect(xml).toContain(`<loc>${SITE_URL}${path}</loc>`);
 	}
-	expect(xml).not.toContain('/app');
+	// No signed-in /app URLs: the "<loc>https://app…" domain prefix itself
+	// contains "/app", so match on the full location tag instead.
+	expect(xml).not.toContain(`<loc>${SITE_URL}/app`);
 
 	const robots = await page.request.get('/robots.txt');
 	expect(await robots.text()).toContain(`Sitemap: ${SITE_URL}/sitemap.xml`);

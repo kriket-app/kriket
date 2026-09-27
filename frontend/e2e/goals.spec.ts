@@ -56,7 +56,7 @@ test('a goal can be added with a duration shortcut, seen on the overview, and de
 	await page.getByRole('button', { name: /delete/i }).click();
 	await page.getByRole('alertdialog').getByRole('button', { name: 'Delete' }).click();
 	await page.waitForURL('/app/goals');
-	await expect(page.getByText('Saving for something?')).toBeVisible();
+	await expect(page.getByText('Quiet in here… just crickets.')).toBeVisible();
 
 	await page.setViewportSize({ width: 375, height: 700 });
 	expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);

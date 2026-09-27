@@ -1,8 +1,16 @@
-import { devices, expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 // iPhones never fire `beforeinstallprompt`, so the install button stays hidden
 // there and this hint is the only install guidance those visitors get.
-test.use({ ...devices['iPhone 13'] });
+// Emulated on Chromium (iPhone user agent + touch + mobile viewport): the stock
+// iPhone device descriptor forces WebKit, which CI does not install.
+test.use({
+	viewport: { width: 390, height: 844 },
+	userAgent:
+		'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+	hasTouch: true,
+	isMobile: true
+});
 
 test('iPhone visitors see the iOS install steps on the landing page', async ({ page }) => {
 	await page.goto('/');
