@@ -31,7 +31,7 @@ test('tags are seeded, a stream forecasts, and the mobile nav sits at the bottom
 	).toBeVisible();
 
 	await page.goto('/app');
-	await expect(page.getByText(/expected/i)).toBeVisible();
+	await expect(page.getByText(/^expected on/i)).toBeVisible();
 	// The chart also carries a "Balance" label in its own text, so an unscoped getByText
 	// is ambiguous; the starting-balance input's accessible name is exactly "Balance".
 	await expect(page.getByLabel('Balance', { exact: true })).toBeVisible();

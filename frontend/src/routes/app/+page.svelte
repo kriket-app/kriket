@@ -1,32 +1,21 @@
 <script lang="ts">
 	import { ArrowRight } from '@lucide/svelte';
-	import { enhance } from '$app/forms';
+	import AnswerCard from '$lib/components/answer-card.svelte';
+	import CheckinCard from '$lib/components/checkin-card.svelte';
+	import ComingUp from '$lib/components/coming-up.svelte';
 	import ForecastChart from '$lib/components/forecast-chart.svelte';
+	import ForecastTiles from '$lib/components/forecast-tiles.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import { formatDate } from '$lib/dates';
-	import { centsToDollars, formatCents } from '$lib/money';
 	import { cn } from '$lib/utils';
 
 	let { data, form } = $props();
 
 	const WINDOWS = [30, 90, 180];
-	const stats = $derived([
-		{ label: 'Worst case', cents: data.forecast.endBalance.minCents },
-		{ label: 'Expected', cents: data.forecast.endBalance.actualCents },
-		{ label: 'Best case', cents: data.forecast.endBalance.maxCents }
-	]);
-	const upcoming = $derived(data.forecast.events.slice(0, 8));
-	const signed = (cents: number) => `${cents < 0 ? '−' : '+'}${formatCents(Math.abs(cents))}`;
-	const errorFor = (path: string) =>
-		form?.action === 'settings'
-			? form.details?.find((detail) => detail.path === path)?.message
-			: undefined;
-	const balanceError = $derived(errorFor('balanceCents'));
-	const latestCheckin = $derived(data.checkins[0]);
-	const saved = $derived(form?.ok ? formatCents(latestCheckin?.balanceCents ?? 0) : null);
+	// Switching the window keeps the month Coming up shows (left out when it is today's month).
+	const monthQuery = $derived(
+		data.comingUp.month === data.comingUp.today.slice(0, 7) ? '' : `&month=${data.comingUp.month}`
+	);
 </script>
 
 <svelte:head><title>Overview · kriket</title></svelte:head>
@@ -36,7 +25,7 @@
 	<nav class="flex gap-1 rounded-full bg-muted p-1" aria-label="Forecast length">
 		{#each WINDOWS as days (days)}
 			<a
-				href="?days={days}"
+				href="?days={days}{monthQuery}"
 				aria-current={days === data.days ? 'page' : undefined}
 				class={cn(
 					'rounded-full px-3 py-1 text-sm font-medium tabular-nums',
@@ -49,123 +38,61 @@
 	</nav>
 </div>
 
-{#if data.hasStreams}
-	<div class="mt-6 grid gap-3 sm:grid-cols-3">
-		{#each stats as stat (stat.label)}
-			{@const change = stat.cents - data.forecast.startingBalanceCents}
-			<Card.Root size="sm">
-				<Card.Content class="grid gap-1">
-					<p class="text-muted-foreground">{stat.label}</p>
-					<p class="text-2xl font-semibold tabular-nums">{formatCents(stat.cents)}</p>
-					<p
-						class={cn('tabular-nums', change >= 0 ? 'text-brand-strong' : 'text-muted-foreground')}
-					>
-						{signed(change)} from today
-					</p>
-				</Card.Content>
-			</Card.Root>
-		{/each}
-	</div>
+<!-- The check-in and the answer share the first row from md up; the check-in comes first below. -->
+<div class="mt-6 grid gap-4 md:grid-cols-2">
+	<CheckinCard latest={data.checkins[0]} today={data.comingUp.today} {form} />
+	{#if data.hasStreams}
+		<AnswerCard forecast={data.forecast} days={data.days} />
+	{:else}
+		<Card.Root class="border-0 bg-brand-soft ring-0">
+			<Card.Header>
+				<Card.Title class="text-lg">Let's hear some chirping</Card.Title>
+				<Card.Description>
+					Add the money that comes in, your pay or your shifts, and kriket draws where your balance
+					is heading: worst case, usual, and best case.
+				</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				<Button href="/app/income" class="self-start">Add your income<ArrowRight /></Button>
+			</Card.Content>
+		</Card.Root>
+	{/if}
+</div>
 
+{#if data.hasStreams}
 	<Card.Root class="mt-4">
 		<Card.Header>
 			<Card.Title>Balance forecast</Card.Title>
 			<Card.Description>
-				The line uses your usual amounts; the band runs from the worst case to the best.
-			</Card.Description>
-		</Card.Header>
-		<Card.Content><ForecastChart points={data.forecast.points} /></Card.Content>
-	</Card.Root>
-{:else}
-	<Card.Root class="mt-6 border-0 bg-brand-soft ring-0">
-		<Card.Header>
-			<Card.Title class="text-lg">Let's hear some chirping</Card.Title>
-			<Card.Description>
-				Add the money that comes in, your pay or your shifts, and kriket draws where your balance is
-				heading: worst case, usual, and best case.
+				The line uses your usual amounts; the band runs from the worst case to the best. Each dot is
+				a payment; tap one for its name and amount.
 			</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<Button href="/app/income" class="self-start">Add your income<ArrowRight /></Button>
+			<ForecastChart points={data.forecast.points} events={data.forecast.events} />
+			<ul class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground" aria-hidden="true">
+				<li class="flex items-center gap-1.5">
+					<span class="size-2.5 rounded-full bg-brand"></span>Money in
+				</li>
+				<li class="flex items-center gap-1.5">
+					<span class="size-2.5 rounded-full bg-expense"></span>Money out
+				</li>
+				{#if data.forecast.firstBelowZero}
+					<li class="flex items-center gap-1.5">
+						<span class="h-2 w-3.5 rounded-xs bg-expense/25"></span>Below zero
+					</li>
+				{/if}
+			</ul>
 		</Card.Content>
 	</Card.Root>
+
+	<ForecastTiles forecast={data.forecast} class="mt-4" />
 {/if}
 
-<div class="mt-4 grid gap-4 md:grid-cols-2">
-	<Card.Root>
-		<Card.Header>
-			<Card.Title>Your balance today</Card.Title>
-			<Card.Description>The forecast starts from here.</Card.Description>
-		</Card.Header>
-		<Card.Content>
-			<!-- reset: false keeps the saved values in the inputs instead of the page's first render. -->
-			<form
-				method="POST"
-				action="?/settings"
-				use:enhance={() =>
-					({ update }) =>
-						update({ reset: false })}
-				class="grid gap-4"
-			>
-				<div class="grid content-start gap-2">
-					<Label for="balance">Balance</Label>
-					<!-- No inputmode="decimal": the iOS decimal pad has no minus key, and balances can be negative. -->
-					<Input
-						id="balance"
-						name="balance"
-						autocomplete="off"
-						required
-						value={centsToDollars(latestCheckin?.balanceCents ?? 0)}
-						aria-invalid={balanceError ? true : undefined}
-						aria-describedby={balanceError ? 'balance-error' : undefined}
-					/>
-					{#if balanceError}
-						<p id="balance-error" class="text-xs text-destructive first-letter:uppercase">
-							{balanceError}
-						</p>
-					{/if}
-				</div>
-				<div class="flex items-center justify-between gap-3">
-					{#if saved}
-						<p class="text-brand-strong">Saved · {saved}. Your forecast starts from today.</p>
-					{/if}
-					<Button type="submit" class="ml-auto w-full sm:w-auto">Save</Button>
-				</div>
-			</form>
-		</Card.Content>
-	</Card.Root>
-
-	<Card.Root>
-		<Card.Header><Card.Title>Coming up</Card.Title></Card.Header>
-		<Card.Content>
-			{#if upcoming.length}
-				<ul class="divide-y">
-					{#each upcoming as event (`${event.streamId}-${event.date}`)}
-						<li class="flex items-center gap-3 py-2">
-							<span class="w-14 shrink-0 text-muted-foreground tabular-nums">
-								{formatDate(event.date)}
-							</span>
-							<span class="min-w-0 flex-1 truncate">{event.name}</span>
-							<span
-								class={cn(
-									'font-medium tabular-nums',
-									event.kind === 'income' ? 'text-brand-strong' : 'text-foreground'
-								)}
-							>
-								{event.kind === 'income' ? '+' : '−'}{formatCents(event.actualCents)}
-							</span>
-						</li>
-					{/each}
-				</ul>
-			{:else}
-				<p class="text-muted-foreground">
-					Nothing scheduled yet. Add
-					<a href="/app/income" class="font-medium text-brand-strong hover:underline">income</a>
-					or
-					<a href="/app/expenses" class="font-medium text-brand-strong hover:underline">expenses</a>
-					to see what's coming.
-				</p>
-			{/if}
-		</Card.Content>
-	</Card.Root>
-</div>
+<ComingUp
+	comingUp={data.comingUp}
+	tags={data.tags}
+	days={data.days}
+	hasStreams={data.hasStreams}
+	class="mt-4"
+/>
