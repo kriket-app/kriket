@@ -48,7 +48,7 @@ test('the sitemap lists the crawlable pages and robots points at it', async ({ p
 	const sitemap = await page.request.get('/sitemap.xml');
 	expect(sitemap.ok()).toBe(true);
 	const xml = await sitemap.text();
-	for (const path of ['/', '/signin', '/signup']) {
+	for (const path of ['/', '/signin', '/signup', '/privacy', '/terms']) {
 		expect(xml).toContain(`<loc>${SITE_URL}${path}</loc>`);
 	}
 	// No signed-in /app URLs: the "<loc>https://app…" domain prefix itself

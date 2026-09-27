@@ -98,6 +98,29 @@
 
 	<Card.Root>
 		<Card.Header>
+			<Card.Title class="text-base">Setup</Card.Title>
+			<Card.Description>Walk through the first-run setup again.</Card.Description>
+		</Card.Header>
+		<Card.Content class="flex flex-wrap items-center gap-2">
+			<form method="POST" action="?/reopen">
+				<Button variant="outline" size="sm" type="submit">Replay the setup walkthrough</Button>
+			</form>
+		</Card.Content>
+	</Card.Root>
+
+	<Card.Root>
+		<Card.Header>
+			<Card.Title class="text-base">Legal</Card.Title>
+			<Card.Description>The ground rules you accepted.</Card.Description>
+		</Card.Header>
+		<Card.Content class="flex flex-wrap items-center gap-2">
+			<Button variant="outline" size="sm" href="/privacy">Privacy statement</Button>
+			<Button variant="outline" size="sm" href="/terms">Terms of use</Button>
+		</Card.Content>
+	</Card.Root>
+
+	<Card.Root>
+		<Card.Header>
 			<Card.Title class="text-base">About</Card.Title>
 			<Card.Description>
 				Kriket forecasts where your money is heading from the income and expenses you actually have,

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { randomEmail } from './helpers';
+import { acceptConsent, randomEmail } from './helpers';
 
 async function signUp(page, email: string) {
 	await page.goto('/signup');
@@ -7,6 +7,9 @@ async function signUp(page, email: string) {
 	await page.getByLabel('Email').fill(email);
 	await page.getByLabel('Password').fill('password123');
 	await page.getByRole('button', { name: 'Create account' }).click();
+	await page.waitForURL('/app/onboarding');
+	await acceptConsent(page);
+	await page.getByRole('button', { name: 'Skip setup for now' }).click();
 	await page.waitForURL('/app');
 }
 

@@ -103,6 +103,23 @@ export const forecastAlerts = pgTable('forecast_alerts', {
 	...timestamps()
 });
 
+// One row per user tracking legal consent and the first-run walkthrough. A missing
+// row means the user has never seen onboarding: consent is required before anything
+// else, and the walkthrough replays from settings by clearing onboardingCompletedAt.
+export const userOnboarding = pgTable('user_onboarding', {
+	userId: text('user_id')
+		.primaryKey()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	privacyVersion: text('privacy_version'),
+	termsVersion: text('terms_version'),
+	privacyAcceptedAt: timestamp('privacy_accepted_at'),
+	termsAcceptedAt: timestamp('terms_accepted_at'),
+	onboardingCompletedAt: timestamp('onboarding_completed_at'),
+	...timestamps()
+});
+
+export type UserOnboardingRow = typeof userOnboarding.$inferSelect;
+
 // Goals are balances to reach on a date, not money set aside: the forecast is
 // unchanged and the status compares the forecast's point on targetDate.
 // Multiple goals per user; the overview shows the closest three by date.
