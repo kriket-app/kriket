@@ -13,6 +13,7 @@ import tagsRouter from './routes/tags.js';
 import { streamsRouter } from './routes/streams.js';
 import checkinsRouter from './routes/checkins.js';
 import forecastRouter from './routes/forecast.js';
+import pushRouter from './routes/push.js';
 import comingUpRouter from './routes/coming-up.js';
 import { InvalidInputError, NotFoundError } from './services/errors.js';
 
@@ -54,6 +55,7 @@ export function createApp() {
 	app.use('/api', streamsRouter('expense'));
 	app.use('/api', checkinsRouter);
 	app.use('/api', forecastRouter);
+	app.use('/api', pushRouter);
 	app.use('/api', comingUpRouter);
 
 	// Swagger UI with the spec generated from the route registry.

@@ -72,3 +72,33 @@ export const balanceCheckins = pgTable(
 	},
 	(t) => [uniqueIndex('balance_checkins_user_day_idx').on(t.userId, t.checkedOn)]
 );
+
+// One row per browser/device a user enables notifications on. `endpoint` is
+// globally unique per the Push API; re-subscribing from the same browser
+// upserts instead of duplicating.
+export const pushSubscriptions = pgTable(
+	'push_subscriptions',
+	{
+		id: idColumn(),
+		userId: userIdColumn(),
+		endpoint: text('endpoint').notNull().unique(),
+		p256dh: text('p256dh').notNull(),
+		auth: text('auth').notNull(),
+		userAgent: text('user_agent'),
+		...timestamps()
+	},
+	(t) => [index('push_subscriptions_user_idx').on(t.userId)]
+);
+
+// The last low-balance heads-up sent to a user, one row per user. The alert sweep runs through
+// the day; this row makes it send each dip once and at most one alert a day.
+export const forecastAlerts = pgTable('forecast_alerts', {
+	userId: text('user_id')
+		.primaryKey()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	// The first day the expected balance is below zero, as forecast when the alert went out.
+	dipDate: date('dip_date', { mode: 'string' }).notNull(),
+	// The day the alert went out, in the app's timezone (services/dates.ts).
+	sentOn: date('sent_on', { mode: 'string' }).notNull(),
+	...timestamps()
+});

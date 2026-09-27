@@ -32,7 +32,9 @@
 
 <svelte:head><title>Get started · kriket</title></svelte:head>
 
-<div class="flex min-h-dvh flex-col items-center justify-center gap-8 bg-brand-soft px-4 py-12">
+<div
+	class="pt-safe flex min-h-dvh flex-col items-center justify-center gap-8 bg-brand-soft px-4 py-12"
+>
 	<a href="/" class="flex items-center gap-2 text-lg font-semibold">
 		<BrandMark class="size-8" /> kriket
 	</a>

@@ -130,6 +130,18 @@
 	}
 }
 
+/* Installed-app feel: draw edge to edge (viewport-fit=cover) without pull-to-
+   refresh pulling the page, and keep chrome clear of the notch. In a plain
+   browser tab the insets are zero and overscroll is untouched. */
+@media (display-mode: standalone) {
+	html {
+		overscroll-behavior-y: none;
+	}
+}
+.pt-safe {
+	padding-top: env(safe-area-inset-top);
+}
+
 /* Brand. Change --brand (and --brand-strong / --brand-soft) to recolour the whole app. */
 :root {
 	--brand: oklch(0.627 0.194 149.2); /* tailwind green-600 */
