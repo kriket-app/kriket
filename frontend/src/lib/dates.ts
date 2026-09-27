@@ -42,3 +42,22 @@ const dayFormat = new Intl.DateTimeFormat('en-CA', {
 });
 /** "2026-10-01" -> "Oct 1". */
 export const formatDate = (iso: string) => dayFormat.format(toUtc(iso));
+
+const dayYearFormat = new Intl.DateTimeFormat('en-CA', {
+	month: 'short',
+	day: 'numeric',
+	year: 'numeric',
+	timeZone: 'UTC'
+});
+/** "2027-12-20" -> "Dec 20, 2027". */
+export const formatDateWithYear = (iso: string) => dayYearFormat.format(toUtc(iso));
+
+export const addDays = (iso: string, n: number) =>
+	toIso(new Date(toUtc(iso).getTime() + n * DAY_MS));
+
+/** Whole calendar months from `from` to `to`, minimum 1 (mirrors the backend). */
+export const monthsBetween = (from: string, to: string): number => {
+	const [fromY, fromM, fromD] = from.split('-').map(Number);
+	const [toY, toM, toD] = to.split('-').map(Number);
+	return Math.max(1, (toY - fromY) * 12 + (toM - fromM) + (toD >= fromD ? 0 : -1));
+};

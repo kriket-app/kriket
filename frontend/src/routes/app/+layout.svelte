@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { cn } from '$lib/utils';
 	import BrandMark from '$lib/components/brand-mark.svelte';
-	import { ArrowDownToLine, ArrowUpFromLine, ChartLine, Tags } from '@lucide/svelte';
+	import { ArrowDownToLine, ArrowUpFromLine, ChartLine, Tags, Target } from '@lucide/svelte';
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 
@@ -12,6 +12,7 @@
 		{ href: '/app', label: 'Overview', icon: ChartLine },
 		{ href: '/app/income', label: 'Income', icon: ArrowDownToLine },
 		{ href: '/app/expenses', label: 'Expenses', icon: ArrowUpFromLine },
+		{ href: '/app/goals', label: 'Goals', icon: Target },
 		{ href: '/app/tags', label: 'Tags', icon: Tags }
 	];
 	// /app/balances is Overview's own detail page (flipping through past check-ins), not a
@@ -59,7 +60,7 @@
 		aria-label="Primary"
 		style="padding-bottom: env(safe-area-inset-bottom)"
 	>
-		<div class="grid grid-cols-4">
+		<div class="grid grid-cols-5">
 			{#each items as item (item.href)}
 				{@const Icon = item.icon}
 				<a

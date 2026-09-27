@@ -10,6 +10,7 @@ import { streamsRouter } from '../routes/streams.js';
 import '../routes/checkins.js';
 import '../routes/forecast.js';
 import '../routes/coming-up.js';
+import '../routes/goals.js';
 
 streamsRouter('income');
 streamsRouter('expense');

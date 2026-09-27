@@ -516,6 +516,240 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/goals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List goals with forecast status, closest date first */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Goals */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["GoalList"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        /** Create a goal */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateGoalBody"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Goal"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/goals/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a goal */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Goal */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Goal"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        /** Delete a goal */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Deleted */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Update a goal */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateGoalBody"];
+                };
+            };
+            responses: {
+                /** @description Updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Goal"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/api/income-streams": {
         parameters: {
             query?: never;
@@ -1147,6 +1381,70 @@ export interface components {
             inCents: number;
             outCents: number;
             endBalanceCents: number | null;
+        };
+        GoalStatus: {
+            /** @enum {string} */
+            state: "forecast" | "past" | "beyond";
+            expectedCents: number | null;
+            worstCents: number | null;
+            bestCents: number | null;
+            monthlyNeededCents: number | null;
+        };
+        Goal: {
+            id: string;
+            name: string;
+            description: string | null;
+            amountCents: number;
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
+            targetDate: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            status: components["schemas"]["GoalStatus"];
+        };
+        GoalList: {
+            goals: components["schemas"]["Goal"][];
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
+            today: string;
+        };
+        CreateGoalBody: {
+            /** @example Trip home */
+            name: string;
+            /** @example Flights for December */
+            description?: string | null;
+            /**
+             * @description integer cents, more than 0
+             * @example 150000
+             */
+            amountCents: number;
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
+            targetDate: string;
+        };
+        UpdateGoalBody: {
+            /** @example Trip home */
+            name?: string;
+            /** @example Flights for December */
+            description?: string | null;
+            /**
+             * @description integer cents, more than 0
+             * @example 150000
+             */
+            amountCents?: number;
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
+            targetDate?: string;
         };
     };
     responses: never;

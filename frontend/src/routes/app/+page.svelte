@@ -5,6 +5,7 @@
 	import ComingUp from '$lib/components/coming-up.svelte';
 	import ForecastChart from '$lib/components/forecast-chart.svelte';
 	import ForecastTiles from '$lib/components/forecast-tiles.svelte';
+	import GoalsSection from '$lib/components/goals/goals-section.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
@@ -93,6 +94,8 @@
 
 	<ForecastTiles forecast={data.forecast} class="mt-4" />
 {/if}
+
+<GoalsSection goals={data.goals} />
 
 <ComingUp
 	comingUp={data.comingUp}
