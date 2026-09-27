@@ -1,6 +1,6 @@
 # Statement and paystub import, local only (plan, v1)
 
-**Status:** a plan, not a build. Iteration 2's proposal (`2026-09-27-iteration-2-proposal.md`, rows 14, 34, and 46) keeps this out of the iteration 2 build unless the founders pull it in. Theo wrote the ask and the plan on 2026-09-26 (drafted with Muse Spark 1.3); this file keeps his structure and words, checked against the code on `main` (commit `b52a303`), with the corrections and the open decisions at the end.
+**Superseded** by `2026-09-27-statement-import-browser-plan.md` on 2026-09-26 (browser-side, no upload). Kept for the ask. **Status:** a plan, not a build. Iteration 2's proposal (`2026-09-27-iteration-2-proposal.md`, rows 14, 34, and 46) keeps this out of the iteration 2 build unless the founders pull it in. Theo wrote the ask and the plan on 2026-09-26 (drafted with Muse Spark 1.3); this file keeps his structure and words, checked against the code on `main` (commit `b52a303`), with the corrections and the open decisions at the end.
 
 **Notion task:** none given (hackathon repo). If Erik supplies one, every PR opened from this document puts it as a suffix in the PR title, for example `Import a bank statement as suggested streams [GEN-1234]`.
 

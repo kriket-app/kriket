@@ -9,7 +9,9 @@ const OFFLINE_URL = '/offline';
 
 // Root-relative paths of everything precached at install. `build` entries are
 // Vite output (/_app/immutable/...), `files` are the contents of `static/`.
-const PRECACHE = [...build, ...files, ...prerendered];
+// PDF.js (its worker and the chunk that loads it) is only needed on /app/import and weighs about
+// a megabyte, so it is fetched on first use instead of at install.
+const PRECACHE = [...build.filter((path) => !/pdf/i.test(path)), ...files, ...prerendered];
 const PRECACHED = new Set(PRECACHE.map((path) => (path.startsWith('/') ? path : `/${path}`)));
 
 // Cache-first is only for versioned/static assets. Everything else — SvelteKit

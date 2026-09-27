@@ -3,7 +3,7 @@
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
-	import type { FieldError, Stream, StreamKind, Tag } from '$lib/api/types';
+	import type { FieldError, Stream, StreamKind, StreamSeed, Tag } from '$lib/api/types';
 	import TagDot from '$lib/components/tag-dot.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Calendar } from '$lib/components/ui/calendar';
@@ -17,6 +17,8 @@
 		kind,
 		tags,
 		stream,
+		initial,
+		hidden,
 		details,
 		onsaved
 	}: {
@@ -24,11 +26,18 @@
 		tags: Tag[];
 		/** The stream being edited; without one the form adds a new stream. */
 		stream?: Stream;
+		/** Prefill for a new stream (an import draft); unlike `stream`, keeps the form in "add" mode. */
+		initial?: StreamSeed;
+		/** Extra hidden fields the page's action needs, such as the import page's `kind` and `draftId`. */
+		hidden?: Record<string, string>;
 		/** Field messages from this form's last failed submit, keyed by the API field in `path`. */
 		details?: FieldError[];
 		/** Runs after a successful save, so the dialog around the form can close. */
 		onsaved?: () => void;
 	} = $props();
+
+	/** Where the initial field values come from: the stream being edited, else the prefill. */
+	const seed = (): StreamSeed | undefined => stream ?? initial;
 
 	const id = $props.id();
 
@@ -43,32 +52,32 @@
 	type RepeatChoice = 7 | 14 | 30 | 'custom';
 
 	// The form mounts fresh each time its dialog opens, so it starts from the stream as it is then.
-	let tagId = $state(untrack(() => stream?.tagId ?? ''));
-	let usual = $state(untrack(() => (stream ? centsToDollars(stream.actualCents) : '')));
-	let minimum = $state(untrack(() => (stream ? centsToDollars(stream.minCents) : '')));
-	let maximum = $state(untrack(() => (stream ? centsToDollars(stream.maxCents) : '')));
+	let tagId = $state(untrack(() => seed()?.tagId ?? ''));
+	let usual = $state(untrack(() => (seed() ? centsToDollars(seed()!.actualCents) : '')));
+	let minimum = $state(untrack(() => (seed() ? centsToDollars(seed()!.minCents) : '')));
+	let maximum = $state(untrack(() => (seed() ? centsToDollars(seed()!.maxCents) : '')));
 	let rangeOpen = $state(
 		untrack(() =>
-			stream
-				? stream.minCents !== stream.actualCents || stream.maxCents !== stream.actualCents
+			seed()
+				? seed()!.minCents !== seed()!.actualCents || seed()!.maxCents !== seed()!.actualCents
 				: false
 		)
 	);
 	let repeatChoice = $state<RepeatChoice>(
 		untrack(() => {
-			const days = stream?.intervalDays;
+			const days = seed()?.intervalDays;
 			if (days === 7 || days === 14 || days === 30) return days;
 			return days === undefined ? 7 : 'custom';
 		})
 	);
 	let customDays = $state<number | null>(
 		untrack(() => {
-			const days = stream?.intervalDays;
+			const days = seed()?.intervalDays;
 			return days !== undefined && days !== 7 && days !== 14 && days !== 30 ? days : null;
 		})
 	);
 	let nextDate = $state<DateValue | undefined>(
-		untrack(() => (stream?.firstDate ? parseDate(stream.firstDate) : undefined))
+		untrack(() => (seed()?.firstDate ? parseDate(seed()!.firstDate) : undefined))
 	);
 	let nextDatePopoverOpen = $state(false);
 	let saving = $state(false);
@@ -123,6 +132,9 @@
 >
 	{#if stream}<input type="hidden" name="id" value={stream.id} />{/if}
 	<input type="hidden" name="firstDate" value={nextDateIso} />
+	{#each Object.entries(hidden ?? {}) as [name, value] (name)}
+		<input type="hidden" {name} {value} />
+	{/each}
 	{#if repeatChoice !== 'custom'}
 		<input type="hidden" name="intervalDays" value={repeatChoice} />
 	{/if}
@@ -136,7 +148,7 @@
 			maxlength={100}
 			autocomplete="off"
 			placeholder={kind === 'income' ? 'Pay cheque' : 'Rent'}
-			value={stream?.name ?? ''}
+			value={seed()?.name ?? ''}
 			aria-invalid={errorFor('name') ? true : undefined}
 			aria-describedby={describedBy('name')}
 		/>

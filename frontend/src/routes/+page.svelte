@@ -156,7 +156,8 @@
 						<InstallPrompt />
 					</div>
 					<p class="mt-4 max-w-xl text-sm text-muted-foreground">
-						Email and password only. No bank access, nothing sold, your data is yours alone.
+						Email and password only. No bank access, nothing sold, your data is yours alone. Import
+						a statement and it's read in your browser, never uploaded.
 					</p>
 					<IosInstallHint class="mt-6 max-w-xl" />
 				</div>

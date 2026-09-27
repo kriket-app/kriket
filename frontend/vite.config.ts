@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import adapter from '@sveltejs/adapter-node';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [
@@ -26,5 +26,10 @@ export default defineConfig({
 			// `vite preview` (used by e2e tests) can reach the backend too.
 			'/api': 'http://localhost:3001'
 		}
+	},
+	test: {
+		// The import pipeline is pure TypeScript; component tests would need a browser and are not here.
+		include: ['src/**/*.test.ts'],
+		environment: 'node'
 	}
 });

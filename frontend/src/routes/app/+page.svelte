@@ -62,8 +62,9 @@
 					is heading: worst case, usual, and best case.
 				</Card.Description>
 			</Card.Header>
-			<Card.Content>
-				<Button href="/app/income" class="self-start">Add your income<ArrowRight /></Button>
+			<Card.Content class="flex flex-wrap gap-3">
+				<Button href="/app/income">Add your income<ArrowRight /></Button>
+				<Button href="/app/import" variant="outline">Import a statement</Button>
 			</Card.Content>
 		</Card.Root>
 	{/if}

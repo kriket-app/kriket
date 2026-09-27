@@ -16,6 +16,7 @@ import forecastRouter from './routes/forecast.js';
 import pushRouter from './routes/push.js';
 import comingUpRouter from './routes/coming-up.js';
 import goalsRouter from './routes/goals.js';
+import onboardingRouter from './routes/onboarding.js';
 import { InvalidInputError, NotFoundError } from './services/errors.js';
 
 const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
@@ -59,6 +60,7 @@ export function createApp() {
 	app.use('/api', pushRouter);
 	app.use('/api', comingUpRouter);
 	app.use('/api', goalsRouter);
+	app.use('/api', onboardingRouter);
 
 	// Swagger UI with the spec generated from the route registry.
 	const spec = buildOpenApiDocument();

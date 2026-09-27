@@ -18,3 +18,9 @@ export type ActionState =
 	| { ok?: boolean; action?: string; values?: Record<string, string>; details?: FieldError[] }
 	| null
 	| undefined;
+
+/** What a new stream's form is prefilled with (an import draft): the fields, without an id. */
+export type StreamSeed = Pick<
+	Stream,
+	'name' | 'tagId' | 'minCents' | 'maxCents' | 'actualCents' | 'intervalDays' | 'firstDate'
+>;

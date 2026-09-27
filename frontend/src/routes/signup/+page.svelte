@@ -89,6 +89,14 @@
 				<Button type="submit" size="lg" class="w-full" disabled={submitting}>
 					{submitting ? 'Creating account…' : 'Create account'}
 				</Button>
+				<p class="text-center text-xs text-muted-foreground">
+					By creating an account you agree to the
+					<a href="/terms" class="font-medium text-brand-strong hover:underline">terms of use</a>
+					and the
+					<a href="/privacy" class="font-medium text-brand-strong hover:underline"
+						>privacy statement</a
+					>. You'll confirm both again during setup.
+				</p>
 			</form>
 		</Card.Content>
 		<Card.Footer class="justify-center text-sm text-muted-foreground">

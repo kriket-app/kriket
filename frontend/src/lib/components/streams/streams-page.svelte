@@ -41,6 +41,12 @@
 	<div>
 		<h1 class="text-2xl font-semibold tracking-tight">{copy.title}</h1>
 		<p class="mt-1 text-sm text-muted-foreground">{copy.subtitle}</p>
+		<a
+			href="/app/import"
+			class="mt-1 inline-block text-sm text-brand-strong underline-offset-4 hover:underline"
+		>
+			Import from a statement
+		</a>
 	</div>
 	{@render addButton()}
 </div>
