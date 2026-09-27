@@ -21,32 +21,30 @@
 	let busy = $state(false);
 
 	onMount(() => {
-		if (!pushSupported()) {
-			status = 'unsupported';
-			return;
-		}
 		// The server runs without VAPID keys until push is configured (production
-		// included): render nothing instead of a button that can only fail. This
-		// check comes before the permission check so the card also stays hidden
-		// where notifications are blocked but there is nothing to enable.
+		// included): render nothing instead of a button that can only fail. The
+		// config comes first, before browser support and permission, so the card
+		// stays hidden everywhere while push is off, and nothing flashes while it
+		// loads. A config request that fails also hides it.
 		void pushConfig()
-			.then((config) => {
+			.then(async (config) => {
 				if (!config.enabled) {
 					status = 'disabled';
-					return null;
+					return;
+				}
+				if (!pushSupported()) {
+					status = 'unsupported';
+					return;
 				}
 				if (Notification.permission === 'denied') {
 					status = 'denied';
-					return null;
+					return;
 				}
-				return currentSubscription();
-			})
-			.then((sub) => {
-				if (sub === null) return; // disabled or denied above
+				const sub = await currentSubscription().catch(() => null);
 				status = sub ? 'subscribed' : 'unsubscribed';
 			})
 			.catch(() => {
-				status = 'unsubscribed';
+				status = 'disabled';
 			});
 	});
 
@@ -100,7 +98,7 @@
 	const showIosHint = $derived(isIos() && !isInstalled());
 </script>
 
-{#if status !== 'disabled'}
+{#if status !== 'disabled' && status !== 'loading'}
 	<Card.Root>
 		<Card.Header>
 			<Card.Title class="flex items-center gap-2 text-base">
@@ -112,24 +110,22 @@
 				Notifications
 			</Card.Title>
 			<Card.Description>
-				Switch notifications on for this device, then check delivery with a test. Automatic forecast
-				alerts are next; nothing is sent on its own yet.
+				Get a heads-up on this device when your expected balance is about to drop below zero in the
+				coming week.
 			</Card.Description>
 		</Card.Header>
 		<Card.Content class="grid gap-3">
 			{#if status === 'unsupported'}
+				<!-- iPhone and iPad Safari expose push only to apps added to the Home Screen. -->
 				<p class="text-sm text-muted-foreground">
-					This browser doesn't support push notifications. Try Chrome, Edge, or Safari.
+					{#if showIosHint}
+						On iPhone and iPad, notifications need kriket on your Home Screen first: tap Share, then
+						Add to Home Screen, then open kriket from there and turn them on here.
+					{:else}
+						This browser doesn't support push notifications. Try Chrome, Edge, Firefox, or Safari.
+					{/if}
 				</p>
-			{:else if status === 'loading'}
-				<p class="text-sm text-muted-foreground">Checking notification status…</p>
 			{:else}
-				{#if showIosHint}
-					<p class="text-sm text-muted-foreground">
-						On iPhone, notifications need kriket installed first: Share → Add to Home Screen, then
-						open it from your Home Screen and enable here.
-					</p>
-				{/if}
 				{#if status === 'denied'}
 					<p class="text-sm text-muted-foreground">
 						Notifications are blocked for this site. Allow them in your browser's site settings,
