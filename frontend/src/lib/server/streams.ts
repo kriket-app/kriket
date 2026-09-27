@@ -16,28 +16,41 @@ export const streamsLoad = (kind: StreamKind) => async (event: RequestEvent) => 
 	return { kind, streams: dataOf(streams).streams, tags: dataOf(tags).tags };
 };
 
-// The amount inputs are in dollars; the API's matching fields are in cents.
-const amountFields = [
-	['minimum', 'minCents'],
-	['usual', 'actualCents'],
-	['maximum', 'maxCents']
-] as const;
-
-/** The API body from the stream form, or the fields whose dollar amounts do not parse. */
+/**
+ * The API body from the stream form, or the fields whose dollar amounts do not parse.
+ *
+ * The form only ever asks for `usual`; `minimum` and `maximum` appear in the form data at all
+ * only when "Add a range" was open at submit time (the fields unmount when it's closed). So the
+ * action always sends all three amounts to the API, with min = max = the usual amount whenever
+ * no range was given.
+ */
 function streamBody(values: Record<string, string>) {
 	const details: FieldError[] = [];
-	const cents = { minCents: 0, actualCents: 0, maxCents: 0 };
-	for (const [input, field] of amountFields) {
-		const parsed = parseDollars(values[input] ?? '');
-		if (parsed === null) details.push({ path: field, message: 'Enter an amount like 800.00' });
-		else cents[field] = parsed;
+	const actualCents = parseDollars(values.usual ?? '');
+	if (actualCents === null) {
+		details.push({ path: 'actualCents', message: 'Enter an amount like 85.00' });
 	}
+
+	const rangeGiven = values.minimum !== undefined || values.maximum !== undefined;
+	let minCents = actualCents ?? 0;
+	let maxCents = actualCents ?? 0;
+	if (rangeGiven) {
+		const min = parseDollars(values.minimum ?? '');
+		if (min === null) details.push({ path: 'minCents', message: 'Enter an amount like 60.00' });
+		else minCents = min;
+		const max = parseDollars(values.maximum ?? '');
+		if (max === null) details.push({ path: 'maxCents', message: 'Enter an amount like 120.00' });
+		else maxCents = max;
+	}
+
 	if (details.length) return { details };
 	return {
 		body: {
 			name: values.name ?? '',
 			tagId: values.tagId || null,
-			...cents,
+			minCents,
+			actualCents: actualCents!,
+			maxCents,
 			intervalDays: Number(values.intervalDays),
 			firstDate: values.firstDate ?? ''
 		}

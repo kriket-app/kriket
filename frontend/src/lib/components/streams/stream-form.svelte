@@ -1,14 +1,16 @@
 <script lang="ts">
+	import { parseDate, type DateValue } from '@internationalized/date';
 	import type { SubmitFunction } from '@sveltejs/kit';
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import type { FieldError, Stream, StreamKind, Tag } from '$lib/api/types';
 	import TagDot from '$lib/components/tag-dot.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Calendar } from '$lib/components/ui/calendar';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import * as Popover from '$lib/components/ui/popover';
 	import * as Select from '$lib/components/ui/select';
-	import { today } from '$lib/dates';
 	import { centsToDollars } from '$lib/money';
 
 	let {
@@ -29,19 +31,66 @@
 	} = $props();
 
 	const id = $props.id();
-	const INTERVAL_PRESETS = [7, 14, 30, 365];
+
+	const REPEAT_OPTIONS = [
+		{ days: 7, label: 'Weekly' },
+		{ days: 14, label: 'Every 2 weeks' },
+		{ days: 30, label: 'Monthly' }
+	] as const;
+	type RepeatChoice = 7 | 14 | 30 | 'custom';
 
 	// The form mounts fresh each time its dialog opens, so it starts from the stream as it is then.
 	let tagId = $state(untrack(() => stream?.tagId ?? ''));
-	let intervalDays = $state<number | null>(untrack(() => stream?.intervalDays ?? null));
+	let usual = $state(untrack(() => (stream ? centsToDollars(stream.actualCents) : '')));
+	let minimum = $state(untrack(() => (stream ? centsToDollars(stream.minCents) : '')));
+	let maximum = $state(untrack(() => (stream ? centsToDollars(stream.maxCents) : '')));
+	let rangeOpen = $state(
+		untrack(() =>
+			stream
+				? stream.minCents !== stream.actualCents || stream.maxCents !== stream.actualCents
+				: false
+		)
+	);
+	let repeatChoice = $state<RepeatChoice>(
+		untrack(() => {
+			const days = stream?.intervalDays;
+			if (days === 7 || days === 14 || days === 30) return days;
+			return days === undefined ? 7 : 'custom';
+		})
+	);
+	let customDays = $state<number | null>(
+		untrack(() => {
+			const days = stream?.intervalDays;
+			return days !== undefined && days !== 7 && days !== 14 && days !== 30 ? days : null;
+		})
+	);
+	let nextDate = $state<DateValue | undefined>(
+		untrack(() => (stream?.firstDate ? parseDate(stream.firstDate) : undefined))
+	);
+	let nextDatePopoverOpen = $state(false);
 	let saving = $state(false);
 	// Only messages from a submit made since this form mounted: a reopened dialog starts clean.
 	let submitted = $state(false);
 
+	const nextDateIso = $derived(nextDate?.toString() ?? '');
 	const selectedTag = $derived(tags.find((tag) => tag.id === tagId));
 	const errorFor = (path: string) =>
 		submitted ? details?.find((detail) => detail.path === path)?.message : undefined;
 	const describedBy = (path: string) => (errorFor(path) ? `${id}-${path}-error` : undefined);
+
+	const dateButtonFormat = new Intl.DateTimeFormat('en-CA', {
+		month: 'short',
+		day: 'numeric',
+		year: 'numeric',
+		timeZone: 'UTC'
+	});
+	const formatNextDate = (date: DateValue) => dateButtonFormat.format(date.toDate('UTC'));
+
+	function openRange() {
+		if (!minimum) minimum = usual;
+		if (!maximum) maximum = usual;
+		rangeOpen = true;
+	}
 
 	const submit: SubmitFunction = () => {
 		saving = true;
@@ -62,24 +111,6 @@
 	{/if}
 {/snippet}
 
-{#snippet amount(name: string, label: string, path: string, cents: number | undefined)}
-	<div class="grid content-start gap-2">
-		<Label for="{id}-{name}">{label}</Label>
-		<Input
-			id="{id}-{name}"
-			{name}
-			inputmode="decimal"
-			placeholder="800.00"
-			autocomplete="off"
-			required
-			value={cents === undefined ? '' : centsToDollars(cents)}
-			aria-invalid={errorFor(path) ? true : undefined}
-			aria-describedby={describedBy(path)}
-		/>
-		{@render fieldError(path)}
-	</div>
-{/snippet}
-
 <form
 	method="POST"
 	action={stream ? '?/update' : '?/create'}
@@ -87,6 +118,10 @@
 	class="grid gap-4"
 >
 	{#if stream}<input type="hidden" name="id" value={stream.id} />{/if}
+	<input type="hidden" name="firstDate" value={nextDateIso} />
+	{#if repeatChoice !== 'custom'}
+		<input type="hidden" name="intervalDays" value={repeatChoice} />
+	{/if}
 
 	<div class="grid gap-2">
 		<Label for="{id}-name">Name</Label>
@@ -102,6 +137,93 @@
 			aria-describedby={describedBy('name')}
 		/>
 		{@render fieldError('name')}
+	</div>
+
+	<div class="grid gap-2">
+		<Label for="{id}-usual">Usual amount</Label>
+		<Input
+			id="{id}-usual"
+			name="usual"
+			inputmode="decimal"
+			placeholder="85.00"
+			autocomplete="off"
+			required
+			bind:value={usual}
+			aria-invalid={errorFor('actualCents') ? true : undefined}
+			aria-describedby={describedBy('actualCents') ?? `${id}-usual-hint`}
+		/>
+		<p id="{id}-usual-hint" class="text-xs text-muted-foreground">Just the usual is enough</p>
+		{@render fieldError('actualCents')}
+	</div>
+
+	<div class="grid gap-2">
+		<Label id="{id}-repeat-label">Repeats</Label>
+		<div class="flex flex-wrap gap-1" role="group" aria-labelledby="{id}-repeat-label">
+			{#each REPEAT_OPTIONS as option (option.days)}
+				<Button
+					type="button"
+					size="sm"
+					variant={repeatChoice === option.days ? 'default' : 'outline'}
+					aria-pressed={repeatChoice === option.days}
+					onclick={() => (repeatChoice = option.days)}
+				>
+					{option.label}
+				</Button>
+			{/each}
+			<Button
+				type="button"
+				size="sm"
+				variant={repeatChoice === 'custom' ? 'default' : 'outline'}
+				aria-pressed={repeatChoice === 'custom'}
+				onclick={() => (repeatChoice = 'custom')}
+			>
+				Every N days
+			</Button>
+		</div>
+		{#if repeatChoice === 'custom'}
+			<div class="grid gap-2">
+				<Label for="{id}-repeat-days">Days</Label>
+				<Input
+					id="{id}-repeat-days"
+					name="intervalDays"
+					type="number"
+					min="1"
+					max="366"
+					step="1"
+					required
+					class="w-24"
+					bind:value={customDays}
+					aria-invalid={errorFor('intervalDays') ? true : undefined}
+					aria-describedby={describedBy('intervalDays')}
+				/>
+			</div>
+		{/if}
+		{@render fieldError('intervalDays')}
+	</div>
+
+	<div class="grid gap-2">
+		<Label id="{id}-next-date-label">Next date</Label>
+		<Popover.Root bind:open={nextDatePopoverOpen}>
+			<Popover.Trigger
+				aria-labelledby="{id}-next-date-label"
+				aria-invalid={errorFor('firstDate') ? true : undefined}
+				aria-describedby={describedBy('firstDate')}
+				class="flex h-9 w-full items-center rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"
+			>
+				{nextDate ? formatNextDate(nextDate) : 'Pick a date'}
+			</Popover.Trigger>
+			<Popover.Content class="w-auto p-0">
+				<Calendar
+					type="single"
+					value={nextDate}
+					onValueChange={(value) => {
+						nextDate = value;
+						nextDatePopoverOpen = false;
+					}}
+				/>
+			</Popover.Content>
+		</Popover.Root>
+		{@render fieldError('firstDate')}
 	</div>
 
 	<div class="grid gap-2">
@@ -133,55 +255,57 @@
 		{@render fieldError('tagId')}
 	</div>
 
-	<div class="grid grid-cols-3 gap-3">
-		{@render amount('minimum', 'Minimum', 'minCents', stream?.minCents)}
-		{@render amount('usual', 'Usual', 'actualCents', stream?.actualCents)}
-		{@render amount('maximum', 'Maximum', 'maxCents', stream?.maxCents)}
-	</div>
-
 	<div class="grid gap-2">
-		<Label for="{id}-interval">Repeats every (days)</Label>
-		<div class="flex flex-wrap items-center gap-2">
-			<Input
-				id="{id}-interval"
-				name="intervalDays"
-				type="number"
-				min="1"
-				max="366"
-				step="1"
-				placeholder="14"
-				required
-				class="w-24"
-				bind:value={intervalDays}
-				aria-invalid={errorFor('intervalDays') ? true : undefined}
-				aria-describedby={describedBy('intervalDays')}
-			/>
-			<div class="flex gap-1" role="group" aria-label="Common intervals, in days">
-				{#each INTERVAL_PRESETS as days (days)}
-					<Button
-						size="xs"
-						variant={intervalDays === days ? 'default' : 'outline'}
-						aria-pressed={intervalDays === days}
-						onclick={() => (intervalDays = days)}>{days}</Button
-					>
-				{/each}
+		{#if !rangeOpen}
+			<Button type="button" variant="link" class="justify-start px-0" onclick={openRange}>
+				Add a range
+			</Button>
+			<p class="text-xs text-muted-foreground">
+				If you skip this, minimum and maximum equal the usual amount
+			</p>
+		{:else}
+			<Button
+				type="button"
+				variant="link"
+				class="justify-start px-0"
+				aria-expanded="true"
+				onclick={() => (rangeOpen = false)}
+			>
+				Add a range
+			</Button>
+			<div class="grid grid-cols-2 gap-3">
+				<div class="grid content-start gap-2">
+					<Label for="{id}-minimum">Minimum</Label>
+					<Input
+						id="{id}-minimum"
+						name="minimum"
+						inputmode="decimal"
+						placeholder="60.00"
+						autocomplete="off"
+						required
+						bind:value={minimum}
+						aria-invalid={errorFor('minCents') ? true : undefined}
+						aria-describedby={describedBy('minCents')}
+					/>
+					{@render fieldError('minCents')}
+				</div>
+				<div class="grid content-start gap-2">
+					<Label for="{id}-maximum">Maximum</Label>
+					<Input
+						id="{id}-maximum"
+						name="maximum"
+						inputmode="decimal"
+						placeholder="120.00"
+						autocomplete="off"
+						required
+						bind:value={maximum}
+						aria-invalid={errorFor('maxCents') ? true : undefined}
+						aria-describedby={describedBy('maxCents')}
+					/>
+					{@render fieldError('maxCents')}
+				</div>
 			</div>
-		</div>
-		{@render fieldError('intervalDays')}
-	</div>
-
-	<div class="grid gap-2">
-		<Label for="{id}-first-date">First payment date</Label>
-		<Input
-			id="{id}-first-date"
-			name="firstDate"
-			type="date"
-			required
-			value={stream?.firstDate ?? today()}
-			aria-invalid={errorFor('firstDate') ? true : undefined}
-			aria-describedby={describedBy('firstDate')}
-		/>
-		{@render fieldError('firstDate')}
+		{/if}
 	</div>
 
 	<div class="flex justify-end">
