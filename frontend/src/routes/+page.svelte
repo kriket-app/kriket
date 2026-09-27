@@ -73,8 +73,8 @@
 		},
 		{
 			icon: Target,
-			title: 'Goals are next on the list',
-			body: 'Tell it the number and the date, and it says what has to change: two more shifts, or a grocery run closer to your minimum.'
+			title: 'Goals: a number and a date',
+			body: "Tell kriket what you're saving for, how much you want to have, and by when. It reads your forecast on that day and says whether you get there, and by how much."
 		}
 	];
 

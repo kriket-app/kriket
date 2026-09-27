@@ -50,6 +50,13 @@
       "when": 1790480410375,
       "tag": "0006_glossy_lady_ursula",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790482728723,
+      "tag": "0007_chief_hammerhead",
+      "breakpoints": true
     }
   ]
 }

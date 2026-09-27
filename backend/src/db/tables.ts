@@ -102,3 +102,20 @@ export const forecastAlerts = pgTable('forecast_alerts', {
 	sentOn: date('sent_on', { mode: 'string' }).notNull(),
 	...timestamps()
 });
+
+// Goals are balances to reach on a date, not money set aside: the forecast is
+// unchanged and the status compares the forecast's point on targetDate.
+// Multiple goals per user; the overview shows the closest three by date.
+export const goals = pgTable(
+	'goals',
+	{
+		id: idColumn(),
+		userId: userIdColumn(),
+		name: text('name').notNull(),
+		description: text('description'),
+		amountCents: integer('amount_cents').notNull(),
+		targetDate: date('target_date', { mode: 'string' }).notNull(),
+		...timestamps()
+	},
+	(t) => [index('goals_user_idx').on(t.userId)]
+);
