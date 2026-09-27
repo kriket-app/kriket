@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Check } from '@lucide/svelte';
+	import { tick } from 'svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import * as Popover from '$lib/components/ui/popover';
@@ -62,11 +63,17 @@
 
 	const sliderColor = $derived(hueToHex(hue));
 
-	function pick(color: string) {
+	/**
+	 * Sets the value, waits for the hidden input's DOM to actually carry it (Svelte flushes state
+	 * updates asynchronously), and only then tells the caller — a caller that submits its form on
+	 * `onchange` would otherwise send the previous colour.
+	 */
+	async function pick(color: string) {
 		value = color;
 		hexDraft = color;
-		onchange?.(color);
 		open = false;
+		await tick();
+		onchange?.(color);
 	}
 
 	/** Applies the hex field on blur or Enter; an invalid draft reverts rather than committing. */
