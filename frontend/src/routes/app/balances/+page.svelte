@@ -43,22 +43,25 @@
 <div class="mt-2 flex flex-wrap items-center justify-between gap-3">
 	<h1 class="text-2xl font-semibold tracking-tight">Your balances</h1>
 	{#if data.forecast}
+		{@const currentId = data.checkins[data.selectedIndex].id}
 		<nav class="flex items-center gap-1" aria-label="Check-in">
 			<Button
-				href={data.previousId ? href(data.previousId) : undefined}
+				href={href(data.previousId ?? currentId)}
 				variant="outline"
 				size="icon-sm"
 				disabled={!data.previousId}
 				aria-label="Previous check-in"
+				class="aria-disabled:pointer-events-none aria-disabled:opacity-50"
 			>
 				<ChevronLeft />
 			</Button>
 			<Button
-				href={data.nextId ? href(data.nextId) : undefined}
+				href={href(data.nextId ?? currentId)}
 				variant="outline"
 				size="icon-sm"
 				disabled={!data.nextId}
 				aria-label="Next check-in"
+				class="aria-disabled:pointer-events-none aria-disabled:opacity-50"
 			>
 				<ChevronRight />
 			</Button>
