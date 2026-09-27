@@ -114,8 +114,8 @@ The data model on the board: an income or expense stream has a minimum, maximum,
 days between payments, a first payment date, and a tag. A goal has an amount, a start, and an end. A tag has a
 name.
 
-The **$** beside items 4 and 8 is never explained in any source. My guess is that it marks paid-tier features,
-which would make goals and goal suggestions the business model. Erik, please confirm or correct.
+The **$** beside items 4 and 8 marks the features the founders saw as ones that could potentially be monetized
+(Erik, 2026-09-26). Both are about goals: setting one, and suggestions on how to reach it.
 
 ## What the pitch feedback added
 
@@ -210,8 +210,9 @@ the competitors are:
 
 1. **Forecast or goal coach?** The heart of the pitch is goals plus range-based nudges. The product built so far
    is a cash-flow forecast ("am I going to be OK?"). Goals were deferred twice and now have a plan for
-   iteration 3. These are different products
-   with different competitors: runway and overdraft-avoidance tools versus savings-goal apps.
+   iteration 3. Goals are also the part the founders marked as potentially monetizable, so the free core that is
+   built and the part that might earn money are not the same thing. These are different products with different
+   competitors: runway and overdraft-avoidance tools versus savings-goal apps.
 2. **Set-and-forget or check-in habit?** The pitch promised you could enter your streams once and then just read
    notifications. Iteration 2 asks for a recurring balance check-in. It is small, but it is a habit to form, and
    the persona is defined by not having that habit.
@@ -232,13 +233,15 @@ the competitors are:
 - **Canada first** (my inference): CAD only, a Big Five bank as the reference point, retirement savings named as
   something the persona ignores, and times computed in Saskatoon's zone. The Canadian open-banking situation
   matters for automatic subscription reminders (whiteboard item 9) and for any bank connection.
-- **Business model:** nothing stated. The repo is open source. The **$** marks on the whiteboard suggest goals
-  and suggestions as paid features.
+- **Business model:** goals and goal suggestions are the features the founders marked as potentially monetizable.
+  The repo is open source. Nothing else is decided. Questions for research:
+  - Will a persona defined by running short of money pay at all?
+  - Does the core forecast stay free?
+  - Would someone other than the user pay (an employer of shift workers, a credit union, a campus)?
 - **Growth:** the feedback hinted at peers bringing peers (classmates, co-workers on the same shifts).
 
 ## What I could not tell from the sources
 
-- What the **$** marks mean.
 - Whether Canada is deliberately the first market or just where the team is.
 - How soon Theo needs the portfolio version presentable. His job search sets the deadline for the case study and
   a stable live demo.
@@ -246,7 +249,9 @@ the competitors are:
   personal use can stand in for user research.
 - Erik's role after Co.Hack: co-founder, adviser, or done after judging.
 
-(Answered since the first draft: kriket continues after Co.Hack. See "What Theo wants from it".)
+Answered since the first draft:
+- Kriket continues after Co.Hack. See "What Theo wants from it".
+- The **$** marks flag features that could potentially be monetized.
 
 ## Sources
 
