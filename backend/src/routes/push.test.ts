@@ -153,6 +153,38 @@ describe('/api/push', () => {
 		}
 	});
 
+	it('keeps a device after other failures, and gives tests a short lifetime', async () => {
+		enablePush();
+		try {
+			const a = testAgent();
+			await signUp(a, 'push7@example.com');
+			await a.post('/api/push/subscriptions').send(subscription(FCM));
+			sendMock.mockRejectedValueOnce(Object.assign(new Error('boom'), { statusCode: 500 }));
+			const res = await a.post('/api/push/test').send({ title: 'Hello', body: 'World' });
+			expect(res.body).toEqual({ sent: 0, failed: 1 });
+			expect(sendMock.mock.calls[0][2]).toMatchObject({ TTL: 300, timeout: 10_000 });
+			expect((await a.get('/api/push/subscriptions')).body.subscriptions).toHaveLength(1);
+		} finally {
+			delete process.env.VAPID_PUBLIC_KEY;
+			delete process.env.VAPID_PRIVATE_KEY;
+		}
+	});
+
+	it('only lets a test notification open a page inside the app', async () => {
+		enablePush();
+		try {
+			const a = testAgent();
+			await signUp(a, 'push8@example.com');
+			for (const url of ['https://evil.example.com', '//evil.example.com', 'app', '/\\evil.com']) {
+				expect((await a.post('/api/push/test').send({ url })).status).toBe(400);
+			}
+			expect((await a.post('/api/push/test').send({ url: '/app/income' })).status).toBe(200);
+		} finally {
+			delete process.env.VAPID_PUBLIC_KEY;
+			delete process.env.VAPID_PRIVATE_KEY;
+		}
+	});
+
 	it('isolates subscriptions between users', async () => {
 		enablePush();
 		try {

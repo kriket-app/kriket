@@ -58,12 +58,19 @@ export const PushUnsubscribeBody = registry.register(
 	z.object({ endpoint: z.string().url().max(2000) })
 );
 
+// A path inside the app, never another origin: the service worker opens it when the
+// notification is tapped.
+const appPath = z
+	.string()
+	.max(2000)
+	.regex(/^\/(?![/\\])/, 'must be a path inside the app, starting with a single /');
+
 export const PushTestBody = registry.register(
 	'PushTestBody',
 	z.object({
 		title: z.string().trim().min(1).max(120).default('Kriket test'),
 		body: z.string().trim().max(500).default('Notifications are working.'),
-		url: z.string().max(2000).default('/app')
+		url: appPath.default('/app')
 	})
 );
 
