@@ -12,5 +12,5 @@ test('a new user sees the four presets, and a tag opens its own page', async ({ 
 
 	await page.getByRole('link', { name: 'Bill' }).click();
 	await expect(page.getByRole('heading', { name: 'Bill' })).toBeVisible();
-	await expect(page.getByText(/no streams use this tag yet/i)).toBeVisible();
+	await expect(page.getByText('No streams yet.')).toBeVisible();
 });

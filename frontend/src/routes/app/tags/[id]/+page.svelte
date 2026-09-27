@@ -7,19 +7,22 @@
 
 	const totalCount = $derived(data.incomeStreams.length + data.expenseStreams.length);
 
+	// Only sum a single figure when every stream on the tag is the same kind AND shares an
+	// interval — never net income against expenses into one number (controller ruling R11).
 	const summary = $derived.by(() => {
-		const streamsWord = totalCount === 1 ? 'stream' : 'streams';
 		if (totalCount === 0) return 'No streams yet.';
+		const streamsWord = totalCount === 1 ? 'stream' : 'streams';
+		const sameKind = data.incomeStreams.length === 0 || data.expenseStreams.length === 0;
 		const intervals = new Set(
 			[...data.incomeStreams, ...data.expenseStreams].map((stream) => stream.intervalDays)
 		);
-		if (intervals.size === 1) {
+		if (sameKind && intervals.size === 1) {
 			const [interval] = intervals;
-			const totalIncome = data.incomeStreams.reduce((sum, stream) => sum + stream.actualCents, 0);
-			const totalExpense = data.expenseStreams.reduce((sum, stream) => sum + stream.actualCents, 0);
-			const net = totalExpense - totalIncome;
-			const direction = net < 0 ? 'in' : 'out';
-			return `${totalCount} ${streamsWord} · ${formatCents(Math.abs(net))} ${direction} every ${interval} days`;
+			const isIncome = data.expenseStreams.length === 0;
+			const streams = isIncome ? data.incomeStreams : data.expenseStreams;
+			const total = streams.reduce((sum, stream) => sum + stream.actualCents, 0);
+			const direction = isIncome ? 'in' : 'out';
+			return `${totalCount} ${streamsWord} · ${formatCents(total)} ${direction} every ${interval} days`;
 		}
 		return `${totalCount} ${streamsWord} · ${data.incomeStreams.length} in, ${data.expenseStreams.length} out`;
 	});
@@ -37,9 +40,7 @@
 </div>
 <p class="mt-1 text-sm text-muted-foreground">{summary}</p>
 
-{#if totalCount === 0}
-	<p class="mt-6 text-muted-foreground">No streams use this tag yet.</p>
-{:else}
+{#if totalCount > 0}
 	<ul class="mt-6 grid gap-4 md:grid-cols-2">
 		{#each data.incomeStreams as stream (stream.id)}
 			<li><StreamCard kind="income" {stream} tags={data.tags} {form} /></li>

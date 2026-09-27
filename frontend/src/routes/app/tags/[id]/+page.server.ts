@@ -1,9 +1,9 @@
 import { error } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import type { FieldError, StreamKind } from '$lib/api/types';
-import { parseDollars } from '$lib/money';
+import type { StreamKind } from '$lib/api/types';
 import { api, dataOf } from '$lib/server/api';
 import { actionResult, formValues, invalid } from '$lib/server/forms';
+import { streamBody } from '$lib/server/streams';
 
 export const load: PageServerLoad = async (event) => {
 	const client = api(event);
@@ -27,32 +27,6 @@ export const load: PageServerLoad = async (event) => {
 // edit/delete forms post to `?/update` and `?/delete` on whatever page renders them, without
 // saying which kind the stream is. This page shows both kinds together, so each action tries
 // the income endpoint first and falls back to the expense one on a 404.
-const amountFields = [
-	['minimum', 'minCents'],
-	['usual', 'actualCents'],
-	['maximum', 'maxCents']
-] as const;
-
-function streamBody(values: Record<string, string>) {
-	const details: FieldError[] = [];
-	const cents = { minCents: 0, actualCents: 0, maxCents: 0 };
-	for (const [input, field] of amountFields) {
-		const parsed = parseDollars(values[input] ?? '');
-		if (parsed === null) details.push({ path: field, message: 'Enter an amount like 800.00' });
-		else cents[field] = parsed;
-	}
-	if (details.length) return { details };
-	return {
-		body: {
-			name: values.name ?? '',
-			tagId: values.tagId || null,
-			...cents,
-			intervalDays: Number(values.intervalDays),
-			firstDate: values.firstDate ?? ''
-		}
-	};
-}
-
 type ApiResult = { data?: unknown; error?: unknown; response: Response };
 
 async function onStreamKind(run: (kind: StreamKind) => Promise<ApiResult>): Promise<ApiResult> {
