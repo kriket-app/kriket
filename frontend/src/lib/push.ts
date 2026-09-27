@@ -13,14 +13,10 @@ export function pushSupported() {
 	);
 }
 
-/** iOS and iPadOS only support push for apps added to the Home Screen. */
+/** iOS Safari only supports push for apps installed to the Home Screen. */
 export function isIos() {
 	if (typeof navigator === 'undefined') return false;
-	// iPadOS reports itself as a Mac; touch support gives it away.
-	return (
-		/iphone|ipad|ipod/i.test(navigator.userAgent) ||
-		(navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-	);
+	return /iphone|ipad|ipod/i.test(navigator.userAgent);
 }
 
 export function isInstalled() {

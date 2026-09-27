@@ -1,10 +1,9 @@
 import 'dotenv/config';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { pino } from 'pino';
 import { createApp } from './app.js';
 import { db, pool } from './db/index.js';
 import { validateEnv } from './env.js';
-import { logger } from './logger.js';
-import { startForecastAlerts } from './services/alerts.js';
 
 const env = validateEnv();
 if (!env.success) {
@@ -16,6 +15,7 @@ if (!env.success) {
 }
 
 const port = env.data.PORT;
+const logger = pino({ level: env.data.LOG_LEVEL ?? 'info' });
 
 async function main() {
 	await migrate(db, { migrationsFolder: './drizzle' });
@@ -23,12 +23,9 @@ async function main() {
 	const server = app.listen(port, () => {
 		logger.info({ port }, 'Backend listening');
 	});
-	// Low-balance push alerts; each sweep is a no-op while the VAPID keys are unset.
-	const stopAlerts = startForecastAlerts();
 
 	const shutdown = (signal: NodeJS.Signals) => {
 		logger.info({ signal }, 'Shutting down');
-		stopAlerts();
 		server.close(async () => {
 			await pool.end();
 			logger.info('Shutdown complete');

@@ -165,18 +165,7 @@ interface PushPayload {
 	title?: string;
 	body?: string;
 	url?: string;
-}
-
-/** `path` as a URL on this origin; anything pointing elsewhere opens the overview instead. */
-function appUrl(path: string | undefined) {
-	const origin = self.location.origin;
-	try {
-		const url = new URL(path ?? '/app', origin);
-		if (url.origin === origin) return url.href;
-	} catch {
-		// Not a URL at all: fall through to the overview.
-	}
-	return new URL('/app', origin).href;
+	count?: number;
 }
 
 // Web Push: the backend sends `{ title, body, url }` as JSON.
@@ -191,35 +180,38 @@ self.addEventListener('push', (event) => {
 	const title = data.title ?? 'Kriket';
 	const options: NotificationOptions & { vibrate?: number[] } = {
 		body: data.body ?? 'Something changed in your forecast.',
-		icon: '/icon-192.png',
-		badge: '/icon-192.png',
-		data: { url: appUrl(data.url) }
+		icon: '/Kriket192x192.png',
+		badge: '/Kriket192x192.png',
+		data: { url: data.url ?? '/app' }
 	};
 	e.waitUntil(
-		(self as unknown as ServiceWorkerGlobalScope).registration.showNotification(title, options)
+		(async () => {
+			const scope = self as unknown as ServiceWorkerGlobalScope;
+			await scope.registration.showNotification(title, options);
+			// App icon badge (supported on Android/iOS-installed apps, no-op
+			// elsewhere). Cleared whenever the app is opened (see +layout).
+			(scope.navigator as Navigator & { setAppBadge?: (count: number) => Promise<void> })
+				.setAppBadge?.(data.count ?? 1)
+				?.catch(() => undefined);
+		})()
 	);
 });
 
 self.addEventListener('notificationclick', (event) => {
 	const e = event as NotificationEvent;
 	e.notification.close();
-	const target = appUrl((e.notification.data as { url?: string } | undefined)?.url);
+	const url = (e.notification.data as { url?: string } | undefined)?.url ?? '/app';
 	e.waitUntil(
 		(async () => {
 			const scope = self as unknown as ServiceWorkerGlobalScope;
 			const windows = await scope.clients.matchAll({ type: 'window', includeUncontrolled: true });
-			// Reuse an open kriket window: bring it forward and show the page the notification is about.
-			const open = windows.find((c) => new URL(c.url).origin === scope.location.origin) as
-				WindowClient | undefined;
-			if (open) {
-				const focused = await open.focus();
-				if (new URL(focused.url).pathname !== new URL(target).pathname) {
-					// navigate() needs a window this worker controls; otherwise focusing is enough.
-					await focused.navigate(target).catch(() => undefined);
+			for (const client of windows) {
+				const c = client as WindowClient;
+				if (c.url.includes(new URL(url, scope.location.origin).pathname) && 'focus' in c) {
+					return c.focus();
 				}
-				return;
 			}
-			await scope.clients.openWindow(target);
+			if (scope.clients.openWindow) return scope.clients.openWindow(url);
 		})()
 	);
 });

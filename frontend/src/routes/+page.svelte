@@ -2,6 +2,7 @@
 	import { ChartLine, Repeat, Target } from '@lucide/svelte';
 	import BrandMark from '$lib/components/brand-mark.svelte';
 	import ForecastChart from '$lib/components/forecast-chart.svelte';
+	import InstallPrompt from '$lib/components/install-prompt.svelte';
 	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
@@ -84,7 +85,9 @@
 </svelte:head>
 
 <div class="min-h-dvh bg-background text-foreground">
-	<header class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+	<header
+		class="pt-safe mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6"
+	>
 		<a href="/" class="flex items-center gap-2 text-lg font-semibold">
 			<BrandMark class="size-7" /> kriket
 		</a>
@@ -116,6 +119,7 @@
 					<div class="mt-8 flex flex-wrap gap-3">
 						<Button href="/signup" size="lg" class="px-5">Get started</Button>
 						<Button href="#how" size="lg" variant="outline" class="px-5">See how it works</Button>
+						<InstallPrompt />
 					</div>
 				</div>
 

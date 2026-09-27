@@ -15,10 +15,9 @@
 	# filenames are unhashed, so immutable would pin stale artwork in installs.
 	header /service-worker.js Cache-Control "no-cache"
 	header /manifest.webmanifest Cache-Control "public, max-age=3600"
-	header /icon-*.png Cache-Control "public, max-age=86400"
-	header /maskable-512.png Cache-Control "public, max-age=86400"
-	header /apple-touch-icon.png Cache-Control "public, max-age=86400"
-	header /icon.svg Cache-Control "public, max-age=86400"
+	header /Kriket*.png Cache-Control "public, max-age=86400"
+	header /Kriket.svg Cache-Control "public, max-age=86400"
+	header /favicon.ico Cache-Control "public, max-age=86400"
 
 	handle /api/* {
 		reverse_proxy backend:3001

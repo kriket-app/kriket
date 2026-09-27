@@ -128,8 +128,7 @@ router.post('/push/test', requireAuth, validate({ body: PushTestBody }), async (
 		res.status(503).json({ message: 'Push notifications are not configured' });
 		return;
 	}
-	// A test that can't be delivered within five minutes is no longer a useful test.
-	res.json(await sendToUser(res.locals.user!.id, req.body, { ttlSeconds: 300 }));
+	res.json(await sendToUser(res.locals.user!.id, req.body));
 });
 
 export default router;

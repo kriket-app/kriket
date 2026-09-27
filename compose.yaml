@@ -41,12 +41,10 @@ services:
       CORS_ORIGINS: ${CORS_ORIGINS:-}
       PORT: 3001
       # Web Push (PWA notifications). Empty by default: push stays disabled until
-      # VAPID keys are provided via .env locally or the parameter store on the box
-      # (/xenia/app/VAPID_PUBLIC_KEY and so on). An empty subject means the app's own
-      # https URL (backend/src/services/push.ts).
+      # VAPID keys are provided via .env locally or the parameter store on the box.
       VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
       VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
-      VAPID_SUBJECT: ${VAPID_SUBJECT:-}
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-mailto:admin@example.com}
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3001/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 10s

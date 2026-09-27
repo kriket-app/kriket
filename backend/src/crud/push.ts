@@ -34,14 +34,6 @@ export async function removeSubscription(userId: string, endpoint: string) {
 	return row ?? null;
 }
 
-/** Every user with at least one device subscribed: the forecast alert sweep checks only these. */
-export async function listUserIdsWithSubscriptions() {
-	const rows = await db
-		.selectDistinct({ userId: pushSubscriptions.userId })
-		.from(pushSubscriptions);
-	return rows.map((row) => row.userId);
-}
-
 export async function removeSubscriptionByEndpoint(endpoint: string) {
 	await db.delete(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint));
 }

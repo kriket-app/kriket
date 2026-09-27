@@ -2,23 +2,31 @@
 	"name": "Kriket",
 	"short_name": "Kriket",
 	"description": "Budgeting for bumpy income.",
+	"lang": "en",
 	"id": "/app",
 	"start_url": "/app",
 	"scope": "/",
 	"display": "standalone",
 	"display_override": ["window-controls-overlay", "standalone"],
+	"launch_handler": { "client_mode": "focus-existing" },
 	"background_color": "#ffffff",
 	"theme_color": "#16a34a",
 	"categories": ["finance"],
 	"icons": [
-		{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-		{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-		{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+		{ "src": "/Kriket.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+		{ "src": "/Kriket192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+		{ "src": "/Kriket512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
 		{
-			"src": "/maskable-512.png",
+			"src": "/Kriket512-maskable.png",
 			"sizes": "512x512",
 			"type": "image/png",
 			"purpose": "maskable"
+		},
+		{
+			"src": "/Kriket512-mono.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "monochrome"
 		}
 	],
 	"shortcuts": [
@@ -27,21 +35,21 @@
 			"short_name": "Forecast",
 			"description": "See where your balance is heading.",
 			"url": "/app",
-			"icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+			"icons": [{ "src": "/Kriket192x192.png", "sizes": "192x192", "type": "image/png" }]
 		},
 		{
 			"name": "Add income",
 			"short_name": "Income",
 			"description": "Add an income stream.",
 			"url": "/app/income",
-			"icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+			"icons": [{ "src": "/Kriket192x192.png", "sizes": "192x192", "type": "image/png" }]
 		},
 		{
 			"name": "Add expenses",
 			"short_name": "Expenses",
 			"description": "Add an expense stream.",
 			"url": "/app/expenses",
-			"icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+			"icons": [{ "src": "/Kriket192x192.png", "sizes": "192x192", "type": "image/png" }]
 		}
 	]
 }
