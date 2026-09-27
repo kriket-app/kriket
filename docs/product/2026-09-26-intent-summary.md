@@ -1,7 +1,8 @@
 # Kriket: what we are building and why
 
 **What this is:** a summary of kriket's high-level intent, written by Claude on 2026-09-26 (evening of day 1)
-from everything the founders have said so far. It has two jobs. First, Erik checks whether it matches.
+from everything the founders have said so far. It was updated the same evening with Theo's goals for the project,
+as Erik relayed them. It has two jobs. First, Erik checks whether it matches.
 Second, once corrected, it is the starting brief for a fresh session on market research and product-market fit.
 Where a statement is my inference rather than something a founder said, it says so.
 
@@ -18,7 +19,51 @@ is heading in the worst, expected, and best case. The ledger is not the point. T
 to be OK, and will I reach my goal?", and then the nudge that follows: pick up a shift, go easier on groceries.
 Kriket should deliver this with as little typing as possible, in an interface pleasant enough that people come
 back. It started as a pitch at Co.Hack 2026 (Saskatoon, 26 and 27 September 2026) by Theo and Erik, who met that
-morning. The code is open source.
+morning. The code is open source. Theo wants three things from it: to use it himself, to turn it into a real
+product if the market supports one, and to show it in his portfolio while he applies for jobs.
+
+## What Theo wants from it
+
+Erik relayed this on the evening of 2026-09-26. Theo wants three things, listed from most certain to least:
+
+1. **To use it himself.** Theo is user zero, a daily tester who will notice what is missing. The trap: one
+   person's money is one data point. Before building a feature because Theo wants it, check that it also serves
+   the persona. No source says whether Theo's own income is bumpy.
+2. **To make it a real product, if possible.** "If possible" is the question the market-research session exists
+   to answer:
+   - Do enough people have this problem?
+   - Would they switch from what they use now (a bank app, a spreadsheet, or nothing)?
+   - Would anyone pay?
+   - What does it take to hold people's financial data responsibly?
+3. **To show it in his portfolio while he applies for jobs.** This makes the public repo, a live demo, and a
+   written case study deliverables in their own right, alongside the features.
+
+**What the three goals mean together:**
+
+- **The code carries on after the event; the event's hosting does not.** Today the app runs at
+  `app.26.cohack.tetl.ca` on Erik's Co.Hack kit, in an AWS account made for the event. As a safety measure, the
+  kit's post-event runbook shuts that account down and later closes it. By design the code outlives it, ready to
+  be picked up (Erik, 2026-09-26).
+  - The app itself is portable: `compose.yaml` runs it anywhere with Docker.
+  - Only the deploy workflow, `.github/workflows/deploy-docker-box.yml`, is tied to the kit.
+
+  Picking it up therefore means choosing a new host and replacing that one workflow. It also means knowing that
+  anything entered on the event's live app, including Theo's own numbers if he starts using it now, lives in the
+  event's database. There is no export yet. If the portfolio needs a link that never goes dark, pick the new host
+  before the event ends.
+- **Validation doubles as portfolio material.** A hiring manager learns more from "I interviewed shift workers,
+  found this, and changed that because of it" than from one more feature. Early user research serves the
+  product goal and the portfolio goal at once, so the two don't compete for time.
+- **Theo's own work should be easy to see.** AI agents wrote most of the code while the founders steered. For
+  job applications, what counts is the decisions and the parts Theo built himself: his product calls in the
+  iteration 2 proposal, the statement-import plan, and the PWA. It also counts that he can explain any part of the
+  code. A case study that walks from the pitch feedback through each iteration's decisions would tell that story.
+- **Open source can be a strength.** In consumer finance the code is not the moat; trust and reach are. Public
+  code plus Theo's planned local-only parsing make a privacy claim anyone can check. The portfolio needs the repo
+  public anyway.
+- **Ownership needs a conversation before this becomes a product.** The day-1 team terms were set for a
+  hackathon. A product needs Erik and Theo to agree who owns it, who runs it, and who pays for hosting. No source
+  states Erik's own role after Co.Hack.
 
 ## The problem, as the founders frame it
 
@@ -53,14 +98,14 @@ morning. The code is open source.
 
 ## The whiteboard: the first backlog (day 1 morning)
 
-| Item | What | Status as of this writing |
+| Item | What | Status on the evening of 2026-09-26 |
 |---|---|---|
-| 0 | Create, edit, delete tags, with presets | Built in iteration 1; reworked in iteration 2 |
+| 0 | Create, edit, delete tags, with presets | Built in iteration 1; reworked in iteration 2 (any colour, a page per tag) |
 | 1 | Income streams | Built |
 | 2 | Expense streams | Built |
-| 3 | See the forecast balance | Built; iteration 2 makes it the centre of the app |
-| 4 | Add a goal (marked **$**) | Deferred by Theo until after iteration 2; a plan is due then |
-| 5 | A mobile app | Theo's PWA, [PR 21](https://github.com/kriket-app/kriket/pull/21), queued for after iteration 2 |
+| 3 | See the forecast balance | Built; iteration 2 made it the centre of the app |
+| 4 | Add a goal (marked **$**) | Kept out of iteration 2 by Theo; planned for iteration 3 in `docs/plans/2026-09-27-goals.md` ([PR 33](https://github.com/kriket-app/kriket/pull/33)) |
+| 5 | A mobile app | Theo's PWA, [PR 21](https://github.com/kriket-app/kriket/pull/21), still open, queued behind iteration 2 |
 | 6, 7 | One-time expenses and incomes | Not started |
 | 8 | Suggestions on how to meet a goal (marked **$**) | Not started; needs goals |
 | 9 | Subscription reminders: manual, or automatic via a bank API, a subscription provider's API, or email | Not started |
@@ -130,17 +175,23 @@ session should treat them as hypotheses.
 
 ## Where the product is now
 
-Check before relying on this; it moves daily.
+This was true on the evening of 2026-09-26. Check `gh pr list --state all` before relying on it.
 
-- Iteration 1 (whiteboard items 0 to 3) is live at https://app.26.cohack.tetl.ca. Every merge to `main` deploys.
-- Iteration 2 is decided and being built task by task on `i2/*` branches (`docs/plans/2026-09-27-iteration-2-build.md`;
-  run `gh pr list --state all` for progress). It brings:
-  - an overview that leads with a sentence about the lowest point;
+- The app is live at https://app.26.cohack.tetl.ca, and every merge to `main` deploys. That hosting ends after
+  the event (see "What Theo wants from it").
+- Iteration 1 built whiteboard items 0 to 3.
+- Iteration 2 shipped that evening,
+  [PR 26](https://github.com/kriket-app/kriket/pull/26) to [PR 32](https://github.com/kriket-app/kriket/pull/32),
+  built from `docs/plans/2026-09-27-iteration-2-build.md`. It brought:
+  - an overview that leads with the check-in and a plain sentence about the lowest point;
   - colour with meaning;
   - a chart with a dot for every pay and bill;
-  - a balance check-in with history;
+  - a balance check-in with a history you can flip through;
   - shorter forms;
-  - a month-by-month "Coming up".
+  - a month-by-month "Coming up";
+  - a page per tag;
+  - a landing page that says what changed.
+- Goals, whiteboard item 4, have a plan for iteration 3 ([PR 33](https://github.com/kriket-app/kriket/pull/33)).
 - Not built yet: goals, suggestions, any low-lift import, notifications, subscription reminders, one-time items.
   So the two things the pitch and its feedback valued most, goal coaching and low-lift entry, are both still ahead.
 
@@ -158,7 +209,8 @@ Check before relying on this; it moves daily.
 the competitors are:
 
 1. **Forecast or goal coach?** The heart of the pitch is goals plus range-based nudges. The product built so far
-   is a cash-flow forecast ("am I going to be OK?"), and goals keep being deferred. These are different products
+   is a cash-flow forecast ("am I going to be OK?"). Goals were deferred twice and now have a plan for
+   iteration 3. These are different products
    with different competitors: runway and overdraft-avoidance tools versus savings-goal apps.
 2. **Set-and-forget or check-in habit?** The pitch promised you could enter your streams once and then just read
    notifications. Iteration 2 asks for a recurring balance check-in. It is small, but it is a habit to form, and
@@ -167,7 +219,7 @@ the competitors are:
    spreadsheet. Today the only way in is typing streams by hand.
 4. **Privacy versus convenience.** Theo's local-only, no-bank-connection stance is a strong trust story, but it
    gives up the lowest-lift option (automatic bank sync) that the feedback named first.
-5. **"Enjoyable" is mostly unbuilt.** Colour with meaning is coming. The character in the pitch (the cricket,
+5. **"Enjoyable" is mostly unbuilt.** Colour with meaning has shipped. The character in the pitch (the cricket,
    the hops, the small wins like catching a forgotten subscription) is not on any plan yet.
 
 **Untested assumptions a market-research session should check:**
@@ -186,10 +238,15 @@ the competitors are:
 
 ## What I could not tell from the sources
 
-- Whether kriket continues after Co.Hack: a venture, a side project, or a hackathon demo. This changes what
-  "market research" should mean (a real go-to-market versus a sharper judging pitch).
 - What the **$** marks mean.
 - Whether Canada is deliberately the first market or just where the team is.
+- How soon Theo needs the portfolio version presentable. His job search sets the deadline for the case study and
+  a stable live demo.
+- Whether Theo's own money looks like the persona's (bumpy income, no budgeting habit). That decides how far his
+  personal use can stand in for user research.
+- Erik's role after Co.Hack: co-founder, adviser, or done after judging.
+
+(Answered since the first draft: kriket continues after Co.Hack. See "What Theo wants from it".)
 
 ## Sources
 
@@ -214,4 +271,6 @@ merged. A possible opening prompt:
 > "Tensions" and "Untested assumptions" as the agenda. Help me work through market research and product-market
 > fit for kriket: who else serves young people with variable income (in Canada first), what they get wrong, which
 > of the tensions the evidence resolves, and what we would need to learn from real users before building goals or
-> statement import.
+> statement import. Theo wants to use kriket himself, make it a real product if the market supports one, and show
+> it in his portfolio while he applies for jobs. Weigh every recommendation against all three goals, and say when
+> they pull in different directions.
