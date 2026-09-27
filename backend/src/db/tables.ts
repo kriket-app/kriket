@@ -77,3 +77,16 @@ export const pushSubscriptions = pgTable(
 	},
 	(t) => [index('push_subscriptions_user_idx').on(t.userId)]
 );
+
+// The last low-balance heads-up sent to a user, one row per user. The alert sweep runs through
+// the day; this row makes it send each dip once and at most one alert a day.
+export const forecastAlerts = pgTable('forecast_alerts', {
+	userId: text('user_id')
+		.primaryKey()
+		.references(() => user.id, { onDelete: 'cascade' }),
+	// The first day the expected balance is below zero, as forecast when the alert went out.
+	dipDate: date('dip_date', { mode: 'string' }).notNull(),
+	// The day the alert went out, in the app's timezone (services/dates.ts).
+	sentOn: date('sent_on', { mode: 'string' }).notNull(),
+	...timestamps()
+});
