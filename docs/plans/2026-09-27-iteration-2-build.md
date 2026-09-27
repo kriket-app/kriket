@@ -72,9 +72,9 @@ type ComingUp = {
   today: string;        // YYYY-MM-DD
   firstMonth: string;   // month of the first check-in; today's month when there is none
   lastMonth: string;    // month containing today + 365 days
-  days: { date: string; past: boolean; events: ComingUpEvent[] }[];  // only days with events, ascending; past = date < today
-  inCents: number;      // sum of income actualCents on days >= today in this month
-  outCents: number;     // sum of expense actualCents on days >= today in this month
+  days: { date: string; past: boolean; events: ComingUpEvent[] }[];  // only days with events, ascending; past = before today, or already in the latest check-in
+  inCents: number;      // sum of income actualCents on days not past, in this month
+  outCents: number;     // sum of expense actualCents on days not past, in this month
   endBalanceCents: number | null;  // expected balance at the end of the month's last day, from the current forecast; null if that day is before today
 };
 ```
@@ -92,6 +92,8 @@ type ComingUp = {
 **Which check-in anchors a forecast:** without `checkinId`, the latest one, and the forecast is *rolled forward*: computed from its `checkedOn` and trimmed so `startDate = today()` and `endDate = today() + days` (points and events before today dropped). With `checkinId` of an older check-in, the forecast starts on that check-in's `checkedOn` and runs `days` from there, not trimmed (the balances page shows what the forecast looked like then). With no check-in at all: balance 0 from today, `checkin: null`.
 
 **Expected value of a check-in:** for the i-th check-in (oldest first, i > 0): `expectedCents = previous.balanceCents + Σ income.actualCents − Σ expense.actualCents` over events dated in `(previous.checkedOn, this.checkedOn]`, with today's streams.
+
+**Changed after the build (whole-iteration review fix wave):** Coming up's `past`/`inCents`/`outCents` now also treat a day already covered by the latest check-in as past, not just a day before today (I1); `recoversOn` is the first day back at or above zero after `firstBelowZero` (ruling R15, already in the code); a stream's `actualCents` must be at least 1, not just at least 0 (I4).
 
 ## Tasks
 

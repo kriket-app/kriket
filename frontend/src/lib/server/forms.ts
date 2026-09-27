@@ -12,27 +12,39 @@ export async function formValues(request: Request) {
 }
 
 // The API validates with Zod, whose default wording ("Number must be less than or equal to 366")
-// is not something to show someone filling out a form. One plain sentence per field path replaces
-// it; the path is kept so the field still shows its own message. Covers streams (name, actualCents,
-// minCents, maxCents, intervalDays, firstDate, tagId), tags (name, color), and check-ins
-// (balanceCents).
-const PLAIN_MESSAGES: Record<string, string> = {
-	name: 'Enter a name.',
-	actualCents: 'Enter an amount.',
-	minCents: "Minimum can't be more than the usual amount.",
-	maxCents: "Maximum can't be less than the usual amount.",
-	intervalDays: 'Use a whole number of days from 1 to 366.',
-	firstDate: 'Enter a date as YYYY-MM-DD.',
-	tagId: 'Choose a tag, or none.',
-	color: 'Choose a colour.',
-	balanceCents: 'Enter an amount.'
-};
+// is not something to show someone filling out a form. An ordered list of { path, match?, message }
+// replaces it, first match wins; the path is kept so the field still shows its own message. A
+// missing `match` matches any message on that path. Covers streams (name, actualCents, minCents,
+// maxCents, intervalDays, firstDate, tagId), tags (name, color), and check-ins (balanceCents).
+const PLAIN_MESSAGES: { path: string; match?: RegExp; message: string }[] = [
+	{ path: 'name', message: 'Enter a name.' },
+	{
+		path: 'actualCents',
+		match: /below the minimum/,
+		message: "The usual amount can't be less than the minimum."
+	},
+	{
+		path: 'actualCents',
+		match: /more than \$0/,
+		message: 'The usual amount must be more than $0.'
+	},
+	{ path: 'actualCents', message: 'Enter an amount.' },
+	{ path: 'minCents', message: "Minimum can't be less than $0." },
+	{ path: 'maxCents', message: "Maximum can't be less than the usual amount." },
+	{ path: 'intervalDays', message: 'Use a whole number of days from 1 to 366.' },
+	{ path: 'firstDate', message: 'Pick the next date.' },
+	{ path: 'tagId', message: 'Choose a tag, or none.' },
+	{ path: 'color', message: 'Choose a colour.' },
+	{ path: 'balanceCents', message: 'Enter an amount.' }
+];
 
 /** Replaces the API's Zod wording with a plain sentence for known fields; keeps the path. */
-const plainify = (detail: FieldError): FieldError => ({
-	...detail,
-	message: PLAIN_MESSAGES[detail.path] ?? detail.message
-});
+const plainify = (detail: FieldError): FieldError => {
+	const found = PLAIN_MESSAGES.find(
+		(m) => m.path === detail.path && (!m.match || m.match.test(detail.message))
+	);
+	return { ...detail, message: found?.message ?? detail.message };
+};
 
 /** Sends the form back with field messages, the same shape an API 400 produces. */
 export const invalid = (action: string, values: Record<string, string>, details: FieldError[]) =>

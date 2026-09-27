@@ -64,7 +64,7 @@
 		{
 			icon: Repeat,
 			title: 'Streams, not receipts',
-			body: 'Add each paycheque and bill once: its minimum, maximum, and usual amount, every how many days, from a first date. Set it up once and stop logging every coffee.'
+			body: 'Add each paycheque and bill once: the usual amount, how often, and the next date. Add a range only for the ones that move. Set it up once and stop logging every coffee.'
 		},
 		{
 			icon: ChartLine,
@@ -85,11 +85,11 @@
 		},
 		{
 			title: 'Add what comes in and goes out, just the usual amount',
-			body: 'Shifts, paycheques, rent, groceries: each with its range and how often it repeats.'
+			body: 'Shifts, paycheques, rent, groceries: the usual amount and how often. A range is optional.'
 		},
 		{
 			title: 'Check in now and then; kriket keeps the forecast honest',
-			body: 'See where the worst, expected, and best case land, and tweak a stream when life changes.'
+			body: "Type today's balance whenever you look at your bank; the forecast starts again from it."
 		}
 	];
 </script>

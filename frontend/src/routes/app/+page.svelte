@@ -41,7 +41,12 @@
 
 <!-- The check-in and the answer share the first row from md up; the check-in comes first below. -->
 <div class="mt-6 grid gap-4 md:grid-cols-2">
-	<CheckinCard latest={data.checkins[0]} today={data.comingUp.today} {form} />
+	<CheckinCard
+		latest={data.checkins[0]}
+		today={data.comingUp.today}
+		expectedTodayCents={data.forecast.points[0]?.actualCents ?? 0}
+		{form}
+	/>
 	{#if data.hasStreams}
 		<AnswerCard forecast={data.forecast} days={data.days} />
 	{:else}

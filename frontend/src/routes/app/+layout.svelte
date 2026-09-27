@@ -15,8 +15,12 @@
 		{ href: '/app/expenses', label: 'Expenses', icon: ArrowUpFromLine },
 		{ href: '/app/tags', label: 'Tags', icon: Tags }
 	];
+	// /app/balances is Overview's own detail page (flipping through past check-ins), not a
+	// separate section, so it highlights Overview too.
 	const active = (href: string) =>
-		href === '/app' ? page.url.pathname === '/app' : page.url.pathname.startsWith(href);
+		href === '/app'
+			? page.url.pathname === '/app' || page.url.pathname.startsWith('/app/balances')
+			: page.url.pathname.startsWith(href);
 
 	async function signOut() {
 		// Drop this device's push subscription first: otherwise the next person on

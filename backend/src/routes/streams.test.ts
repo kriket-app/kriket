@@ -62,6 +62,25 @@ describe.each(['income', 'expense'] as const)('/api/%s-streams', (kind) => {
 		expect(created.body.minCents).toBe(body.actualCents);
 		expect(created.body.maxCents).toBe(body.actualCents);
 	});
+	it('refuses a zero usual amount on create and on update', async () => {
+		const a = testAgent();
+		await signUp(a, `${kind}8@example.com`);
+		const bad = await a.post(base).send({ ...body, minCents: 0, actualCents: 0, maxCents: 0 });
+		expect(bad.status).toBe(400);
+		expect(bad.body.error.details[0].path).toBe('actualCents');
+		const ok = await a.post(base).send(body);
+		const worse = await a.patch(`${base}/${ok.body.id}`).send({ actualCents: 0 });
+		expect(worse.status).toBe(400);
+		expect(worse.body.error.details[0].path).toBe('actualCents');
+	});
+	it('accepts a zero minimum as long as it is not more than the usual amount', async () => {
+		const a = testAgent();
+		await signUp(a, `${kind}9@example.com`);
+		const created = await a
+			.post(base)
+			.send({ ...body, minCents: 0, actualCents: 100, maxCents: 200 });
+		expect(created.status).toBe(201);
+	});
 	it('only accepts the caller’s own tag and nulls it when the tag is deleted', async () => {
 		const a = testAgent();
 		await signUp(a, `${kind}3@example.com`);

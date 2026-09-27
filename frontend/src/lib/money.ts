@@ -8,7 +8,3 @@ export function parseDollars(input: string): number | null {
 }
 /** 123450 -> "1234.50", the form an amount input is prefilled with (parseDollars reads it back). */
 export const centsToDollars = (cents: number) => (cents / 100).toFixed(2);
-export const formatRange = (minCents: number, actualCents: number, maxCents: number) =>
-	minCents === maxCents
-		? formatCents(actualCents)
-		: `${formatCents(minCents)} to ${formatCents(maxCents)}, usually ${formatCents(actualCents)}`;

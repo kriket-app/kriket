@@ -5,7 +5,6 @@ export type Stream = components['schemas']['Stream'];
 export type StreamKind = 'income' | 'expense';
 export type Checkin = components['schemas']['Checkin'];
 export type ComingUp = components['schemas']['ComingUp'];
-export type ComingUpEvent = components['schemas']['ComingUpEvent'];
 /** One field-level message from an API 400: `path` is the body field, such as `actualCents`. */
 export type FieldError = components['schemas']['ValidationError']['error']['details'][number];
 

@@ -14,12 +14,15 @@
 	let {
 		latest,
 		today,
+		expectedTodayCents,
 		form
 	}: {
 		/** The newest check-in, if there is one. */
 		latest: Checkin | undefined;
 		/** Today, as the API returned it. */
 		today: string;
+		/** What the forecast expects the balance to be today, carried forward from the latest check-in. */
+		expectedTodayCents: number;
 		form: ActionState;
 	} = $props();
 
@@ -29,14 +32,25 @@
 			: undefined
 	);
 	const saved = $derived(form?.ok && latest ? money(latest.balanceCents) : null);
+	// Today's own check-in prefills its value; anything older is stale, so the field starts empty
+	// with the expected amount only as a placeholder (one tap on Save would otherwise store the
+	// old balance as today's).
+	const checkedInToday = $derived(latest?.checkedOn === today);
 </script>
 
 <Card.Root>
 	<Card.Header>
 		<Card.Title>Your balance today</Card.Title>
 		<Card.Description>
-			{#if latest && latest.checkedOn < today}Last saved {formatDate(latest.checkedOn)}.{/if}
-			The forecast starts from here.
+			{#if checkedInToday}
+				The forecast starts from here.
+			{:else if latest}
+				Last saved {money(latest.balanceCents)} on {formatDate(latest.checkedOn)}. kriket expects {money(
+					expectedTodayCents
+				)} by the end of today.
+			{:else}
+				Tell kriket what's in your account today; the forecast starts from it.
+			{/if}
 		</Card.Description>
 	</Card.Header>
 	<Card.Content>
@@ -59,7 +73,8 @@
 						autocomplete="off"
 						required
 						class="tabular-nums"
-						value={centsToDollars(latest?.balanceCents ?? 0)}
+						value={checkedInToday ? centsToDollars(latest?.balanceCents ?? 0) : ''}
+						placeholder={checkedInToday ? undefined : centsToDollars(expectedTodayCents)}
 						aria-invalid={balanceError ? true : undefined}
 						aria-describedby={balanceError ? 'balance-error' : undefined}
 					/>

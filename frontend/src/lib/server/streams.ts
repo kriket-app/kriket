@@ -1,11 +1,14 @@
-import type { Actions, RequestEvent } from '@sveltejs/kit';
+import { error, type Actions, type RequestEvent } from '@sveltejs/kit';
 import type { FieldError, StreamKind } from '$lib/api/types';
 import { parseDollars } from '$lib/money';
-import { api, dataOf } from './api';
+import { api, dataOf, messageOf } from './api';
 import { actionResult, formValues, invalid } from './forms';
 
 // The income and expenses pages share this load and these actions; only the API base differs:
 // `/api/income-streams` or `/api/expense-streams`.
+
+/** The stream form's Tag select value for "New tag…" (kept in sync with stream-form.svelte). */
+const NEW_TAG_VALUE = '__new__';
 
 export const streamsLoad = (kind: StreamKind) => async (event: RequestEvent) => {
 	const client = api(event);
@@ -29,6 +32,8 @@ export function streamBody(values: Record<string, string>) {
 	const actualCents = parseDollars(values.usual ?? '');
 	if (actualCents === null) {
 		details.push({ path: 'actualCents', message: 'Enter an amount like 85.00' });
+	} else if (actualCents <= 0) {
+		details.push({ path: 'actualCents', message: 'The usual amount must be more than $0.' });
 	}
 
 	const rangeGiven = values.minimum !== undefined || values.maximum !== undefined;
@@ -42,6 +47,8 @@ export function streamBody(values: Record<string, string>) {
 		if (max === null) details.push({ path: 'maxCents', message: 'Enter an amount like 120.00' });
 		else maxCents = max;
 	}
+
+	if (!values.firstDate) details.push({ path: 'firstDate', message: 'Pick the next date.' });
 
 	if (details.length) return { details };
 	return {
@@ -57,22 +64,49 @@ export function streamBody(values: Record<string, string>) {
 	};
 }
 
+/**
+ * If the stream form's Tag select carries the "New tag…" sentinel, creates the tag through the
+ * API from `newTagName` and returns its id in place of `tagId`; any other tagId (including no
+ * tag) passes through unchanged. A 400 from the tags API (an empty or duplicate name) maps to
+ * `newTagName`, not `name` — the field the stream form actually shows.
+ */
+export async function resolveTagId(
+	event: RequestEvent,
+	values: Record<string, string>
+): Promise<{ tagId: string | null } | { details: FieldError[] }> {
+	if (values.tagId !== NEW_TAG_VALUE) return { tagId: values.tagId || null };
+	const result = await api(event).POST('/api/tags', {
+		body: { name: values.newTagName ?? '', color: '#22c55e' }
+	});
+	if (result.data) return { tagId: result.data.id };
+	if (result.response.status === 400) {
+		return { details: [{ path: 'newTagName', message: 'Enter a tag name.' }] };
+	}
+	error(result.response.status, messageOf(result.error));
+}
+
 export const streamsActions = (kind: StreamKind) =>
 	({
 		async create(event) {
 			const values = await formValues(event.request);
 			const { body, details } = streamBody(values);
 			if (!body) return invalid('create', values, details);
-			const result = await api(event).POST(`/api/${kind}-streams`, { body });
+			const tag = await resolveTagId(event, values);
+			if ('details' in tag) return invalid('create', values, tag.details);
+			const result = await api(event).POST(`/api/${kind}-streams`, {
+				body: { ...body, tagId: tag.tagId }
+			});
 			return actionResult('create', values, result);
 		},
 		async update(event) {
 			const values = await formValues(event.request);
 			const { body, details } = streamBody(values);
 			if (!body) return invalid('update', values, details);
+			const tag = await resolveTagId(event, values);
+			if ('details' in tag) return invalid('update', values, tag.details);
 			const result = await api(event).PATCH(`/api/${kind}-streams/{id}`, {
 				params: { path: { id: values.id ?? '' } },
-				body
+				body: { ...body, tagId: tag.tagId }
 			});
 			return actionResult('update', values, result);
 		},

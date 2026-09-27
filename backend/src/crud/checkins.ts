@@ -1,4 +1,4 @@
-import { and, asc, eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { db } from '../db/index.js';
 import { balanceCheckins } from '../db/tables.js';
 
@@ -10,14 +10,6 @@ export const listCheckins = (userId: string): Promise<CheckinRow[]> =>
 		.from(balanceCheckins)
 		.where(eq(balanceCheckins.userId, userId))
 		.orderBy(asc(balanceCheckins.checkedOn));
-
-export async function findCheckin(userId: string, id: string): Promise<CheckinRow | null> {
-	const [row] = await db
-		.select()
-		.from(balanceCheckins)
-		.where(and(eq(balanceCheckins.id, id), eq(balanceCheckins.userId, userId)));
-	return row ?? null;
-}
 
 export async function upsertCheckin(
 	userId: string,

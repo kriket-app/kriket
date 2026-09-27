@@ -59,6 +59,9 @@ export async function getComingUp(userId: string, month?: string): Promise<Comin
 				: a.name.localeCompare(b.name)
 	);
 
+	const settledThrough = checkins.at(-1)?.checkedOn;
+	const settled = (d: string) => d < t || (settledThrough !== undefined && d <= settledThrough);
+
 	const byDate = new Map<string, Ev[]>();
 	for (const e of events) {
 		const list = byDate.get(e.date);
@@ -67,14 +70,14 @@ export async function getComingUp(userId: string, month?: string): Promise<Comin
 	}
 	const days = [...byDate.entries()].map(([date, evs]) => ({
 		date,
-		past: date < t,
+		past: settled(date),
 		events: evs.map(({ date: _date, ...rest }) => rest)
 	}));
 
 	let inCents = 0;
 	let outCents = 0;
 	for (const e of events) {
-		if (e.date < t) continue;
+		if (settled(e.date)) continue;
 		if (e.kind === 'income') inCents += e.actualCents;
 		else outCents += e.actualCents;
 	}
