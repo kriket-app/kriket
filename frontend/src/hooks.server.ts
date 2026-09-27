@@ -7,9 +7,9 @@ async function currentUser(event: RequestEvent) {
 	try {
 		const { data } = await api(event).GET('/api/me');
 		return data?.user;
-	} catch (error) {
+	} catch (err) {
 		// An unreachable backend sends the visitor to sign in instead of failing with a 500.
-		console.error('Session check failed, treating the visitor as signed out:', error);
+		console.error('Session check failed, treating the visitor as signed out:', err);
 		return undefined;
 	}
 }

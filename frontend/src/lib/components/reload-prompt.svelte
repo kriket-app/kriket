@@ -12,16 +12,21 @@
 	// the *initial* install must never reload the page (it would wipe forms).
 	let updating = false;
 
+	function watch(worker: ServiceWorker) {
+		worker.addEventListener('statechange', () => {
+			if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+				waiting = worker;
+			}
+		});
+	}
+
 	function track(reg: ServiceWorkerRegistration) {
 		if (reg.waiting && navigator.serviceWorker.controller) waiting = reg.waiting;
+		// A worker that started installing before this component mounted fires no
+		// updatefound for us, and the hourly check finds nothing new, so watch it here.
+		if (reg.installing) watch(reg.installing);
 		reg.addEventListener('updatefound', () => {
-			const worker = reg.installing;
-			if (!worker) return;
-			worker.addEventListener('statechange', () => {
-				if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-					waiting = worker;
-				}
-			});
+			if (reg.installing) watch(reg.installing);
 		});
 	}
 

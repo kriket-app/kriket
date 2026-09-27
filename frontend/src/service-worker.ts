@@ -167,6 +167,18 @@ interface PushPayload {
 	url?: string;
 }
 
+/** `path` as a URL on this origin; anything pointing elsewhere opens the overview instead. */
+function appUrl(path: string | undefined) {
+	const origin = self.location.origin;
+	try {
+		const url = new URL(path ?? '/app', origin);
+		if (url.origin === origin) return url.href;
+	} catch {
+		// Not a URL at all: fall through to the overview.
+	}
+	return new URL('/app', origin).href;
+}
+
 // Web Push: the backend sends `{ title, body, url }` as JSON.
 self.addEventListener('push', (event) => {
 	const e = event as PushEvent;
@@ -181,7 +193,7 @@ self.addEventListener('push', (event) => {
 		body: data.body ?? 'Something changed in your forecast.',
 		icon: '/icon-192.png',
 		badge: '/icon-192.png',
-		data: { url: data.url ?? '/app' }
+		data: { url: appUrl(data.url) }
 	};
 	e.waitUntil(
 		(self as unknown as ServiceWorkerGlobalScope).registration.showNotification(title, options)
@@ -191,18 +203,23 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
 	const e = event as NotificationEvent;
 	e.notification.close();
-	const url = (e.notification.data as { url?: string } | undefined)?.url ?? '/app';
+	const target = appUrl((e.notification.data as { url?: string } | undefined)?.url);
 	e.waitUntil(
 		(async () => {
 			const scope = self as unknown as ServiceWorkerGlobalScope;
 			const windows = await scope.clients.matchAll({ type: 'window', includeUncontrolled: true });
-			for (const client of windows) {
-				const c = client as WindowClient;
-				if (c.url.includes(new URL(url, scope.location.origin).pathname) && 'focus' in c) {
-					return c.focus();
+			// Reuse an open kriket window: bring it forward and show the page the notification is about.
+			const open = windows.find((c) => new URL(c.url).origin === scope.location.origin) as
+				WindowClient | undefined;
+			if (open) {
+				const focused = await open.focus();
+				if (new URL(focused.url).pathname !== new URL(target).pathname) {
+					// navigate() needs a window this worker controls; otherwise focusing is enough.
+					await focused.navigate(target).catch(() => undefined);
 				}
+				return;
 			}
-			if (scope.clients.openWindow) return scope.clients.openWindow(url);
+			await scope.clients.openWindow(target);
 		})()
 	);
 });

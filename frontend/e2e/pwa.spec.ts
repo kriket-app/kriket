@@ -67,8 +67,8 @@ test('the service worker registers and takes control', async ({ page }) => {
 test('no prerendered stub shadows the authed app: anonymous /app redirects', async ({ page }) => {
 	// Regression guard: the prerender crawler follows hrefs on prerendered pages.
 	// If it ever crawls /app anonymously, the redirect stub it writes would be served
-	// instead of SSR and every full page load would land on sign in. The offline page
-	// therefore links nothing under /app, and this asserts the SSR redirect survives.
+	// instead of SSR and every full page load would land on sign in. hooks.server.ts
+	// fails the build when that happens; this asserts the SSR redirect survives.
 	const res = await page.request.get('/app', { maxRedirects: 0 });
 	expect(res.status()).toBe(303);
 	expect(res.headers()['location']).toContain('/signin');
@@ -97,9 +97,23 @@ test('push config reports disabled without VAPID keys, and the card stays hidden
 	await expect(page.getByText('Notifications', { exact: true })).toHaveCount(0);
 });
 
-test('an update prompt appears when a new service worker waits', async ({ page }) => {
+test('the card stays hidden while push is off, even where the browser has no push', async ({
+	page
+}) => {
+	// Like iPhone Safari outside the Home Screen: no PushManager at all.
+	await page.addInitScript(() => {
+		delete (window as { PushManager?: unknown }).PushManager;
+	});
+	await signUpAndSignIn(page);
+	await expect(page.getByRole('heading', { name: /your next \d+ days/i })).toBeVisible();
+	// The card decides after the config request; give it a moment to (not) appear.
+	await page.waitForLoadState('networkidle');
+	await expect(page.getByText('Notifications', { exact: true })).toHaveCount(0);
+	await expect(page.getByText(/doesn't support push/i)).toHaveCount(0);
+});
+
+test('no update prompt shows on a first visit', async ({ page }) => {
 	await page.goto('/');
-	// The prompt only renders when a waiting worker exists; in a fresh profile
-	// there is none, so the page must not show stale update UI.
+	// The prompt renders only when a newer worker is waiting; a fresh profile has none.
 	await expect(page.getByText(/new version of kriket/i)).toHaveCount(0);
 });
