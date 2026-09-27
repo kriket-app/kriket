@@ -205,7 +205,8 @@
 		<Label id="{id}-next-date-label">Next date</Label>
 		<Popover.Root bind:open={nextDatePopoverOpen}>
 			<Popover.Trigger
-				aria-labelledby="{id}-next-date-label"
+				id="{id}-next-date-button"
+				aria-labelledby="{id}-next-date-label {id}-next-date-button"
 				aria-invalid={errorFor('firstDate') ? true : undefined}
 				aria-describedby={describedBy('firstDate')}
 				class="flex h-9 w-full items-center rounded-md border border-input bg-transparent px-3 text-sm shadow-xs"

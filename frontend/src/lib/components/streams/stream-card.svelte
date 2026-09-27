@@ -24,15 +24,17 @@
 	const failedEdit = $derived(
 		form?.action === 'update' && form.values?.id === stream.id ? form.details : undefined
 	);
-	/** "weekly", "every 2 weeks", "monthly" for the intervals people actually use, else "every N days". */
+	/** "daily", "weekly", "every 2 weeks", "monthly" for the intervals people actually use, else "every N days". */
 	const repeatText = $derived(
-		stream.intervalDays === 7
-			? 'weekly'
-			: stream.intervalDays === 14
-				? 'every 2 weeks'
-				: stream.intervalDays === 30
-					? 'monthly'
-					: `every ${stream.intervalDays} days`
+		stream.intervalDays === 1
+			? 'daily'
+			: stream.intervalDays === 7
+				? 'weekly'
+				: stream.intervalDays === 14
+					? 'every 2 weeks'
+					: stream.intervalDays === 30
+						? 'monthly'
+						: `every ${stream.intervalDays} days`
 	);
 	const isRanged = $derived(
 		stream.minCents !== stream.actualCents || stream.maxCents !== stream.actualCents
