@@ -24,7 +24,7 @@ export const streamsLoad = (kind: StreamKind) => async (event: RequestEvent) => 
  * action always sends all three amounts to the API, with min = max = the usual amount whenever
  * no range was given.
  */
-function streamBody(values: Record<string, string>) {
+export function streamBody(values: Record<string, string>) {
 	const details: FieldError[] = [];
 	const actualCents = parseDollars(values.usual ?? '');
 	if (actualCents === null) {
