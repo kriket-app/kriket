@@ -59,7 +59,13 @@
 			// Not an ImportError means something unexpected; keep the cause for whoever debugs it.
 			if (!(err instanceof ImportError)) console.error('Statement import failed', err);
 			if (!(err instanceof ImportError))
-				problemDetail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+				problemDetail =
+					err instanceof Error
+						? // The first stack frames name the file and line; that pins down which API is missing.
+							[`${err.name}: ${err.message}`, ...(err.stack ?? '').split('\n').slice(0, 4)].join(
+								'\n'
+							)
+						: String(err);
 			problem = err instanceof ImportError ? err.message : 'That file could not be read.';
 			status = 'failed';
 		}
@@ -122,7 +128,9 @@
 		{:else if status === 'failed'}
 			<p class="text-sm text-destructive" role="alert">{problem}</p>
 			{#if problemDetail}
-				<p class="font-mono text-xs break-all text-muted-foreground">{problemDetail}</p>
+				<p class="font-mono text-xs break-all whitespace-pre-wrap text-muted-foreground">
+					{problemDetail}
+				</p>
 			{/if}
 		{/if}
 	</Card.Content>
