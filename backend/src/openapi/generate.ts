@@ -7,9 +7,10 @@ import '../routes/health.js';
 import '../routes/me.js';
 import '../routes/tags.js';
 import { streamsRouter } from '../routes/streams.js';
-import '../routes/settings.js';
+import '../routes/checkins.js';
 import '../routes/forecast.js';
 import '../routes/push.js';
+import '../routes/coming-up.js';
 
 streamsRouter('income');
 streamsRouter('expense');

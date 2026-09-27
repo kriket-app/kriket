@@ -4,41 +4,56 @@ import { api, dataOf } from '$lib/server/api';
 import { actionResult, formValues, invalid } from '$lib/server/forms';
 
 const WINDOWS = [30, 90, 180];
+const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 export const load: PageServerLoad = async (event) => {
-	const requested = Number(event.url.searchParams.get('days'));
-	const days = WINDOWS.includes(requested) ? requested : 90;
+	const requestedDays = Number(event.url.searchParams.get('days'));
+	const days = WINDOWS.includes(requestedDays) ? requestedDays : 90;
+	const requestedMonth = event.url.searchParams.get('month');
+	const month = requestedMonth && MONTH.test(requestedMonth) ? requestedMonth : undefined;
 	const client = api(event);
-	// The stream lists only decide whether to show the first-run panel instead of the forecast.
-	const [forecast, settings, incomes, expenses] = await Promise.all([
+
+	async function loadComingUp() {
+		const result = await client.GET('/api/coming-up', { params: { query: { month } } });
+		// A month outside the ones kriket shows (an old link, an edited address) falls back to
+		// today's month instead of an error page.
+		if (month && result.response.status === 400) return dataOf(await client.GET('/api/coming-up'));
+		return dataOf(result);
+	}
+
+	// The stream lists only decide whether to show the first-run panel instead of the forecast;
+	// the tags colour Coming up's dots.
+	const [forecast, checkins, incomes, expenses, tags, comingUp] = await Promise.all([
 		client.GET('/api/forecast', { params: { query: { days } } }),
-		client.GET('/api/settings'),
+		client.GET('/api/checkins'),
 		client.GET('/api/income-streams'),
-		client.GET('/api/expense-streams')
+		client.GET('/api/expense-streams'),
+		client.GET('/api/tags'),
+		loadComingUp()
 	]);
 	return {
 		days,
 		forecast: dataOf(forecast),
-		settings: dataOf(settings),
-		hasStreams: dataOf(incomes).streams.length + dataOf(expenses).streams.length > 0
+		checkins: dataOf(checkins).checkins,
+		hasStreams: dataOf(incomes).streams.length + dataOf(expenses).streams.length > 0,
+		tags: dataOf(tags).tags,
+		comingUp
 	};
 };
 
 export const actions = {
-	async settings(event) {
+	async checkin(event) {
 		const values = await formValues(event.request);
-		const startingBalanceCents = parseDollars(values.balance ?? '');
-		if (startingBalanceCents === null) {
-			return invalid('settings', values, [
+		const balanceCents = parseDollars(values.balance ?? '');
+		if (balanceCents === null) {
+			return invalid('checkin', values, [
 				{
-					path: 'startingBalanceCents',
+					path: 'balanceCents',
 					message: 'Enter an amount like 420.00, or -50.00 if overdrawn'
 				}
 			]);
 		}
-		const result = await api(event).PUT('/api/settings', {
-			body: { startingBalanceCents, startingDate: values.asOf ?? '' }
-		});
-		return actionResult('settings', values, result);
+		const result = await api(event).POST('/api/checkins', { body: { balanceCents } });
+		return actionResult('checkin', values, result);
 	}
 } satisfies Actions;

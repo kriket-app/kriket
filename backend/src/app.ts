@@ -11,9 +11,10 @@ import healthRouter from './routes/health.js';
 import meRouter from './routes/me.js';
 import tagsRouter from './routes/tags.js';
 import { streamsRouter } from './routes/streams.js';
-import settingsRouter from './routes/settings.js';
+import checkinsRouter from './routes/checkins.js';
 import forecastRouter from './routes/forecast.js';
 import pushRouter from './routes/push.js';
+import comingUpRouter from './routes/coming-up.js';
 import { InvalidInputError, NotFoundError } from './services/errors.js';
 
 const allowedOrigins = (process.env.CORS_ORIGINS ?? '')
@@ -52,9 +53,10 @@ export function createApp() {
 	app.use('/api', tagsRouter);
 	app.use('/api', streamsRouter('income'));
 	app.use('/api', streamsRouter('expense'));
-	app.use('/api', settingsRouter);
+	app.use('/api', checkinsRouter);
 	app.use('/api', forecastRouter);
 	app.use('/api', pushRouter);
+	app.use('/api', comingUpRouter);
 
 	// Swagger UI with the spec generated from the route registry.
 	const spec = buildOpenApiDocument();

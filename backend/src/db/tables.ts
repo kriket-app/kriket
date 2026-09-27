@@ -1,5 +1,14 @@
 import { sql } from 'drizzle-orm';
-import { boolean, date, index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+	boolean,
+	date,
+	index,
+	integer,
+	pgTable,
+	text,
+	timestamp,
+	uniqueIndex
+} from 'drizzle-orm/pg-core';
 import { user } from './schema.js';
 
 const idColumn = () =>
@@ -52,14 +61,17 @@ export const expenseStreams = pgTable('expense_streams', streamColumns(), (t) =>
 	index('expense_streams_user_idx').on(t.userId)
 ]);
 
-export const userSettings = pgTable('user_settings', {
-	userId: text('user_id')
-		.primaryKey()
-		.references(() => user.id, { onDelete: 'cascade' }),
-	startingBalanceCents: integer('starting_balance_cents').default(0).notNull(),
-	startingDate: date('starting_date', { mode: 'string' }).notNull(),
-	...timestamps()
-});
+export const balanceCheckins = pgTable(
+	'balance_checkins',
+	{
+		id: idColumn(),
+		userId: userIdColumn(),
+		balanceCents: integer('balance_cents').notNull(),
+		checkedOn: date('checked_on', { mode: 'string' }).notNull(),
+		...timestamps()
+	},
+	(t) => [uniqueIndex('balance_checkins_user_day_idx').on(t.userId, t.checkedOn)]
+);
 
 // One row per browser/device a user enables notifications on. `endpoint` is
 // globally unique per the Push API; re-subscribing from the same browser

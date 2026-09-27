@@ -17,9 +17,14 @@ export const actions = {
 	},
 	async update(event) {
 		const values = await formValues(event.request);
+		// The rename dialog submits only `name`; a row's colour picker submits only `color`
+		// (an empty value there means "leave the colour as it is", not "clear it").
+		const body: { name?: string; color?: string } = {};
+		if (values.name !== undefined) body.name = values.name;
+		if (values.color) body.color = values.color;
 		const result = await api(event).PATCH('/api/tags/{id}', {
 			params: { path: { id: values.id ?? '' } },
-			body: { name: values.name ?? '' }
+			body
 		});
 		return actionResult('update', values, result);
 	},

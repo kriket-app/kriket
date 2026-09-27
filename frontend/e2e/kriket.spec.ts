@@ -15,11 +15,13 @@ test('tags are seeded, a stream forecasts, and the mobile nav sits at the bottom
 		.first()
 		.click();
 	await page.getByLabel('Name').fill('Shifts');
-	await page.getByLabel('Minimum').fill('800');
-	await page.getByLabel('Usual').fill('1000');
-	await page.getByLabel('Maximum').fill('1200');
-	await page.getByLabel(/every/i).fill('14');
-	await page.getByLabel(/first payment/i).fill('2026-10-01');
+	await page.getByLabel('Usual amount').fill('1000');
+	await page.getByRole('button', { name: 'Every 2 weeks' }).click();
+	await page.getByRole('button', { name: 'Pick a date' }).click();
+	await page
+		.getByRole('button', { name: /1, \d{4}/ })
+		.first()
+		.click();
 	await page
 		.getByRole('button', { name: /add income/i })
 		.last()
@@ -31,7 +33,7 @@ test('tags are seeded, a stream forecasts, and the mobile nav sits at the bottom
 	).toBeVisible();
 
 	await page.goto('/app');
-	await expect(page.getByText(/expected/i)).toBeVisible();
+	await expect(page.getByText(/^expected on/i)).toBeVisible();
 	// The chart also carries a "Balance" label in its own text, so an unscoped getByText
 	// is ambiguous; the starting-balance input's accessible name is exactly "Balance".
 	await expect(page.getByLabel('Balance', { exact: true })).toBeVisible();

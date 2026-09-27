@@ -36,6 +36,6 @@ router.get('/forecast', requireAuth, async (req, res) => {
 		});
 		return;
 	}
-	res.json(await getForecast(res.locals.user!.id, parsed.data.days));
+	res.json(await getForecast(res.locals.user!.id, parsed.data.days, parsed.data.checkinId));
 });
 export default router;

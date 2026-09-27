@@ -1,11 +1,13 @@
 import type { ForecastDto, ForecastEventDto, ForecastPointDto } from '../schemas/forecast.js';
+import { listCheckins } from '../crud/checkins.js';
 import { expenseCrud, incomeCrud } from '../crud/streams.js';
-import { addDays, daysBetween } from './dates.js';
-import { getSettings } from './settings.js';
+import { NotFoundError } from './errors.js';
+import { addDays, daysBetween, today } from './dates.js';
 
 export type StreamInput = {
 	id: string;
 	name: string;
+	tagId: string | null;
 	minCents: number;
 	actualCents: number;
 	maxCents: number;
@@ -21,6 +23,9 @@ export type ForecastInput = {
 };
 
 export { addDays, daysBetween, today, toIso, toUtc } from './dates.js';
+
+/** computeForecast's own shape, before the anchor and the below-zero summary are known. */
+type ForecastCore = Omit<ForecastDto, 'checkin' | 'lowest' | 'firstBelowZero' | 'recoversOn'>;
 
 /** Dates on which the stream pays inside [start, end], inclusive: firstDate + k * intervalDays, k >= 0. */
 export function occurrences(
@@ -39,7 +44,7 @@ export function occurrences(
 	}
 }
 
-export function computeForecast(input: ForecastInput): ForecastDto {
+export function computeForecast(input: ForecastInput): ForecastCore {
 	const endDate = addDays(input.startDate, input.days);
 	const events: ForecastEventDto[] = [];
 	const push = (kind: 'income' | 'expense', s: StreamInput) => {
@@ -49,6 +54,7 @@ export function computeForecast(input: ForecastInput): ForecastDto {
 				kind,
 				streamId: s.id,
 				name: s.name,
+				tagId: s.tagId,
 				minCents: s.minCents,
 				actualCents: s.actualCents,
 				maxCents: s.maxCents
@@ -102,17 +108,96 @@ export function computeForecast(input: ForecastInput): ForecastDto {
 	};
 }
 
-export async function getForecast(userId: string, days: number): Promise<ForecastDto> {
-	const [settings, incomes, expenses] = await Promise.all([
-		getSettings(userId),
-		incomeCrud.list(userId),
-		expenseCrud.list(userId)
-	]);
-	return computeForecast({
-		startDate: settings.startingDate,
-		days,
-		startingBalanceCents: settings.startingBalanceCents,
+/** A forecast whose points[0] is the check-in itself; events on its day are already in the balance. */
+export function forecastFromCheckin(
+	checkin: { balanceCents: number; checkedOn: string },
+	days: number,
+	incomes: StreamInput[],
+	expenses: StreamInput[]
+): ForecastCore {
+	const rest = computeForecast({
+		startDate: addDays(checkin.checkedOn, 1),
+		days: days - 1,
+		startingBalanceCents: checkin.balanceCents,
 		incomes,
 		expenses
 	});
+	const b = checkin.balanceCents;
+	return {
+		...rest,
+		startDate: checkin.checkedOn,
+		startingBalanceCents: b,
+		points: [{ date: checkin.checkedOn, minCents: b, actualCents: b, maxCents: b }, ...rest.points]
+	};
+}
+
+/** Drops everything before `from` (a roll-forward to today). */
+export function trimForecast(f: ForecastCore, from: string): ForecastCore {
+	return {
+		...f,
+		startDate: from,
+		points: f.points.filter((p) => p.date >= from),
+		events: f.events.filter((e) => e.date >= from)
+	};
+}
+
+/**
+ * The lowest expected point (earliest on ties), the first day under zero, and the first day after
+ * that back at or above zero. `recoversOn` ends the first dip, even when a later one follows; it is
+ * null when the balance never goes under zero or is still under at the last point.
+ */
+export function summarize(points: ForecastPointDto[]) {
+	let lowest = points[0];
+	let firstBelowZero: string | null = null;
+	let recoversOn: string | null = null;
+	for (const p of points) {
+		if (p.actualCents < lowest.actualCents) lowest = p;
+		if (p.actualCents < 0) firstBelowZero ??= p.date;
+		else if (firstBelowZero && !recoversOn) recoversOn = p.date;
+	}
+	return {
+		lowest: { date: lowest.date, cents: lowest.actualCents },
+		firstBelowZero,
+		recoversOn
+	};
+}
+
+export async function getForecast(
+	userId: string,
+	days: number,
+	checkinId?: string
+): Promise<ForecastDto> {
+	const [checkins, incomes, expenses] = await Promise.all([
+		listCheckins(userId),
+		incomeCrud.list(userId),
+		expenseCrud.list(userId)
+	]);
+
+	let anchorRow: { id: string; balanceCents: number; checkedOn: string } | null = null;
+	if (checkinId) {
+		anchorRow = checkins.find((c) => c.id === checkinId) ?? null;
+		if (!anchorRow) throw new NotFoundError('Checkin not found');
+	} else if (checkins.length > 0) {
+		anchorRow = checkins[checkins.length - 1];
+	}
+	const checkinDto = anchorRow
+		? { id: anchorRow.id, balanceCents: anchorRow.balanceCents, checkedOn: anchorRow.checkedOn }
+		: null;
+	const anchor = anchorRow ?? { balanceCents: 0, checkedOn: today() };
+
+	let forecast: ForecastCore;
+	let endDate: string;
+	if (checkinId) {
+		// An older check-in: the forecast starts on its checkedOn and is not trimmed.
+		forecast = forecastFromCheckin(anchor, days, incomes, expenses);
+		endDate = forecast.endDate;
+	} else {
+		// Latest check-in or none: rolled forward so startDate = today() and endDate = today() + days.
+		const totalDays = daysBetween(anchor.checkedOn, today()) + days;
+		const full = forecastFromCheckin(anchor, totalDays, incomes, expenses);
+		forecast = trimForecast(full, today());
+		endDate = addDays(today(), days);
+	}
+
+	return { ...forecast, endDate, checkin: checkinDto, ...summarize(forecast.points) };
 }
