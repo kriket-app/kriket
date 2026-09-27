@@ -95,8 +95,11 @@ main { margin-inline: auto; max-width: 64rem; padding: 24px 16px 96px; }
 /* ---------------------------------------------------------------- page heads */
 .page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 16px; }
 h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.025em; }
+.h1-tag { display: flex; align-items: center; gap: 10px; }
 .sub { margin-top: 4px; font-size: 14px; color: var(--muted-foreground); }
 .head-actions { display: flex; align-items: center; gap: 8px; }
+.back { display: inline-block; font-size: 14px; font-weight: 500; color: var(--brand-strong); text-decoration: none; }
+.back:hover { text-decoration: underline; }
 
 /* ---------------------------------------------------------------- cards (ui/card) */
 .card { --sp: 24px; display: flex; flex-direction: column; gap: var(--sp); overflow: hidden; border-radius: var(--radius-xl); background: var(--card); padding-block: var(--sp); font-size: 14px; box-shadow: var(--shadow-xs), var(--card-ring); }
@@ -179,8 +182,8 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
 /* ---------------------------------------------------------------- overview */
 .top-row { display: grid; gap: 16px; }
 @media (min-width: 768px) { .top-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-.checkin-fields { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.checkin-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.checkin-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.checkin-row .field { flex: 1; min-width: 120px; }
 .saved { display: none; align-items: center; gap: 6px; font-size: 13px; color: var(--brand-strong); }
 .saved.show { display: flex; }
 .saved svg { width: 16px; height: 16px; }
@@ -198,7 +201,7 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
 .rows .date { width: 56px; flex-shrink: 0; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
 .rows .name { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rows .amt { font-weight: 500; font-variant-numeric: tabular-nums; }
-.rows .tagname { color: var(--muted-foreground); font-size: 12px; }
+.rows .tagname-label { color: var(--muted-foreground); font-size: 12px; }
 .card-link { font-size: 14px; font-weight: 500; color: var(--brand-strong); text-decoration: none; }
 .card-link:hover { text-decoration: underline; }
 .md-only { display: none; }
@@ -226,10 +229,16 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
 .checkins .amt { font-weight: 500; font-variant-numeric: tabular-nums; width: 80px; }
 .checkins .note { flex: 1; min-width: 0; color: var(--muted-foreground); font-size: 13px; }
 .checkins li[aria-current="true"] .note { color: inherit; }
-.checkins-plain li { cursor: default; }
-.checkins-plain li:hover { background: transparent; }
+/* The overview's compact "Your balances" card: the same three check-ins, side by side, read-only. */
+.checkins-row { display: flex; flex-wrap: wrap; gap: 16px 28px; padding-inline: var(--sp); }
+.checkins-row li { display: grid; gap: 2px; min-width: 108px; }
+.checkins-row .date { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.checkins-row .amt { font-weight: 600; font-variant-numeric: tabular-nums; }
+.checkins-row .note { font-size: 12px; color: var(--muted-foreground); }
 
-/* ---------------------------------------------------------------- coming up */
+/* ---------------------------------------------------------------- coming up (now the overview's last card) */
+.coming-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; }
+.coming-h .edge-note { order: 3; flex-basis: 100%; }
 .month-nav { display: flex; align-items: center; gap: 8px; }
 .month-nav h2 { font-size: 18px; font-weight: 600; min-width: 160px; text-align: center; font-variant-numeric: tabular-nums; }
 .edge-note { font-size: 13px; color: var(--muted-foreground); text-align: right; width: 100%; }
@@ -256,7 +265,8 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
 /* ---------------------------------------------------------------- tags */
 .tagrow { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--border); }
 .tagrow:first-child { border-top: 0; }
-.tagrow .input--quiet { flex: 1; min-width: 0; }
+.tagname { flex: 1; min-width: 0; text-align: left; font-weight: 500; background: transparent; border: 0; padding: 6px 0; border-radius: var(--radius-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tagname:hover { color: var(--brand-strong); text-decoration: underline; }
 .swatch { width: 28px; height: 28px; border-radius: 9999px; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.1); }
 .swatch:focus-visible { box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); }
 .tagrow--add { gap: 12px; }
@@ -413,7 +423,7 @@ h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.02
       <div class="card mt-4" data-coming-up>
         <div class="card-h coming-h">
           <div class="card-t">Coming up</div>
-          <p class="card-d" data-edge-note hidden></p>
+          <p class="card-d edge-note" data-edge-note hidden></p>
           <div class="month-nav">
             <button type="button" class="btn btn--outline btn--icon-sm" data-month="-1" aria-label="Previous month"><svg><use href="#i-left"/></svg></button>
             <h2 data-month-label aria-live="polite">October 2026</h2>
@@ -544,7 +554,8 @@ const S = {
   month: DATA.months.findIndex((m) => m.key === DATA.today.slice(0, 7)) + 1, // next month first
   tags: DATA.tags.map((t) => ({ ...t })),
   streams: DATA.streams.map((s) => ({ ...s })),
-  newTagColor: '#64748b'
+  newTagColor: '#64748b',
+  currentTag: 'bill'                            // the tag page's selection
 };
 if (S.month >= DATA.months.length) S.month = DATA.months.length - 1;
 
@@ -667,16 +678,11 @@ function renderOverview() {
     [`Worst to best on ${dayLabel(f.end)}`, `${money(end[0])} to ${money(end[2])}`, 'Incomes at their minimum and expenses at their maximum, then the reverse']
   ].map(([label, value, sub]) => `<div class="card card--sm"><div class="card-c tile-c"><p class="muted">${label}</p><p class="tile-v">${value}</p><p class="muted">${sub}</p></div></div>`).join('');
 
-  const upcoming = forecastFor(current, 180).events.slice(0, 8);
-  $('[data-upcoming]', el).innerHTML = upcoming.map((e) => {
-    const date = addDays(f.start, e.day);
-    const t = S.streams.find((s) => s.id === e.stream)?.tag;
-    return `<li><span class="date">${dayLabel(date)}</span>${dot(t)}<span class="name">${esc(e.name)}</span><span class="amt ${kindClass(e.kind)}">${amountText(e.kind, e.cents)}</span></li>`;
-  }).join('');
-
   $('[data-checkins-plain]', el).innerHTML = [...DATA.checkins].reverse().map((c) =>
     `<li><span class="date">${longLabel(c.date)}</span><span class="amt">${money(c.cents)}</span><span class="note">${esc(c.note)}</span></li>`
   ).join('');
+
+  renderComingUp();
 }
 
 function renderBalances() {
@@ -695,20 +701,21 @@ function renderBalances() {
 }
 
 function renderComingUp() {
-  const el = screenEl('coming-up');
+  // The coming-up card lives at the bottom of the overview now, not on a screen of its own.
+  const cu = $('[data-coming-up]');
   const m = DATA.months[S.month];
-  $('[data-month-label]', el).textContent = m.label;
+  $('[data-month-label]', cu).textContent = m.label;
   const atStart = S.month === 0, atEnd = S.month === DATA.months.length - 1;
-  const prev = $('[data-month="-1"]', el), next = $('[data-month="1"]', el);
+  const prev = $('[data-month="-1"]', cu), next = $('[data-month="1"]', cu);
   prev.setAttribute('aria-disabled', String(atStart));
   next.setAttribute('aria-disabled', String(atEnd));
   prev.title = atStart ? `You started kriket on ${dayLabel(DATA.startedOn)}` : '';
   next.title = atEnd ? 'Three months ahead is as far as this proposal goes' : '';
-  const note = $('[data-edge-note]', el);
+  const note = $('[data-edge-note]', cu);
   note.hidden = !(atStart || atEnd);
-  note.textContent = atStart ? `You started kriket on ${dayLabel(DATA.startedOn)}, so there is nothing before ${MONTHS_LONG[Number(m.key.slice(5)) - 1]}.` : atEnd ? 'Three months ahead is as far as this proposal goes.' : '';
+  note.textContent = atStart ? `You started kriket on ${dayLabel(DATA.startedOn)}` : atEnd ? 'Three months ahead is as far as this proposal goes.' : '';
   const isThisMonth = m.key === DATA.today.slice(0, 7);
-  $('[data-strip]', el).innerHTML =
+  $('[data-strip]', cu).innerHTML =
     `<span>In <b class="in">${money(m.in)}</b></span><span>Out <b class="out">${money(m.out)}</b></span>` +
     (m.end == null ? '' : `<span>Ends at <b>${money(m.end)}</b> expected</span>`) +
     (isThisMonth ? `<span class="muted">counting from today</span>` : '');
@@ -723,12 +730,12 @@ function renderComingUp() {
     const rows = d.events.map((e) => {
       const st = S.streams.find((s) => s.id === e.stream);
       const t = tag(st?.tag);
-      return `<li>${dot(st?.tag)}<span class="name">${esc(e.name)}${t ? ` <span class="tagname">${esc(t.name)}</span>` : ''}</span><span class="amt ${kindClass(e.kind)}">${amountText(e.kind, e.cents)}</span></li>`;
+      return `<li>${dot(st?.tag)}<span class="name">${esc(e.name)}${t ? ` <span class="tagname-label">${esc(t.name)}</span>` : ''}</span><span class="amt ${kindClass(e.kind)}">${amountText(e.kind, e.cents)}</span></li>`;
     }).join('');
     items.push(`<li class="day ${d.past ? 'day--past' : ''}"><h3 class="day-h">${weekdayLabel(d.date)}${d.past ? '<small>before today</small>' : ''}</h3><ul class="rows">${rows}</ul></li>`);
   }
   if (isThisMonth && !todayShown) items.push(`<li class="today-line"><span>Today, ${dayLabel(DATA.today)}</span></li>`);
-  $('[data-days]', el).innerHTML = items.join('') || '<li class="day"><p class="day-h">Nothing this month.</p></li>';
+  $('[data-days]', cu).innerHTML = items.join('') || '<li class="day"><p class="day-h">Nothing this month.</p></li>';
 }
 
 function streamCard(s) {
@@ -760,8 +767,9 @@ function renderStreams(kind) {
 function tagRow(t) {
   return `<li class="tagrow" data-tag-row="${esc(t.id)}">
   <button type="button" class="swatch" data-tag-dot="${esc(t.id)}" data-pick="${esc(t.id)}" style="background:${esc(t.color)}" aria-label="Colour of ${esc(t.name)}" aria-haspopup="dialog"></button>
-  <input class="input input--quiet" value="${esc(t.name)}" aria-label="Name of ${esc(t.name)}" data-rename="${esc(t.id)}" maxlength="40">
+  <button type="button" class="tagname" data-open-tag="${esc(t.id)}">${esc(t.name)}</button>
   ${t.preset ? '<span class="badge badge--secondary">preset</span>' : ''}
+  <button type="button" class="btn btn--ghost btn--icon-sm" aria-label="Rename ${esc(t.name)}" data-rename-tag="${esc(t.id)}"><svg><use href="#i-pencil"/></svg></button>
   <button type="button" class="btn btn--ghost btn--icon-sm" aria-label="Delete ${esc(t.name)}" data-delete-tag="${esc(t.id)}"><svg><use href="#i-trash"/></svg></button>
 </li>`;
 }
@@ -773,14 +781,38 @@ function applyTagColor(id, color) {
   $$(`[data-tag-dot="${id}"]`).forEach((el) => (el.style.background = color));
 }
 
-const RENDER = { overview: renderOverview, balances: renderBalances, 'coming-up': renderComingUp, income: () => renderStreams('income'), expenses: () => renderStreams('expense'), tags: renderTags };
-const NAV_FOR = { overview: 'overview', balances: 'overview', 'coming-up': 'coming-up', income: 'income', expenses: 'expenses', tags: null };
+// A tag's own page: its streams, and a one-line summary of what they add up to.
+function tagSummary(t, streams) {
+  if (!streams.length) return 'No streams use this tag yet.';
+  const inCents = streams.filter((s) => s.kind === 'income').reduce((a, s) => a + s.usual, 0);
+  const outCents = streams.filter((s) => s.kind === 'expense').reduce((a, s) => a + s.usual, 0);
+  const parts = [];
+  if (inCents) parts.push(`${money(inCents)} in`);
+  if (outCents) parts.push(`${money(outCents)} out`);
+  const everyDays = new Set(streams.map((s) => s.every));
+  const everyText = everyDays.size === 1 ? ` every ${streams[0].every} days` : '';
+  return `${streams.length} stream${streams.length === 1 ? '' : 's'} · ${parts.join(' and ')}${everyText}`;
+}
+function renderTag() {
+  const el = screenEl('tag');
+  const t = tag(S.currentTag) ?? S.tags[0];
+  const streams = S.streams.filter((s) => s.tag === t.id);
+  $('#tag-title', el).innerHTML = `${dot(t.id, 'dot--lg')}${esc(t.name)}`;
+  $('[data-tag-summary]', el).textContent = tagSummary(t, streams);
+  $('[data-tag-streams]', el).innerHTML = streams.map(streamCard).join('') || '<p class="muted">No streams use this tag yet.</p>';
+}
+
+const RENDER = { overview: renderOverview, balances: renderBalances, income: () => renderStreams('income'), expenses: () => renderStreams('expense'), tags: renderTags, tag: renderTag };
+const NAV_FOR = { overview: 'overview', balances: 'overview', income: 'income', expenses: 'expenses', tags: 'tags', tag: 'tags' };
 
 function show(name) {
   closePopover();
   closeDialog();
   if (name === 'add-expense') { show('expenses'); openStreamDialog('expense'); return; }
   if (name === 'add-income') { show('income'); openStreamDialog('income'); return; }
+  // Coming up is a card on the overview now, not its own screen: land on the overview, scrolled down to it.
+  const scrollToComingUp = name === 'coming-up';
+  if (scrollToComingUp) name = 'overview';
   if (!RENDER[name]) name = 'overview';
   S.screen = name;
   $$('.screen').forEach((s) => (s.hidden = s.dataset.screen !== name));
@@ -789,7 +821,12 @@ function show(name) {
     const isNav = a.closest('nav');
     if (isNav) a.setAttribute('aria-current', a.dataset.go === NAV_FOR[name] ? 'page' : 'false');
   });
-  window.scrollTo(0, 0);
+  if (scrollToComingUp) {
+    const cu = $('[data-coming-up]');
+    if (cu) cu.scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0);
+  } else {
+    window.scrollTo(0, 0);
+  }
 }
 
 // ---------------------------------------------------------------- popovers (calendar, tag menu, colour picker)
@@ -1095,6 +1132,21 @@ document.addEventListener('click', (ev) => {
   const edit = ev.target.closest('[data-edit]');
   if (edit) { toast('Editing a stream opens the same form, filled in. Not drawn in this proposal.'); return; }
 
+  const openTag = ev.target.closest('[data-open-tag]');
+  if (openTag) { S.currentTag = openTag.dataset.openTag; show('tag'); return; }
+
+  const renameTag = ev.target.closest('[data-rename-tag]');
+  if (renameTag) {
+    const t = tag(renameTag.dataset.renameTag);
+    const next = window.prompt('Rename tag', t.name);
+    if (next && next.trim()) {
+      t.name = next.trim();
+      renderTags();
+      if (S.screen === 'tag' && S.currentTag === t.id) renderTag();
+    }
+    return;
+  }
+
   const delTag = ev.target.closest('[data-delete-tag]');
   if (delTag) {
     const t = tag(delTag.dataset.deleteTag);
@@ -1141,10 +1193,9 @@ $('[data-checkin-form]').addEventListener('submit', (ev) => {
   const form = ev.currentTarget;
   const raw = $('#balance', form).value.replace(/[$,\s]/g, '');
   const cents = Math.round(Number(raw) * 100);
-  const date = $('#as-of', form).dataset.date;
   const saved = $('[data-saved]', form);
   if (!Number.isFinite(cents)) { saved.innerHTML = '<span class="out">That is not an amount.</span>'; saved.classList.add('show'); return; }
-  saved.innerHTML = `<svg><use href="#i-circle-check"/></svg><span>Saved · ${money(cents)} as of ${dayLabel(date)}. Your forecast starts here.</span>`;
+  saved.innerHTML = `<svg><use href="#i-circle-check"/></svg><span>Saved · ${money(cents)}. Your forecast starts from today.</span>`;
   saved.classList.add('show');
   toast('Balance saved');
 });
@@ -1157,13 +1208,6 @@ $('[data-add-tag-form]').addEventListener('submit', (ev) => {
   S.tags.push({ id: 'tag-' + Date.now(), name, color: S.newTagColor, preset: false });
   input.value = '';
   renderTags();
-});
-
-$('[data-tag-list]').addEventListener('input', (ev) => {
-  const field = ev.target.closest('[data-rename]');
-  if (!field) return;
-  const t = tag(field.dataset.rename);
-  if (t) t.name = field.value;
 });
 
 // ---------------------------------------------------------------- start

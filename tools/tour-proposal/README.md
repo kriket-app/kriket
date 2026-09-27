@@ -30,7 +30,8 @@ python3 tools/tour-proposal/build.py
 
 Open `tools/tour-proposal/out/index.html` in a browser (the frames work from a file), or
 `out/app.html#overview` for the prototype alone; the hash can be any screen: `overview`,
-`balances`, `coming-up`, `income`, `expenses`, `add-expense`, `tags`.
+`balances`, `coming-up` (the overview, scrolled to its last card), `income`, `expenses`,
+`add-expense`, `tags`, `tag` (a tag's own page, opened on "Bill").
 
 For screenshots, with the Playwright that `frontend` installs (`npm ci` there first; `KRIKET_DIR`
 points at another clone if this one has no `node_modules`):

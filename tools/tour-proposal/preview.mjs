@@ -22,7 +22,7 @@ const INDEX = path.join(HERE, 'out', 'index.html');
 fs.mkdirSync(OUT, { recursive: true });
 for (const file of fs.readdirSync(OUT)) if (file.endsWith('.png')) fs.rmSync(path.join(OUT, file));
 
-const SCREENS = ['overview', 'balances', 'coming-up', 'income', 'expenses', 'add-expense', 'tags'];
+const SCREENS = ['overview', 'balances', 'coming-up', 'income', 'expenses', 'add-expense', 'tags', 'tag'];
 const DEVICES = {
 	desktop: { viewport: { width: 1280, height: 800 } },
 	phone: {
@@ -41,9 +41,9 @@ const STATES = [
 		act: (p) => p.getByRole('button', { name: 'Save', exact: true }).click()
 	},
 	{
-		name: 'overview-calendar',
-		screen: 'overview',
-		act: (p) => p.getByLabel('As of').click()
+		name: 'tags-open-bill',
+		screen: 'tags',
+		act: (p) => p.getByRole('button', { name: 'Bill', exact: true }).click()
 	},
 	{
 		name: 'overview-30',

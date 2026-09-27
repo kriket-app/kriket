@@ -6,16 +6,20 @@ title = "Kriket Proposed Prototype"   # keep exactly this: the published artifac
 name = "kriket"
 sub = "proposed prototype"
 headline = "Iteration 2, proposed."
-lede = "Clickable screens of what iteration 2 could look like, built from Theo's and Erik's notes on iteration 1. A proposal to react to, not a promise: nothing here is built, and every screen is labelled proposed."
-facts = ["Proposal, 2026-09-27", "from feedback on iteration 1", "nothing saves"]
+lede = "The proposal as Theo and Erik decided it on 2026-09-26: clickable screens to visualise iteration 2 while it is being built, and to help plan the one after. Still a proposal, not a promise: nothing here saves, and the real app may end up different."
+facts = ["Decided 2026-09-26", "from feedback on iteration 1", "nothing saves"]
 live_url = "https://app.26.cohack.tetl.ca"
 live_note = "iteration 1, as built"
 repo_url = "https://github.com/kriket-app/kriket"
 footer_note = "Nothing on this page is private."
 
 [[meta.link]]
-label = "The next-steps document (edit it on GitHub)"
+label = "The spec (edit it on GitHub)"
 url = "https://github.com/kriket-app/kriket/blob/main/docs/plans/2026-09-27-iteration-2-proposal.md"
+
+[[meta.link]]
+label = "The build board"
+url = "https://26.cohack.tetl.ca/kriket/board/"
 
 [[meta.link]]
 label = "The app tour, iteration 1"
@@ -47,7 +51,7 @@ intro = "The screens in the order Sam would meet them. Each frame is the prototy
 [[stop]]
 id = "overview"
 title = "Overview"
-caption = "Sam's next 90 days, in order: the balance check-in, the answer in one sentence, the chart with a dot for every payment and the dip below zero shaded, three tiles, and what is coming up."
+caption = "Sam's next 90 days, in order: the balance check-in, the answer in one sentence, the chart with a dot for every payment and the dip below zero shaded, three tiles, the balance history, and, as the last card, what is coming up."
 answers = ["Erik 1", "Theo 7", "Theo 10.1", "Theo 11", "Erik: not just a spreadsheet"]
   [[stop.frame]]
   device = "desktop"
@@ -89,7 +93,7 @@ answers = ["Erik 1", "Theo 10.1", "Theo 10.2"]
 [[stop]]
 id = "coming-up"
 title = "Coming up, month by month"
-caption = "One month at a time: what comes in, what goes out, where the month ends, and every payment grouped by day. The arrows flip forward to December; September is as far back as it goes, because that is when Sam started."
+caption = "Coming up is now the last card on the overview, not a page of its own: one month at a time, what comes in, what goes out, where the month ends, and every payment grouped by day. The arrows flip forward to December; September is as far back as it goes, because that is when Sam started."
 answers = ["Theo 9"]
   [[stop.frame]]
   device = "desktop"
@@ -119,8 +123,8 @@ answers = ["Erik 2", "Erik 3"]
 [[stop]]
 id = "tags"
 title = "Tags with a colour picker"
-caption = "Four presets, pay cheque, bill, groceries, and investment, plus one of Sam's own. Any colour: a swatch grid, a hue slider, or a hex value, styled like the rest of the app. Tags leaves the nav; it is a link from Income and from Expenses."
-answers = ["Erik 4", "Theo 4", "Theo 5", "Erik: does Tags need a page", "Erik: only shades of green"]
+caption = "Four presets, pay cheque, side hustle, bill, and groceries, plus one of Sam's own. Any colour: a swatch grid, a hue slider, or a hex value, styled like the rest of the app. Tags is back in the main nav; click a tag's name to open its own page."
+answers = ["Erik 4", "Theo 4", "Theo 5", "Erik: only shades of green"]
   [[stop.frame]]
   device = "desktop"
   screen = "tags"
@@ -130,6 +134,21 @@ answers = ["Erik 4", "Theo 4", "Theo 5", "Erik: does Tags need a page", "Erik: o
   device = "phone"
   screen = "tags"
   title = "The proposed Tags page on a phone"
+
+[[stop]]
+id = "tag"
+title = "A tag's page"
+caption = "Click a tag's name from the Tags screen and its own page opens: the tag's colour and name as the title, a one-line summary of what it adds up to, and its streams as cards, the same as on Income and Expenses."
+answers = ["Theo: keep tags, a tag shows its streams"]
+  [[stop.frame]]
+  device = "desktop"
+  screen = "tag"
+  path = "/app/tags/bill"
+  title = "The proposed tag page on a desktop browser"
+  [[stop.frame]]
+  device = "phone"
+  screen = "tag"
+  title = "The proposed tag page on a phone"
 
 [[stop]]
 id = "streams"
@@ -146,8 +165,8 @@ answers = ["Theo 6", "Theo 8"]
 [not_here]
 title = "Not in this prototype"
 items = [
-  "Bank connections and statement upload.",
-  "Goals and suggestions.",
+  "Bank connections and statement import — planned, not built.",
+  "Goals — planned for after iteration 2.",
   "One-time incomes and expenses.",
   "The phone install (PWA).",
   "Dark mode.",
