@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { WifiOff } from '@lucide/svelte';
 	import BrandMark from '$lib/components/brand-mark.svelte';
+	import Seo from '$lib/components/seo.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 </script>
 
-<svelte:head><title>Offline · kriket</title></svelte:head>
+<Seo
+	title="Offline · kriket"
+	description="You're offline. Reconnect to see your forecast."
+	path="/offline"
+	noindex
+/>
 
 <div class="flex min-h-dvh flex-col bg-background text-foreground">
 	<header class="pt-safe mx-auto flex h-16 w-full max-w-6xl items-center px-4 sm:px-6">

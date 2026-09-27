@@ -51,11 +51,7 @@ test('the app is installable: manifest, icons, and theme color', async ({ page }
 			content: meta.getAttribute('content')
 		}))
 	);
-	expect(themeColors).toContainEqual({
-		media: '(prefers-color-scheme: light)',
-		content: '#16a34a'
-	});
-	expect(themeColors).toContainEqual({ media: '(prefers-color-scheme: dark)', content: '#242424' });
+	expect(themeColors).toContainEqual({ media: null, content: '#16a34a' });
 });
 
 test('the service worker is served and the offline page is prerendered', async ({ page }) => {

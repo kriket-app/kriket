@@ -3,6 +3,7 @@
 	import type { ActionState, Stream, StreamKind, Tag } from '$lib/api/types';
 	import { Button } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import Chirp from '$lib/components/chirp.svelte';
 	import StreamCard from './stream-card.svelte';
 	import StreamForm from './stream-form.svelte';
 
@@ -48,7 +49,11 @@
 	<div
 		class="mt-6 flex flex-col items-center gap-4 rounded-xl border border-dashed p-8 text-center"
 	>
-		<p class="max-w-sm text-muted-foreground">{copy.empty}</p>
+		<Chirp class="size-8" />
+		<div class="grid gap-1">
+			<p class="font-medium">Quiet in here… just crickets.</p>
+			<p class="max-w-sm text-muted-foreground">{copy.empty}</p>
+		</div>
 		{@render addButton()}
 	</div>
 {:else}

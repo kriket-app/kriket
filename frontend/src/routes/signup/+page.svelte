@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import { authClient } from '$lib/auth-client';
 	import BrandMark from '$lib/components/brand-mark.svelte';
+	import Seo from '$lib/components/seo.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
@@ -30,7 +31,12 @@
 	}
 </script>
 
-<svelte:head><title>Get started · kriket</title></svelte:head>
+<Seo
+	title="Get started · kriket"
+	description="Create your free kriket account with just an email and password — no bank access, ever."
+	path="/signup"
+	noindex
+/>
 
 <div
 	class="pt-safe flex min-h-dvh flex-col items-center justify-center gap-8 bg-brand-soft px-4 py-12"

@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { components } from '$lib/api/schema';
 	import * as Card from '$lib/components/ui/card';
 	import { formatDate } from '$lib/dates';
 	import { money, signed } from '$lib/forecast-words';
 	import { cn } from '$lib/utils';
+	import TweenedMoney from '$lib/components/tweened-money.svelte';
 
 	type Forecast = components['schemas']['Forecast'];
 
@@ -23,10 +25,10 @@
 </script>
 
 <!-- Stacked rows on a phone (label left, number right); three cards side by side from sm up.
-     A value of two amounts reads "$A to $B", and each amount stays on one line. -->
+     The hero figures count toward new values instead of swapping. -->
 {#snippet tile(
 	label: string,
-	amounts: string[],
+	value: Snippet,
 	valueClass?: string,
 	note?: string,
 	noteClass?: string
@@ -42,9 +44,7 @@
 					valueClass
 				)}
 			>
-				{#each amounts as text, i (i)}
-					{#if i}{' to '}{/if}<span class="whitespace-nowrap">{text}</span>
-				{/each}
+				{@render value()}
 			</p>
 			{#if note}
 				<p class={cn('text-muted-foreground tabular-nums', noteClass)}>{note}</p>
@@ -53,23 +53,32 @@
 	</Card.Root>
 {/snippet}
 
+{#snippet lowestValue()}
+	<TweenedMoney id="tile-lowest" cents={forecast.lowest.cents} />
+{/snippet}
+
+{#snippet endValue()}
+	<TweenedMoney id="tile-end" cents={forecast.endBalance.actualCents} />
+{/snippet}
+
+{#snippet rangeValue()}
+	<span class="whitespace-nowrap">{money(forecast.endBalance.minCents)}</span>
+	{' to '}<span class="whitespace-nowrap">{money(forecast.endBalance.maxCents)}</span>
+{/snippet}
+
 <div class={cn('grid gap-3 sm:grid-cols-3', className)}>
 	{@render tile(
 		'Lowest point',
-		[money(forecast.lowest.cents)],
+		lowestValue,
 		balanceClass(forecast.lowest.cents),
 		formatDate(forecast.lowest.date)
 	)}
 	{@render tile(
 		`Expected on ${end}`,
-		[money(forecast.endBalance.actualCents)],
+		endValue,
 		balanceClass(forecast.endBalance.actualCents),
 		`${signed(change)} from today`,
 		change < 0 ? 'text-expense-strong' : 'text-brand-strong'
 	)}
-	{@render tile(
-		`Worst to best on ${end}`,
-		[money(forecast.endBalance.minCents), money(forecast.endBalance.maxCents)],
-		balanceClass(forecast.endBalance.minCents)
-	)}
+	{@render tile(`Worst to best on ${end}`, rangeValue, balanceClass(forecast.endBalance.minCents))}
 </div>

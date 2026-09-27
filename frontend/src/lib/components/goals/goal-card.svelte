@@ -6,6 +6,7 @@
 	import { buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import Chirp from '$lib/components/chirp.svelte';
 	import { formatGoalDate } from '$lib/dates';
 	import { dollars } from '$lib/forecast-words';
 	import { goalWords, monthlyWords } from '$lib/goal-words';
@@ -14,11 +15,14 @@
 	let {
 		goal,
 		form,
-		expectedOn
+		expectedOn,
+		fresh = false
 	}: {
 		goal: Goal;
 		form: ActionState;
 		expectedOn?: (date: string) => number | null;
+		/** Just created here: hop in with a chirp instead of appearing quietly. */
+		fresh?: boolean;
 	} = $props();
 
 	const words = $derived(goalWords(goal));
@@ -35,7 +39,7 @@
 	let editing = $state(false);
 </script>
 
-<Card.Root size="sm" class="h-full">
+<Card.Root size="sm" class="h-full {fresh ? 'animate-hop-in' : ''}">
 	<Card.Header>
 		<Card.Title class="text-base font-semibold">
 			<a href="/app/goals/{goal.id}" class="hover:underline">{goal.name}</a>
@@ -82,6 +86,7 @@
 		</Card.Action>
 	</Card.Header>
 	<Card.Content class="grid gap-2">
+		{#if fresh}<Chirp label="Goal set!" />{/if}
 		<p class="text-sm">{words.text}</p>
 		{#if words.note}<p class="text-xs text-muted-foreground">{words.note}</p>{/if}
 		{#if monthly}<p class="text-xs text-muted-foreground tabular-nums">{monthly}</p>{/if}
@@ -94,7 +99,10 @@
 				aria-valuemax={100}
 				aria-label="{goal.name} progress"
 			>
-				<div class="h-full {barClass}" style="width: {progress}%"></div>
+				<div
+					class="h-full transition-[width] duration-500 ease-[var(--ease-hop)] {barClass}"
+					style="width: {progress}%"
+				></div>
 			</div>
 		{/if}
 	</Card.Content>

@@ -2,6 +2,7 @@
 	import { navigating, page } from '$app/state';
 	import { cn } from '$lib/utils';
 	import BrandMark from '$lib/components/brand-mark.svelte';
+	import { tap } from '$lib/haptics';
 	import { ArrowDownToLine, ArrowUpFromLine, ChartLine, Target } from '@lucide/svelte';
 
 	let { data, children } = $props();
@@ -21,24 +22,27 @@
 			: page.url.pathname.startsWith(href);
 	const settingsActive = $derived(page.url.pathname.startsWith('/app/settings'));
 	const initial = $derived(data.user.email.trim().charAt(0).toUpperCase() || 'K');
-
-	// A light press nudge on touch devices (Android haptic; no-op elsewhere).
-	function tap() {
-		try {
-			navigator.vibrate?.(10);
-		} catch {
-			// Haptics are best-effort.
-		}
-	}
+	// The header cricket hops on every tap; the key replays the hop.
+	let hops = $state(0);
 </script>
+
+<!-- The whole signed-in area sits behind auth: keep it out of search indexes. -->
+<svelte:head><meta name="robots" content="noindex, nofollow" /></svelte:head>
 
 <div class="min-h-dvh bg-background text-foreground">
 	<header class="pt-safe sticky top-0 z-20 border-b bg-background/90 backdrop-blur">
 		<div
 			class="mx-auto flex h-14 max-w-5xl items-center gap-6 ps-[max(1rem,env(safe-area-inset-left))] pe-[max(1rem,env(safe-area-inset-right))]"
 		>
-			<a href="/app" class="flex items-center gap-2 font-semibold">
-				<BrandMark class="size-6" /> kriket
+			<a
+				href="/app"
+				class="flex items-center gap-2 font-semibold"
+				onclick={() => {
+					tap();
+					hops += 1;
+				}}
+			>
+				{#key hops}<BrandMark class="size-6 {hops > 0 ? 'animate-chirp' : ''}" />{/key} kriket
 			</a>
 			<nav class="hidden items-center gap-1 md:flex" aria-label="Primary">
 				{#each items as item (item.href)}
@@ -90,16 +94,19 @@
 		<div class="grid grid-cols-4 ps-[env(safe-area-inset-left)] pe-[env(safe-area-inset-right)]">
 			{#each items as item (item.href)}
 				{@const Icon = item.icon}
+				{@const isActive = active(item.href)}
 				<a
 					href={item.href}
-					aria-current={active(item.href) ? 'page' : undefined}
+					aria-current={isActive ? 'page' : undefined}
 					onclick={tap}
 					class={cn(
 						'flex min-h-12 flex-col items-center justify-center gap-1 py-2 text-xs transition active:scale-95 active:bg-accent/50',
-						active(item.href) ? 'text-brand-strong' : 'text-muted-foreground'
+						isActive ? 'text-brand-strong' : 'text-muted-foreground'
 					)}
 				>
-					<Icon class="size-5" /><span>{item.label}</span>
+					{#key isActive}
+						<Icon class="size-5 {isActive ? 'animate-hop-in' : ''}" /><span>{item.label}</span>
+					{/key}
 				</a>
 			{/each}
 		</div>

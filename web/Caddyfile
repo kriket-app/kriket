@@ -18,6 +18,7 @@
 	header /Kriket*.png Cache-Control "public, max-age=86400"
 	header /Kriket.svg Cache-Control "public, max-age=86400"
 	header /favicon.ico Cache-Control "public, max-age=86400"
+	header /og-*.png Cache-Control "public, max-age=86400"
 
 	handle /api/* {
 		reverse_proxy backend:3001

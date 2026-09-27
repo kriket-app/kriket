@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { CircleCheck } from '@lucide/svelte';
 	import { enhance } from '$app/forms';
 	import type { ActionState, Checkin } from '$lib/api/types';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
+	import Chirp from '$lib/components/chirp.svelte';
 	import { formatDate } from '$lib/dates';
 	import { money } from '$lib/forecast-words';
+	import { chirp } from '$lib/haptics';
 	import { centsToDollars } from '$lib/money';
 
 	/** The balance check-in: the one habit, first on the overview. Posts to the page's `checkin` action. */
@@ -36,6 +37,10 @@
 	// with the expected amount only as a placeholder (one tap on Save would otherwise store the
 	// old balance as today's).
 	const checkedInToday = $derived(latest?.checkedOn === today);
+	// A saved check-in gets a hopping cricket and a silent chirp-chirp in the hand.
+	$effect(() => {
+		if (saved) chirp();
+	});
 </script>
 
 <Card.Root>
@@ -90,10 +95,12 @@
 				<!-- Always in the page, so screen readers announce the line when it appears. -->
 				<p role="status">
 					{#if saved}
-						<span class="flex items-start gap-1.5 text-brand-strong">
-							<CircleCheck class="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-							<span>Saved · {saved}. Your forecast starts from today.</span>
-						</span>
+						{#key form}
+							<span class="flex items-start gap-1.5 text-brand-strong">
+								<Chirp class="mt-0.5 size-4" label="Chirp!" />
+								<span>Saved · {saved}. Your forecast starts from today.</span>
+							</span>
+						{/key}
 					{/if}
 				</p>
 				{#if latest}

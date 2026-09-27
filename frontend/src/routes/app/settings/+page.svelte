@@ -7,21 +7,12 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
-	import { setTheme, theme, THEME_CHOICES, type ThemeChoice } from '$lib/theme.svelte';
 	import { pushSupported, unsubscribePush } from '$lib/push';
-	import { ChevronRight, Laptop, Moon, Sun, Tags } from '@lucide/svelte';
-	import { cn } from '$lib/utils';
+	import { ChevronRight, Tags } from '@lucide/svelte';
 
 	let { data } = $props();
 
 	const REPO_URL = 'https://github.com/kriket-app/kriket';
-
-	const themeIcons = { system: Laptop, light: Sun, dark: Moon } as const;
-	const themeLabels: Record<ThemeChoice, string> = {
-		system: 'System',
-		light: 'Light',
-		dark: 'Dark'
-	};
 
 	let signingOut = $state(false);
 	let confirmSignOut = $state(false);
@@ -45,7 +36,7 @@
 <svelte:head><title>Settings · kriket</title></svelte:head>
 
 <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
-<p class="mt-1 text-sm text-muted-foreground">Your account, notifications, and how kriket looks.</p>
+<p class="mt-1 text-sm text-muted-foreground">Your account, notifications, and tags.</p>
 
 <div class="mt-6 grid gap-4">
 	<Card.Root>
@@ -74,33 +65,6 @@
 					</AlertDialog.Footer>
 				</AlertDialog.Content>
 			</AlertDialog.Root>
-		</Card.Content>
-	</Card.Root>
-
-	<Card.Root>
-		<Card.Header>
-			<Card.Title class="text-base">Appearance</Card.Title>
-			<Card.Description>System follows your device's light or dark mode.</Card.Description>
-		</Card.Header>
-		<Card.Content>
-			<div class="flex gap-1 rounded-full bg-muted p-1" role="group" aria-label="Colour theme">
-				{#each THEME_CHOICES as choice (choice)}
-					{@const Icon = themeIcons[choice]}
-					<button
-						type="button"
-						aria-pressed={theme.choice === choice}
-						onclick={() => setTheme(choice)}
-						class={cn(
-							'flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium',
-							theme.choice === choice
-								? 'bg-background text-brand-strong shadow-xs'
-								: 'text-muted-foreground hover:text-foreground'
-						)}
-					>
-						<Icon class="size-4" />{themeLabels[choice]}
-					</button>
-				{/each}
-			</div>
 		</Card.Content>
 	</Card.Root>
 

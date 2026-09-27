@@ -3,7 +3,6 @@
 	import { onNavigate } from '$app/navigation';
 	import './layout.css';
 	import ReloadPrompt from '$lib/components/reload-prompt.svelte';
-	import { initTheme } from '$lib/theme.svelte';
 
 	// Each area brings its own chrome: the landing page and auth pages have their own header,
 	// and /app has the app shell with the responsive nav.
@@ -28,7 +27,6 @@
 	});
 
 	onMount(() => {
-		initTheme();
 		// A push may have badged the app icon while it was closed; opening the app
 		// clears it. No-op where badging is unsupported.
 		(navigator as Navigator & { clearAppBadge?: () => Promise<void> })
