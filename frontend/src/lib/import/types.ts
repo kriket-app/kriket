@@ -65,6 +65,7 @@ export type Draft = {
 	minCents: number;
 	maxCents: number;
 	intervalDays: number;
+	recurrence: 'days' | 'monthly';
 	firstDate: string;
 	hint: Hint;
 	/** How many transactions and how much they came to in this statement. */

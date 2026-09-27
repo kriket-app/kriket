@@ -1,7 +1,9 @@
 import { streamCrud, type StreamRow } from '../crud/streams.js';
 import type { CreateStreamInput, StreamDto, UpdateStreamInput } from '../schemas/streams.js';
 import { InvalidInputError, NotFoundError } from './errors.js';
-import { tagBelongsToUser } from './tags.js';
+import { ensureSubscriptionTag, isSubscriptionTagName, tagBelongsToUser } from './tags.js';
+import { findTag } from '../crud/tags.js';
+import { today } from './dates.js';
 
 export const toStreamDto = (row: StreamRow): StreamDto => ({
 	id: row.id,
@@ -11,7 +13,9 @@ export const toStreamDto = (row: StreamRow): StreamDto => ({
 	maxCents: row.maxCents,
 	actualCents: row.actualCents,
 	intervalDays: row.intervalDays,
+	recurrence: row.recurrence,
 	firstDate: row.firstDate,
+	isSubscription: row.isSubscription ?? false,
 	createdAt: row.createdAt.toISOString(),
 	updatedAt: row.updatedAt.toISOString()
 });
@@ -31,19 +35,66 @@ async function assertTag(userId: string, tagId: string | null | undefined) {
 		throw new InvalidInputError('Invalid request', [{ path: 'tagId', message: 'no such tag' }]);
 }
 
+function scheduleFields(input: UpdateStreamInput, current?: StreamRow) {
+	const recurrence = input.recurrence ?? current?.recurrence ?? 'days';
+	const intervalDays =
+		recurrence === 'monthly'
+			? 30
+			: recurrence === 'yearly'
+				? 365
+				: (input.intervalDays ?? current?.intervalDays);
+	if (intervalDays === undefined)
+		throw new InvalidInputError('Invalid request', [
+			{ path: 'intervalDays', message: 'provide a day interval or choose monthly or yearly' }
+		]);
+	return { recurrence, intervalDays };
+}
+
 export function streamService(kind: 'income' | 'expense') {
 	const crud = streamCrud(kind);
+	async function subscriptionFields(userId: string, input: UpdateStreamInput, current?: StreamRow) {
+		await assertTag(userId, input.tagId);
+		const tagId = input.tagId === undefined ? current?.tagId : input.tagId;
+		const tag = tagId ? await findTag(userId, tagId) : null;
+		const subscriptionTag =
+			tag?.presetKey === 'subscriptions' || (tag && isSubscriptionTagName(tag.name));
+		if (kind === 'income' && subscriptionTag)
+			throw new InvalidInputError('Invalid request', [
+				{ path: 'tagId', message: 'the subscription tag is for expenses' }
+			]);
+		if (kind === 'income')
+			return { isSubscription: false, subscriptionSince: null, tagId: tagId ?? null };
+		const isSubscription =
+			input.isSubscription ?? (subscriptionTag ? true : (current?.isSubscription ?? false));
+		return {
+			isSubscription,
+			subscriptionSince: isSubscription ? (current?.subscriptionSince ?? today()) : null,
+			tagId: isSubscription
+				? (await ensureSubscriptionTag(userId)).id
+				: subscriptionTag
+					? null
+					: (tagId ?? null)
+		};
+	}
 	return {
 		list: async (userId: string) => (await crud.list(userId)).map(toStreamDto),
 		async create(userId: string, body: CreateStreamInput) {
+			if (kind === 'income' && body.isSubscription) {
+				throw new InvalidInputError('Invalid request', [
+					{ path: 'isSubscription', message: 'only expenses can be subscriptions' }
+				]);
+			}
 			const values = {
 				...body,
+				...scheduleFields(body),
 				minCents: body.minCents ?? body.actualCents,
-				maxCents: body.maxCents ?? body.actualCents
+				maxCents: body.maxCents ?? body.actualCents,
+				isSubscription: kind === 'expense' ? (body.isSubscription ?? false) : false
 			};
 			assertOrdered(values);
-			await assertTag(userId, values.tagId);
-			return toStreamDto(await crud.insert(userId, { ...values, tagId: values.tagId ?? null }));
+			return toStreamDto(
+				await crud.insert(userId, { ...values, ...(await subscriptionFields(userId, body)) })
+			);
 		},
 		async update(userId: string, id: string, patch: UpdateStreamInput) {
 			const current = await crud.find(userId, id);
@@ -51,9 +102,18 @@ export function streamService(kind: 'income' | 'expense') {
 			// An empty patch reaches Drizzle's set({}), which throws, so skip the write and
 			// hand back the row unchanged.
 			if (Object.keys(patch).length === 0) return toStreamDto(current);
-			assertOrdered({ ...current, ...patch });
-			await assertTag(userId, patch.tagId);
-			const row = await crud.update(userId, id, patch);
+			if (kind === 'income' && patch.isSubscription) {
+				throw new InvalidInputError('Invalid request', [
+					{ path: 'isSubscription', message: 'only expenses can be subscriptions' }
+				]);
+			}
+			const merged = { ...current, ...patch };
+			assertOrdered(merged);
+			const row = await crud.update(userId, id, {
+				...patch,
+				...scheduleFields(patch, current),
+				...(await subscriptionFields(userId, patch, current))
+			});
 			if (!row) throw new NotFoundError('Stream not found');
 			return toStreamDto(row);
 		},

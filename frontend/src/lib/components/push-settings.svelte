@@ -111,7 +111,7 @@
 			</Card.Title>
 			<Card.Description>
 				Get a heads-up on this device when your expected balance is about to drop below zero in the
-				coming week.
+				coming week, plus a subscription cleanup reminder every 90 days.
 			</Card.Description>
 		</Card.Header>
 		<Card.Content class="grid gap-3">

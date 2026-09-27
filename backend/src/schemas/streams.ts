@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { registry } from '../openapi/registry.js';
 import { cents, isoDate, positiveCents } from './common.js';
 
+const recurrence = z.enum(['days', 'monthly', 'yearly']);
+
 export const Stream = registry.register(
 	'Stream',
 	z.object({
@@ -12,7 +14,9 @@ export const Stream = registry.register(
 		maxCents: z.number().int(),
 		actualCents: z.number().int(),
 		intervalDays: z.number().int(),
+		recurrence,
 		firstDate: isoDate,
+		isSubscription: z.boolean(),
 		createdAt: z.string().openapi({ format: 'date-time' }),
 		updatedAt: z.string().openapi({ format: 'date-time' })
 	})
@@ -26,11 +30,18 @@ const fields = {
 	maxCents: cents,
 	actualCents: positiveCents,
 	intervalDays: z.number().int().min(1).max(366).openapi({ example: 14 }),
-	firstDate: isoDate
+	recurrence: recurrence.optional(),
+	firstDate: isoDate,
+	isSubscription: z.boolean().optional().openapi({ example: false })
 };
 export const CreateStreamBody = registry.register(
 	'CreateStreamBody',
-	z.object({ ...fields, minCents: cents.optional(), maxCents: cents.optional() })
+	z.object({
+		...fields,
+		intervalDays: fields.intervalDays.optional(),
+		minCents: cents.optional(),
+		maxCents: cents.optional()
+	})
 );
 export const UpdateStreamBody = registry.register('UpdateStreamBody', z.object(fields).partial());
 export type StreamDto = z.infer<typeof Stream>;

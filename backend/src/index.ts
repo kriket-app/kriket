@@ -5,6 +5,7 @@ import { db, pool } from './db/index.js';
 import { validateEnv } from './env.js';
 import { logger } from './logger.js';
 import { startForecastAlerts } from './services/alerts.js';
+import { startSubscriptionDigests } from './services/subscription-digests.js';
 
 const env = validateEnv();
 if (!env.success) {
@@ -25,10 +26,13 @@ async function main() {
 	});
 	// Low-balance push alerts; each sweep is a no-op while the VAPID keys are unset.
 	const stopAlerts = startForecastAlerts();
+	// Quarterly subscription cleanup nudges share the same waking-hours window.
+	const stopDigests = startSubscriptionDigests();
 
 	const shutdown = (signal: NodeJS.Signals) => {
 		logger.info({ signal }, 'Shutting down');
 		stopAlerts();
+		stopDigests();
 		server.close(async () => {
 			await pool.end();
 			logger.info('Shutdown complete');

@@ -34,7 +34,7 @@
 		pay: 'Pay cheque',
 		'e-transfer': 'Side hustle',
 		groceries: 'Groceries',
-		subscription: 'Bill',
+		subscription: 'Subscriptions',
 		utilities: 'Bill',
 		rent: 'Bill',
 		fees: 'Bill'
@@ -42,7 +42,11 @@
 	const tagIdFor = (draft: Draft) =>
 		draft.kind === 'expense' && draft.hint === 'e-transfer'
 			? null
-			: (tags.find((tag) => tag.name === TAG_FOR[draft.hint])?.id ?? null);
+			: (tags.find((tag) =>
+					draft.hint === 'subscription'
+						? tag.presetKey === 'subscriptions'
+						: tag.name === TAG_FOR[draft.hint]
+				)?.id ?? null);
 
 	async function read(event: Event) {
 		const file = (event.currentTarget as HTMLInputElement).files?.[0];
@@ -223,6 +227,7 @@
 					</p>
 				{:else}
 					<StreamForm
+						subscriptionMode={draft.kind === 'expense' && draft.hint === 'subscription'}
 						kind={draft.kind}
 						{tags}
 						initial={{
@@ -232,6 +237,7 @@
 							maxCents: draft.maxCents,
 							actualCents: draft.actualCents,
 							intervalDays: draft.intervalDays,
+							recurrence: draft.recurrence,
 							firstDate: draft.firstDate
 						}}
 						hidden={{ kind: draft.kind, draftId: draft.id }}

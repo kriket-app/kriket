@@ -23,14 +23,15 @@ export const load: PageServerLoad = async (event) => {
 
 	// The stream lists only decide whether to show the first-run panel instead of the forecast;
 	// the tags colour Coming up's dots.
-	const [forecast, checkins, incomes, expenses, tags, comingUp, goals] = await Promise.all([
+	const [forecast, checkins, incomes, expenses, tags, comingUp, goals, digest] = await Promise.all([
 		client.GET('/api/forecast', { params: { query: { days } } }),
 		client.GET('/api/checkins'),
 		client.GET('/api/income-streams'),
 		client.GET('/api/expense-streams'),
 		client.GET('/api/tags'),
 		loadComingUp(),
-		client.GET('/api/goals')
+		client.GET('/api/goals'),
+		client.GET('/api/subscriptions/digest')
 	]);
 	return {
 		days,
@@ -39,11 +40,19 @@ export const load: PageServerLoad = async (event) => {
 		hasStreams: dataOf(incomes).streams.length + dataOf(expenses).streams.length > 0,
 		tags: dataOf(tags).tags,
 		comingUp,
-		goals: dataOf(goals).goals
+		goals: dataOf(goals).goals,
+		digest: dataOf(digest)
 	};
 };
 
 export const actions = {
+	async dismissSubscriptions(event) {
+		return actionResult(
+			'dismissSubscriptions',
+			{},
+			await api(event).POST('/api/subscriptions/dismiss')
+		);
+	},
 	async checkin(event) {
 		const values = await formValues(event.request);
 		const balanceCents = parseDollars(values.balance ?? '');

@@ -1173,6 +1173,94 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/subscriptions/digest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Quarterly subscription cleanup digest */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Digest */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SubscriptionDigest"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/subscriptions/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Snooze the subscription digest for another quarter */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Dismissed */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/income-streams": {
         parameters: {
             query?: never;
@@ -1582,6 +1670,8 @@ export interface components {
             name: string;
             color: string | null;
             isPreset: boolean;
+            /** @enum {string|null} */
+            presetKey: "subscriptions" | null;
             /** Format: date-time */
             createdAt: string;
         };
@@ -1608,11 +1698,14 @@ export interface components {
             maxCents: number;
             actualCents: number;
             intervalDays: number;
+            /** @enum {string} */
+            recurrence: "days" | "monthly" | "yearly";
             /**
              * Format: date
              * @example 2026-10-01
              */
             firstDate: string;
+            isSubscription: boolean;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -1642,12 +1735,16 @@ export interface components {
              */
             actualCents: number;
             /** @example 14 */
-            intervalDays: number;
+            intervalDays?: number;
+            /** @enum {string} */
+            recurrence?: "days" | "monthly" | "yearly";
             /**
              * Format: date
              * @example 2026-10-01
              */
             firstDate: string;
+            /** @example false */
+            isSubscription?: boolean;
         };
         UpdateStreamBody: {
             /** @example Shifts at the café */
@@ -1671,11 +1768,15 @@ export interface components {
             actualCents?: number;
             /** @example 14 */
             intervalDays?: number;
+            /** @enum {string} */
+            recurrence?: "days" | "monthly" | "yearly";
             /**
              * Format: date
              * @example 2026-10-01
              */
             firstDate?: string;
+            /** @example false */
+            isSubscription?: boolean;
         };
         Checkin: {
             id: string;
@@ -1922,6 +2023,14 @@ export interface components {
             privacyAccepted: true;
             /** @enum {boolean} */
             termsAccepted: true;
+        };
+        SubscriptionDigest: {
+            count: number;
+            monthlyCents: number;
+            lastSentOn: string | null;
+            /** Format: date */
+            nextReviewOn: string | null;
+            due: boolean;
         };
     };
     responses: never;

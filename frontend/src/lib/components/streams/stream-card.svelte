@@ -8,9 +8,10 @@
 	import { buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { formatDate, nextOccurrence, repeatText as repeatTextOf } from '$lib/dates';
+	import { formatDate, nextOccurrence, repeatText as repeatTextOf, today } from '$lib/dates';
 	import { formatCents } from '$lib/money';
 	import StreamForm from './stream-form.svelte';
+	import SubscriptionIcon from '$lib/components/subscription-icon.svelte';
 
 	let {
 		kind,
@@ -24,25 +25,32 @@
 	const failedEdit = $derived(
 		form?.action === 'update' && form.values?.id === stream.id ? form.details : undefined
 	);
-	const repeatText = $derived(repeatTextOf(stream.intervalDays));
+	const repeatText = $derived(repeatTextOf(stream.intervalDays, stream.recurrence));
 	const isRanged = $derived(
 		stream.minCents !== stream.actualCents || stream.maxCents !== stream.actualCents
 	);
 	const amountClass = $derived(kind === 'income' ? 'text-brand-strong' : 'text-expense-strong');
 	const nextDateText = $derived(
-		`next ${formatDate(nextOccurrence(stream.firstDate, stream.intervalDays))}`
+		`next ${formatDate(nextOccurrence(stream.firstDate, stream.intervalDays, today(), stream.recurrence))}`
 	);
 	let editing = $state(false);
 </script>
 
 <Card.Root size="sm" class="h-full">
 	<Card.Header>
-		<Card.Title class="text-base font-semibold">{stream.name}</Card.Title>
+		<Card.Title class="flex items-center gap-2 text-base font-semibold"
+			>{#if stream.isSubscription}<SubscriptionIcon name={stream.name} />{/if}<span
+				>{stream.name}</span
+			></Card.Title
+		>
 		{#if tag}
 			<Card.Description>
 				<Badge variant="outline"><TagDot color={tag.color} />{tag.name}</Badge>
 			</Card.Description>
 		{/if}
+		{#if stream.isSubscription && tag?.presetKey !== 'subscriptions'}<Badge variant="outline"
+				>Subscription</Badge
+			>{/if}
 		<Card.Action class="flex gap-1">
 			<Dialog.Root bind:open={editing}>
 				<Dialog.Trigger
@@ -73,7 +81,9 @@
 					<AlertDialog.Header>
 						<AlertDialog.Title>Delete {stream.name}?</AlertDialog.Title>
 						<AlertDialog.Description
-							>It stops counting toward your forecast.</AlertDialog.Description
+							>It stops counting toward your forecast.{stream.isSubscription
+								? ' This only stops tracking it in kriket; cancel with the service to stop being charged.'
+								: ''}</AlertDialog.Description
 						>
 					</AlertDialog.Header>
 					<!-- A successful delete reruns the page's load, which removes this card and its dialog. -->

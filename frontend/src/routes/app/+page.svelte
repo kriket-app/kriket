@@ -9,6 +9,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
+	import SubscriptionReview from '$lib/components/subscription-review.svelte';
 
 	let { data, form } = $props();
 
@@ -108,6 +109,7 @@
 {/if}
 
 <GoalsSection goals={data.goals} todayIso={data.comingUp.today} />
+<SubscriptionReview digest={data.digest} />
 
 {#key data.days}
 	<div class="animate-window-in">

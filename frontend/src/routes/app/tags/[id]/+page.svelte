@@ -16,7 +16,9 @@
 		if (totalCount === 0) return null;
 		const sameKind = data.incomeStreams.length === 0 || data.expenseStreams.length === 0;
 		const intervals = new Set(
-			[...data.incomeStreams, ...data.expenseStreams].map((stream) => stream.intervalDays)
+			[...data.incomeStreams, ...data.expenseStreams].map((stream) =>
+				repeatText(stream.intervalDays, stream.recurrence)
+			)
 		);
 		if (!sameKind || intervals.size !== 1) return null;
 		const [interval] = intervals;
@@ -31,7 +33,7 @@
 		return `${totalCount} ${streamsWord}`;
 	});
 	const summarySuffix = $derived.by(() => {
-		if (oneKindTotal) return repeatText(oneKindTotal.interval);
+		if (oneKindTotal) return oneKindTotal.interval;
 		if (totalCount === 0) return null;
 		return `${data.incomeStreams.length} in, ${data.expenseStreams.length} out`;
 	});

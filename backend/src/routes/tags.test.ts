@@ -5,28 +5,29 @@ describe('/api/tags', () => {
 	it('rejects signed-out callers', async () => {
 		expect((await testApp().get('/api/tags')).status).toBe(401);
 	});
-	it('seeds four presets sorted by name on the first list, then keeps them', async () => {
+	it('seeds five presets sorted by name on the first list, then keeps them', async () => {
 		const a = testAgent();
 		await signUp(a, 'tags1@example.com');
 		const first = await a.get('/api/tags');
 		expect(first.status).toBe(200);
-		expect(first.body.tags).toHaveLength(4);
+		expect(first.body.tags).toHaveLength(5);
 		expect(first.body.tags.every((t: { isPreset: boolean }) => t.isPreset)).toBe(true);
 		expect(first.body.tags.map((t: { name: string }) => t.name)).toEqual([
 			'Bill',
 			'Groceries',
 			'Pay cheque',
-			'Side hustle'
+			'Side hustle',
+			'Subscriptions'
 		]);
-		expect((await a.get('/api/tags')).body.tags).toHaveLength(4);
+		expect((await a.get('/api/tags')).body.tags).toHaveLength(5);
 	});
-	it('seeds exactly 4 presets even when two first requests race', async () => {
+	it('seeds exactly 5 presets even when two first requests race', async () => {
 		const a = testAgent();
 		await signUp(a, 'tags5@example.com');
 		const [first, second] = await Promise.all([a.get('/api/tags'), a.get('/api/tags')]);
-		expect(first.body.tags).toHaveLength(4);
-		expect(second.body.tags).toHaveLength(4);
-		expect((await a.get('/api/tags')).body.tags).toHaveLength(4);
+		expect(first.body.tags).toHaveLength(5);
+		expect(second.body.tags).toHaveLength(5);
+		expect((await a.get('/api/tags')).body.tags).toHaveLength(5);
 	});
 	it('creates, renames, and deletes a tag, and hides it from other users', async () => {
 		const a = testAgent();
@@ -53,5 +54,17 @@ describe('/api/tags', () => {
 		expect(res.body.error.details.map((d: { path: string }) => d.path)).toEqual(
 			expect.arrayContaining(['name', 'color'])
 		);
+	});
+	it('only restores the dedicated subscription preset after deletion', async () => {
+		const a = testAgent();
+		await signUp(a, 'tags-delete@example.com');
+		const first = (await a.get('/api/tags')).body.tags;
+		for (const tag of first.filter((t: { name: string }) =>
+			['Subscriptions', 'Groceries'].includes(t.name)
+		))
+			await a.delete(`/api/tags/${tag.id}`);
+		const names = (await a.get('/api/tags')).body.tags.map((t: { name: string }) => t.name);
+		expect(names).toContain('Subscriptions');
+		expect(names).not.toContain('Groceries');
 	});
 });

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { signUp, testAgent } from '../../tests/helpers.js';
+import { monthEnd, today } from '../services/dates.js';
 
 const body = {
 	name: 'Shifts',
@@ -12,6 +13,36 @@ const body = {
 
 describe.each(['income', 'expense'] as const)('/api/%s-streams', (kind) => {
 	const base = `/api/${kind}-streams`;
+	it('persists calendar schedules, uses them in forecast/coming-up, and preserves fixed-day compatibility', async () => {
+		const a = testAgent();
+		await signUp(a, `${kind}-calendar@example.com`);
+		const { intervalDays: _, ...calendarBody } = body;
+		const created = await a
+			.post(base)
+			.send({ ...calendarBody, firstDate: '2024-01-31', recurrence: 'monthly' });
+		expect(created.status).toBe(201);
+		expect(created.body).toMatchObject({ recurrence: 'monthly', intervalDays: 30 });
+		const events = (await a.get('/api/forecast?days=90')).body.events;
+		expect(events.length).toBeGreaterThan(1);
+		for (const e of events) expect(e.date).toBe(monthEnd(e.date.slice(0, 7)));
+		const coming = (await a.get('/api/coming-up')).body;
+		expect(coming.days.map((d: { date: string }) => d.date)).toEqual([
+			monthEnd(today().slice(0, 7))
+		]);
+		expect(
+			(await a.patch(`${base}/${created.body.id}`).send({ name: 'Renamed' })).body.recurrence
+		).toBe('monthly');
+		expect(
+			(await a.patch(`${base}/${created.body.id}`).send({ recurrence: 'yearly' })).body
+		).toMatchObject({ recurrence: 'yearly', intervalDays: 365 });
+		expect(
+			(await a.patch(`${base}/${created.body.id}`).send({ recurrence: 'days', intervalDays: 14 }))
+				.body
+		).toMatchObject({ recurrence: 'days', intervalDays: 14 });
+		expect((await a.post(base).send(body)).body.recurrence).toBe('days');
+		expect((await a.post(base).send(calendarBody)).status).toBe(400);
+		expect((await a.post(base).send({ ...body, recurrence: 'sometimes' })).status).toBe(400);
+	});
 	it('creates, lists, updates, and deletes', async () => {
 		const a = testAgent();
 		await signUp(a, `${kind}1@example.com`);

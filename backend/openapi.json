@@ -83,6 +83,14 @@
           "isPreset": {
             "type": "boolean"
           },
+          "presetKey": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "subscriptions",
+              null
+            ]
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -93,6 +101,7 @@
           "name",
           "color",
           "isPreset",
+          "presetKey",
           "createdAt"
         ]
       },
@@ -170,10 +179,21 @@
           "intervalDays": {
             "type": "integer"
           },
+          "recurrence": {
+            "type": "string",
+            "enum": [
+              "days",
+              "monthly",
+              "yearly"
+            ]
+          },
           "firstDate": {
             "type": "string",
             "format": "date",
             "example": "2026-10-01"
+          },
+          "isSubscription": {
+            "type": "boolean"
           },
           "createdAt": {
             "type": "string",
@@ -192,7 +212,9 @@
           "maxCents",
           "actualCents",
           "intervalDays",
+          "recurrence",
           "firstDate",
+          "isSubscription",
           "createdAt",
           "updatedAt"
         ]
@@ -252,16 +274,27 @@
             "maximum": 366,
             "example": 14
           },
+          "recurrence": {
+            "type": "string",
+            "enum": [
+              "days",
+              "monthly",
+              "yearly"
+            ]
+          },
           "firstDate": {
             "type": "string",
             "format": "date",
             "example": "2026-10-01"
+          },
+          "isSubscription": {
+            "type": "boolean",
+            "example": false
           }
         },
         "required": [
           "name",
           "actualCents",
-          "intervalDays",
           "firstDate"
         ]
       },
@@ -306,10 +339,22 @@
             "maximum": 366,
             "example": 14
           },
+          "recurrence": {
+            "type": "string",
+            "enum": [
+              "days",
+              "monthly",
+              "yearly"
+            ]
+          },
           "firstDate": {
             "type": "string",
             "format": "date",
             "example": "2026-10-01"
+          },
+          "isSubscription": {
+            "type": "boolean",
+            "example": false
           }
         }
       },
@@ -1034,6 +1079,36 @@
         "required": [
           "privacyAccepted",
           "termsAccepted"
+        ]
+      },
+      "SubscriptionDigest": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "monthlyCents": {
+            "type": "integer"
+          },
+          "lastSentOn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextReviewOn": {
+            "type": "string",
+            "nullable": true,
+            "format": "date"
+          },
+          "due": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "count",
+          "monthlyCents",
+          "lastSentOn",
+          "nextReviewOn",
+          "due"
         ]
       }
     },
@@ -2228,6 +2303,69 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscriptions/digest": {
+      "get": {
+        "tags": [
+          "subscriptions"
+        ],
+        "summary": "Quarterly subscription cleanup digest",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Digest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionDigest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscriptions/dismiss": {
+      "post": {
+        "tags": [
+          "subscriptions"
+        ],
+        "summary": "Snooze the subscription digest for another quarter",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Dismissed"
           },
           "401": {
             "description": "Not authenticated",

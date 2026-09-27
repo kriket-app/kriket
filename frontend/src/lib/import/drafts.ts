@@ -66,6 +66,7 @@ export function draftsFrom(statement: Statement, txns: Classified[], today: stri
 		const actualCents = weekly ? Math.round(totalCents / weeks) : totalCents;
 		if (actualCents < 1) continue;
 		const intervalDays = weekly ? 7 : 30;
+		const recurrence = weekly ? 'days' : 'monthly';
 		const lastSeen = g.txns
 			.map((t) => t.date)
 			.sort()
@@ -78,7 +79,9 @@ export function draftsFrom(statement: Statement, txns: Classified[], today: stri
 			minCents: actualCents,
 			maxCents: actualCents,
 			intervalDays,
-			firstDate: nextOccurrence(lastSeen, intervalDays, today),
+			recurrence,
+			// Preserve the observed anchor, including month-end, in the saved stream.
+			firstDate: weekly ? nextOccurrence(lastSeen, intervalDays, today) : lastSeen,
 			hint: g.hint,
 			count: g.txns.length,
 			totalCents,

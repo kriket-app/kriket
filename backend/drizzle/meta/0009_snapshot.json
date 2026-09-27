@@ -1,6 +1,6 @@
 {
-  "id": "44583de2-29ab-43a8-9634-e97e2801562a",
-  "prevId": "240a62c3-1389-4053-94b6-f4e75accca0d",
+  "id": "06bcccbf-5e3f-4e75-95fa-5e787eaf2569",
+  "prevId": "44583de2-29ab-43a8-9634-e97e2801562a",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -506,6 +506,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "is_subscription": {
+          "name": "is_subscription",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -784,6 +791,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "is_subscription": {
+          "name": "is_subscription",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -948,6 +962,59 @@
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.subscription_digests": {
+      "name": "subscription_digests",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sent_on": {
+          "name": "sent_on",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "subscription_digests_user_id_user_id_fk": {
+          "name": "subscription_digests_user_id_user_id_fk",
+          "tableFrom": "subscription_digests",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

@@ -3,6 +3,7 @@ import type { components } from './schema';
 export type Tag = components['schemas']['Tag'];
 export type Stream = components['schemas']['Stream'];
 export type StreamKind = 'income' | 'expense';
+export type SubscriptionDigest = components['schemas']['SubscriptionDigest'];
 export type Checkin = components['schemas']['Checkin'];
 export type ComingUp = components['schemas']['ComingUp'];
 export type Goal = components['schemas']['Goal'];
@@ -23,4 +24,4 @@ export type ActionState =
 export type StreamSeed = Pick<
 	Stream,
 	'name' | 'tagId' | 'minCents' | 'maxCents' | 'actualCents' | 'intervalDays' | 'firstDate'
->;
+> & { recurrence?: Stream['recurrence'] };
