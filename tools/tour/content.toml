@@ -16,7 +16,7 @@ headline = "Budgeting for bumpy income."
 idea = "Add what comes in and what goes out once, as ranges, and kriket forecasts your daily balance at the worst, expected, and best case."
 as_built = "As built at end of iteration 2 (Sat 26 Sep 2026)"
 branch = "i2/tour"
-commit = "50fc3af"
+commit = "767505a"
 public_url = "https://app.26.cohack.tetl.ca"
 public_note = "live since 14:36 on day 1; every merge to main deploys"
 repo_url = "https://github.com/kriket-app/kriket"
@@ -27,7 +27,7 @@ repo_url = "https://github.com/kriket-app/kriket"
 number = 2
 when = "Iteration 2 (Sat 26 Sep 2026)"
 branch = "i2/tour"
-commit = "50fc3af"
+commit = "767505a"
 changed = "The overview leads with a sentence (\"You go $255 short on Oct 1\") instead of tiles; green for money in, expense-orange for money out, and the time under zero shaded orange on the chart. The balance check-in is first on the overview, with a visible \"Saved\" line and a kept history on a new balances page. Stream forms ask for the usual amount only, with an optional range folded behind \"Add a range\", and a styled calendar for the next date. Tags get any colour from a picker and their own pages; the four presets are now Pay cheque, Side hustle, Bill, and Groceries. Coming up moved onto the overview as a month you flip through."
 screenshots = "All fourteen, refreshed for the new overview, streams, tags, and balances pages."
 snapshot = "/tour/2/"   # this iteration's page, kept as it was; the latest is always at /tour/
@@ -76,7 +76,7 @@ intro = "Real screenshots of the running app, seeded through its own forms. Fram
 [[stop]]
 id = "landing"
 title = "Landing page"
-caption = "What a visitor sees first: the crickets headline, a sample forecast, and the trust line about email, password, and no bank access."
+caption = "What a visitor sees first: the crickets headline, a sample forecast, the trust line about email, password, and no bank access, and copy about the usual-amount forms and the check-in habit."
   [[stop.shot]]
   file = "landing-desktop"
   device = "desktop"
@@ -130,7 +130,7 @@ note = "The worst case dips below $0 from Oct 2 to Oct 11, when Rent and the bil
 [[stop]]
 id = "stream-form"
 title = "Adding a stream"
-caption = "Name, usual amount, how often, and a next date from a styled calendar; \"Add a range\" folds open a minimum and maximum for streams that are not fixed."
+caption = "Name, usual amount, how often, and a next date from a styled calendar; \"Add a range\" folds open a minimum and maximum for streams that are not fixed, and becomes \"Remove the range\" once it is. The Tag select also offers \"New tag…\" to make one without leaving the form."
   [[stop.shot]]
   file = "stream-form-usual-desktop"
   device = "desktop"
