@@ -2,19 +2,11 @@ import { listCheckins } from '../crud/checkins.js';
 import { expenseCrud, incomeCrud } from '../crud/streams.js';
 import type { ComingUpDto, ComingUpEventDto } from '../schemas/coming-up.js';
 import { InvalidInputError } from './errors.js';
+import { monthEnd, monthStart } from './dates.js';
 import { addDays, daysBetween, getForecast, occurrences, today } from './forecast.js';
 
 function monthOf(date: string): string {
 	return date.slice(0, 7);
-}
-
-function monthBounds(month: string): { start: string; end: string } {
-	const [year, monthNum] = month.split('-').map(Number);
-	const start = `${month}-01`;
-	// day 0 of the following month is the last day of this one.
-	const lastDay = new Date(Date.UTC(year, monthNum, 0)).getUTCDate();
-	const end = `${month}-${String(lastDay).padStart(2, '0')}`;
-	return { start, end };
 }
 
 export async function getComingUp(userId: string, month?: string): Promise<ComingUpDto> {
@@ -32,7 +24,8 @@ export async function getComingUp(userId: string, month?: string): Promise<Comin
 			{ path: 'month', message: 'outside the range of months this account can show' }
 		]);
 	}
-	const { start, end } = monthBounds(targetMonth);
+	const start = monthStart(targetMonth);
+	const end = monthEnd(targetMonth);
 
 	type Ev = ComingUpEventDto & { date: string };
 	const events: Ev[] = [];
