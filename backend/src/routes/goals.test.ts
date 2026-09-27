@@ -19,6 +19,8 @@ describe('monthsBetween', () => {
 		expect(monthsBetween('2026-03-31', '2026-06-30')).toBe(3);
 		expect(monthsBetween('2026-01-31', '2026-02-28')).toBe(1);
 		expect(monthsBetween('2026-01-30', '2026-02-28')).toBe(1);
+		expect(monthsBetween('2026-08-30', '2027-02-28')).toBe(6);
+		expect(monthsBetween('2026-12-30', '2027-02-28')).toBe(2);
 	});
 });
 

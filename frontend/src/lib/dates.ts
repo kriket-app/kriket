@@ -61,14 +61,10 @@ export const addDays = (iso: string, n: number) =>
 
 const lastDayOf = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate();
 
-/** Whole calendar months from `from` to `to`, minimum 1 (mirrors the backend, month ends included). */
+/** Whole calendar months from `from` to `to`, minimum 1 (mirrors the backend: a month-end `to` counts in full). */
 export const monthsBetween = (from: string, to: string): number => {
 	const [fromY, fromM, fromD] = from.split('-').map(Number);
 	const [toY, toM, toD] = to.split('-').map(Number);
-	const fromIsEnd = fromD === lastDayOf(fromY, fromM);
 	const toIsEnd = toD === lastDayOf(toY, toM);
-	return Math.max(
-		1,
-		(toY - fromY) * 12 + (toM - fromM) + (toD >= fromD || (toIsEnd && fromIsEnd) ? 0 : -1)
-	);
+	return Math.max(1, (toY - fromY) * 12 + (toM - fromM) + (toD >= fromD || toIsEnd ? 0 : -1));
 };

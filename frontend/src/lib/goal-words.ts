@@ -80,6 +80,6 @@ export function monthlyWords(goal: Goal): string | null {
 export function sharedBalanceNote(goals: Goal[]): string | null {
 	const readable = goals.filter((goal) => goal.status.state === 'forecast').length;
 	return readable >= 2
-		? 'Each goal is checked against the same forecast balance, so two goals can both read over while together they fall short.'
+		? 'Each goal is checked against the same forecast balance, so two goals can both look on track while together they fall short.'
 		: null;
 }
