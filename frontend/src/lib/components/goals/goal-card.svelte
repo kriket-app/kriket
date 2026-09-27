@@ -6,12 +6,20 @@
 	import { buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { formatDate } from '$lib/dates';
+	import { formatGoalDate } from '$lib/dates';
 	import { dollars } from '$lib/forecast-words';
 	import { goalWords, monthlyWords } from '$lib/goal-words';
 	import GoalForm from './goal-form.svelte';
 
-	let { goal, form }: { goal: Goal; form: ActionState } = $props();
+	let {
+		goal,
+		form,
+		expectedOn
+	}: {
+		goal: Goal;
+		form: ActionState;
+		expectedOn?: (date: string) => number | null;
+	} = $props();
 
 	const words = $derived(goalWords(goal));
 	const monthly = $derived(monthlyWords(goal));
@@ -33,7 +41,7 @@
 			<a href="/app/goals/{goal.id}" class="hover:underline">{goal.name}</a>
 		</Card.Title>
 		<Card.Description>
-			{dollars(goal.amountCents)} by {formatDate(goal.targetDate)}
+			{dollars(goal.amountCents)} by {formatGoalDate(goal.targetDate)}
 		</Card.Description>
 		<Card.Action class="flex gap-1">
 			<Dialog.Root bind:open={editing}>
@@ -45,7 +53,7 @@
 				</Dialog.Trigger>
 				<Dialog.Content class="max-h-[calc(100dvh-2rem)] overflow-y-auto">
 					<Dialog.Header><Dialog.Title>Edit {goal.name}</Dialog.Title></Dialog.Header>
-					<GoalForm {goal} details={failedEdit} onsaved={() => (editing = false)} />
+					<GoalForm {goal} {expectedOn} details={failedEdit} onsaved={() => (editing = false)} />
 				</Dialog.Content>
 			</Dialog.Root>
 			<AlertDialog.Root>

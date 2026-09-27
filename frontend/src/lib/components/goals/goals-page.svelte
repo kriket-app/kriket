@@ -3,12 +3,24 @@
 	import type { ActionState, Goal } from '$lib/api/types';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { sharedBalanceNote } from '$lib/goal-words';
 	import GoalCard from './goal-card.svelte';
 	import GoalForm from './goal-form.svelte';
 
-	let { goals, form }: { goals: Goal[]; form: ActionState } = $props();
+	let {
+		goals,
+		form,
+		forecastPoints
+	}: {
+		goals: Goal[];
+		form: ActionState;
+		forecastPoints: { date: string; actualCents: number }[];
+	} = $props();
 
 	const createDetails = $derived(form?.action === 'create' ? form.details : undefined);
+	const balanceNote = $derived(sharedBalanceNote(goals));
+	const expectedOn = (date: string) =>
+		forecastPoints.find((point) => point.date === date)?.actualCents ?? null;
 	let adding = $state(false);
 </script>
 
@@ -18,10 +30,12 @@
 		<Dialog.Trigger class={buttonVariants({})}><Plus />New goal</Dialog.Trigger>
 		<Dialog.Content class="max-h-[calc(100dvh-2rem)] overflow-y-auto">
 			<Dialog.Header><Dialog.Title>New goal</Dialog.Title></Dialog.Header>
-			<GoalForm details={createDetails} onsaved={() => (adding = false)} />
+			<GoalForm details={createDetails} {expectedOn} onsaved={() => (adding = false)} />
 		</Dialog.Content>
 	</Dialog.Root>
 </div>
+
+{#if balanceNote}<p class="mt-2 text-sm text-muted-foreground">{balanceNote}</p>{/if}
 
 {#if goals.length === 0}
 	<div class="mt-6 rounded-lg border border-dashed p-8 text-center">
@@ -36,7 +50,7 @@
 {:else}
 	<ul class="mt-6 grid gap-4 md:grid-cols-2">
 		{#each goals as goal (goal.id)}
-			<li><GoalCard {goal} {form} /></li>
+			<li><GoalCard {goal} {form} {expectedOn} /></li>
 		{/each}
 	</ul>
 {/if}

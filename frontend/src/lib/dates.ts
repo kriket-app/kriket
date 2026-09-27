@@ -52,12 +52,23 @@ const dayYearFormat = new Intl.DateTimeFormat('en-CA', {
 /** "2027-12-20" -> "Dec 20, 2027". */
 export const formatDateWithYear = (iso: string) => dayYearFormat.format(toUtc(iso));
 
+/** "Dec 20" when the date is this year, "Dec 20, 2027" when it is not: goals reach 366 days out. */
+export const formatGoalDate = (iso: string, todayIso: string = today()) =>
+	iso.slice(0, 4) === todayIso.slice(0, 4) ? formatDate(iso) : formatDateWithYear(iso);
+
 export const addDays = (iso: string, n: number) =>
 	toIso(new Date(toUtc(iso).getTime() + n * DAY_MS));
 
-/** Whole calendar months from `from` to `to`, minimum 1 (mirrors the backend). */
+const lastDayOf = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate();
+
+/** Whole calendar months from `from` to `to`, minimum 1 (mirrors the backend, month ends included). */
 export const monthsBetween = (from: string, to: string): number => {
 	const [fromY, fromM, fromD] = from.split('-').map(Number);
 	const [toY, toM, toD] = to.split('-').map(Number);
-	return Math.max(1, (toY - fromY) * 12 + (toM - fromM) + (toD >= fromD ? 0 : -1));
+	const fromIsEnd = fromD === lastDayOf(fromY, fromM);
+	const toIsEnd = toD === lastDayOf(toY, toM);
+	return Math.max(
+		1,
+		(toY - fromY) * 12 + (toM - fromM) + (toD >= fromD || (toIsEnd && fromIsEnd) ? 0 : -1)
+	);
 };

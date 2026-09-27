@@ -4,7 +4,7 @@
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import type { FieldError, Goal } from '$lib/api/types';
-	import { formatDate, monthsBetween, today } from '$lib/dates';
+	import { monthsBetween, today } from '$lib/dates';
 	import { parseDollars } from '$lib/money';
 	import { Button } from '$lib/components/ui/button';
 	import { Calendar } from '$lib/components/ui/calendar';
@@ -16,11 +16,14 @@
 	let {
 		goal,
 		details,
-		onsaved
+		onsaved,
+		expectedOn
 	}: {
 		goal?: Goal;
 		details?: FieldError[];
 		onsaved?: () => void;
+		/** Expected balance on a date, from the year-long forecast: makes the preview exact. */
+		expectedOn?: (date: string) => number | null;
 	} = $props();
 
 	const id = $props.id();
@@ -64,19 +67,30 @@
 		);
 	}
 
-	// Live monthly preview: forecast-aware when editing (the goal carries its
-	// status), naive target/months when adding (no forecast yet for the date).
+	// Live monthly preview, using the same rule as the API: (amount - expected)
+	// over the calendar months. Exact whenever the expected balance on the
+	// chosen date is known (the list page's forecast, or the edited goal's own
+	// status on its unchanged date); otherwise an honestly labelled estimate,
+	// since saving from zero is not what the saved card will say.
 	const preview = $derived(() => {
 		const cents = parseDollars(amount);
 		if (cents === null || cents <= 0 || !targetIso || targetIso < todayIso) return null;
-		if (goal?.status.state === 'forecast' && goal.targetDate === targetIso) {
-			const m = goal.status.monthlyNeededCents;
-			if (m === null || m === undefined) return null;
-			if (m === 0) return 'On track — no extra saving needed.';
-			return `≈ ${formatCents(m)}/mo to get there.`;
-		}
 		const months = monthsBetween(todayIso, targetIso);
-		return `≈ ${formatCents(Math.ceil(cents / months))}/mo for ${months} month${months === 1 ? '' : 's'} to reach ${formatCents(cents)} by ${formatDate(targetIso)}.`;
+		let expected = expectedOn?.(targetIso) ?? null;
+		if (
+			expected === null &&
+			goal?.status.state === 'forecast' &&
+			goal.targetDate === targetIso &&
+			goal.status.expectedCents !== null
+		) {
+			expected = goal.status.expectedCents;
+		}
+		if (expected !== null) {
+			const monthly = Math.max(0, Math.ceil((cents - expected) / months));
+			if (monthly === 0) return 'On track — no extra saving needed.';
+			return `≈ ${formatCents(monthly)}/mo to get there.`;
+		}
+		return `Roughly ${formatCents(Math.ceil(cents / months))}/mo of the ${formatCents(cents)} total — kriket checks your forecast after you save.`;
 	});
 
 	const submit: SubmitFunction = () => {

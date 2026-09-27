@@ -96,7 +96,7 @@
 	<ForecastTiles forecast={data.forecast} class="mt-4" />
 {/if}
 
-<GoalsSection goals={data.goals} />
+<GoalsSection goals={data.goals} todayIso={data.comingUp.today} />
 
 <ComingUp
 	comingUp={data.comingUp}

@@ -36,6 +36,7 @@ const PLAIN_MESSAGES: { path: string; match?: RegExp; message: string }[] = [
 	{ path: 'tagId', message: 'Choose a tag, or none.' },
 	{ path: 'color', message: 'Choose a colour.' },
 	{ path: 'balanceCents', message: 'Enter an amount.' },
+	{ path: 'amountCents', match: /less than or equal/, message: 'That amount is too large.' },
 	{ path: 'amountCents', message: 'Enter an amount more than zero.' },
 	{ path: 'targetDate', message: 'Pick today or a later date.' }
 ];

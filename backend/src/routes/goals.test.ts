@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { db } from '../db/index.js';
+import { goals } from '../db/tables.js';
 import { addDays, monthsBetween, today } from '../services/dates.js';
 import { goalStatus } from '../services/goals.js';
 import { signUp, testAgent, testApp } from '../../tests/helpers.js';
@@ -12,6 +14,11 @@ describe('monthsBetween', () => {
 		expect(monthsBetween('2026-09-15', '2026-10-15')).toBe(1);
 		expect(monthsBetween('2026-09-15', '2026-10-14')).toBe(1);
 		expect(monthsBetween('2026-09-15', '2026-11-15')).toBe(2);
+	});
+	it('counts month ends as whole months', () => {
+		expect(monthsBetween('2026-03-31', '2026-06-30')).toBe(3);
+		expect(monthsBetween('2026-01-31', '2026-02-28')).toBe(1);
+		expect(monthsBetween('2026-01-30', '2026-02-28')).toBe(1);
 	});
 });
 
@@ -150,5 +157,48 @@ describe('/api/goals', () => {
 		expect(created.status).toBe(201);
 		expect(created.body.status.state).toBe('beyond');
 		expect(created.body.status.expectedCents).toBeNull();
+	});
+	it('lists upcoming closest-first with past goals last', async () => {
+		const a = testAgent();
+		await signUp(a, 'goals6@example.com');
+		await a.post('/api/goals').send({ ...body(addDays(today(), 60)), name: 'Far' });
+		const meRes = await a.get('/api/me');
+		const uid = meRes.body.user.id as string;
+		await db.insert(goals).values({
+			userId: uid,
+			name: 'Old',
+			description: null,
+			amountCents: 10000,
+			targetDate: addDays(today(), -5)
+		});
+		await a.post('/api/goals').send({ ...body(addDays(today(), 10)), name: 'Near' });
+		const list = await a.get('/api/goals');
+		expect(list.body.goals.map((g: { name: string }) => g.name)).toEqual(['Near', 'Far', 'Old']);
+		expect(list.body.goals[2].status.state).toBe('past');
+	});
+	it('lets a past goal be renamed without moving its date', async () => {
+		const a = testAgent();
+		await signUp(a, 'goals7@example.com');
+		const meRes = await a.get('/api/me');
+		const uid = meRes.body.user.id as string;
+		const [row] = await db
+			.insert(goals)
+			.values({
+				userId: uid,
+				name: 'Old',
+				description: null,
+				amountCents: 10000,
+				targetDate: addDays(today(), -5)
+			})
+			.returning();
+		const renamed = await a
+			.patch(`/api/goals/${row.id}`)
+			.send({ name: 'Older', targetDate: addDays(today(), -5) });
+		expect(renamed.status).toBe(200);
+		expect(renamed.body.name).toBe('Older');
+		expect(renamed.body.status.state).toBe('past');
+		expect(
+			(await a.patch(`/api/goals/${row.id}`).send({ targetDate: addDays(today(), -3) })).status
+		).toBe(400);
 	});
 });

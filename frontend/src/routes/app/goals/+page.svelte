@@ -6,4 +6,4 @@
 
 <svelte:head><title>Goals · kriket</title></svelte:head>
 
-<GoalsPage goals={data.goals} {form} />
+<GoalsPage goals={data.goals} forecastPoints={data.forecastPoints} {form} />

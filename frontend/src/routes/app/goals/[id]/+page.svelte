@@ -3,10 +3,10 @@
 	import { goto } from '$app/navigation';
 	import { Pencil, Trash2 } from '@lucide/svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { formatDate } from '$lib/dates';
+	import { formatGoalDate } from '$lib/dates';
 	import { dollars } from '$lib/forecast-words';
 	import { goalWords, monthlyWords } from '$lib/goal-words';
 	import GoalForm from '$lib/components/goals/goal-form.svelte';
@@ -49,12 +49,12 @@
 						>kriket stops checking your forecast against it.</AlertDialog.Description
 					>
 				</AlertDialog.Header>
+				<!-- No update() here: reloading would fetch the deleted goal and flash a 404 before goto runs. -->
 				<form
 					method="POST"
 					action="?/delete"
 					use:enhance={() =>
-						async ({ result, update }) => {
-							await update();
+						async ({ result }) => {
 							if (result.type === 'success') await goto('/app/goals');
 						}}
 				>
@@ -75,7 +75,9 @@
 
 <Card.Root class="mt-6 {borderClass}">
 	<Card.Header>
-		<Card.Title>{dollars(data.goal.amountCents)} by {formatDate(data.goal.targetDate)}</Card.Title>
+		<Card.Title
+			>{dollars(data.goal.amountCents)} by {formatGoalDate(data.goal.targetDate)}</Card.Title
+		>
 		<Card.Description>{words.text}</Card.Description>
 	</Card.Header>
 	<Card.Content class="grid gap-2">
@@ -85,7 +87,7 @@
 			<p class="text-sm text-muted-foreground tabular-nums">
 				Worst {dollars(data.goal.status.worstCents!)} · Expected {dollars(
 					data.goal.status.expectedCents!
-				)} · Best {dollars(data.goal.status.bestCents!)} on {formatDate(data.goal.targetDate)}
+				)} · Best {dollars(data.goal.status.bestCents!)} on {formatGoalDate(data.goal.targetDate)}
 			</p>
 		{/if}
 	</Card.Content>

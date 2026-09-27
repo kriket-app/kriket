@@ -6,8 +6,14 @@ import { actionResult, formValues, invalid } from './forms';
 
 export const goalsLoad = async (event: RequestEvent) => {
 	const client = api(event);
-	const result = await client.GET('/api/goals');
-	return { goals: dataOf(result).goals, today: dataOf(result).today };
+	// The year-long forecast lets the new-goal form preview the exact monthly
+	// figure for any date, the same number the API will return after saving.
+	const [goalsResult, forecastResult] = await Promise.all([
+		client.GET('/api/goals'),
+		client.GET('/api/forecast', { params: { query: { days: 366 } } })
+	]);
+	const { goals, today } = dataOf(goalsResult);
+	return { goals, today, forecastPoints: dataOf(forecastResult).points };
 };
 
 export function goalBody(values: Record<string, string>) {

@@ -33,20 +33,23 @@ test('a goal can be added with a duration shortcut, seen on the overview, and de
 	await page.getByLabel('What are you saving for?').fill('Trip home');
 	await page.getByLabel('How much do you want to have?').fill('500.00');
 	await page.getByRole('button', { name: '6 mo' }).click();
-	await expect(page.getByText('/mo')).toBeVisible();
+	// The preview is forecast-aware, not amount/months: $200 plus weekly $150
+	// clears $500, so it reads on track instead of ≈$83/mo.
+	await expect(page.getByText('On track — no extra saving needed.')).toBeVisible();
 	await page.getByRole('button', { name: 'Set goal' }).click();
 
 	await expect(page.getByRole('link', { name: 'Trip home' }).first()).toBeVisible();
-	await expect(page.getByText(/Expected \$\d[\d,]* by /).first()).toBeVisible();
+	await expect(page.getByText(/over your \$500 goal/).first()).toBeVisible();
 
 	// The overview shows the goal section, closest date first, capped at three.
 	await page.goto('/app');
 	await expect(page.getByText('Goals').first()).toBeVisible();
-	await expect(page.getByRole('link', { name: 'Trip home' }).first()).toBeVisible();
+	await expect(page.getByText(/over your \$500 goal/).first()).toBeVisible();
 
-	// The detail page shows the three forecast numbers and a monthly figure.
+	// The detail page shows a non-zero forecast and a monthly figure.
 	await page.getByRole('link', { name: 'Trip home' }).first().click();
 	await page.waitForURL(/\/app\/goals\/.+/);
+	await expect(page.getByText(/Expected \$[1-9][\d,]*(\.\d{2})? by/).first()).toBeVisible();
 	await expect(page.getByText(/Worst \$.*Expected \$.*Best \$/).first()).toBeVisible();
 
 	// Delete returns to the empty list.

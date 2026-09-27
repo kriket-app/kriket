@@ -1,15 +1,17 @@
 <script lang="ts">
 	import type { Goal } from '$lib/api/types';
 	import * as Card from '$lib/components/ui/card';
-	import { formatDate } from '$lib/dates';
+	import { formatGoalDate, today } from '$lib/dates';
 	import { dollars } from '$lib/forecast-words';
-	import { goalWords, monthlyWords } from '$lib/goal-words';
+	import { goalWords, monthlyWords, sharedBalanceNote } from '$lib/goal-words';
 
-	let { goals }: { goals: Goal[] } = $props();
+	let { goals, todayIso }: { goals: Goal[]; todayIso: string } = $props();
 
-	// The API returns closest date first; the overview shows at most three.
+	// The API returns upcoming closest-first with past goals last; the overview shows at most three.
 	const shown = $derived(goals.slice(0, 3));
 	const extra = $derived(goals.length - shown.length);
+	const balanceNote = $derived(sharedBalanceNote(goals));
+	const todayValue = $derived(todayIso ?? today());
 </script>
 
 <Card.Root class="mt-4">
@@ -32,13 +34,14 @@
 		<Card.Content>
 			<ul class="grid gap-3">
 				{#each shown as goal (goal.id)}
-					{@const words = goalWords(goal)}
+					{@const words = goalWords(goal, todayValue)}
 					{@const monthly = monthlyWords(goal)}
 					<li class="flex items-baseline justify-between gap-3">
 						<div class="min-w-0">
 							<a href="/app/goals/{goal.id}" class="font-medium hover:underline">{goal.name}</a>
 							<p class="truncate text-sm text-muted-foreground">
-								{dollars(goal.amountCents)} by {formatDate(goal.targetDate)} · {words.text}
+								{dollars(goal.amountCents)} by {formatGoalDate(goal.targetDate, todayValue)} ·
+								{words.text}
 								{#if monthly}· {monthly}{/if}
 							</p>
 						</div>
@@ -57,6 +60,7 @@
 					>
 				</p>
 			{/if}
+			{#if balanceNote}<p class="mt-3 text-xs text-muted-foreground">{balanceNote}</p>{/if}
 		</Card.Content>
 	{/if}
 </Card.Root>

@@ -78,6 +78,16 @@ async function statusFor(row: GoalRow): Promise<GoalStatusDto> {
 export async function listGoalsWithStatus(userId: string) {
 	const now = today();
 	const rows = await listGoals(userId);
+	// Upcoming goals first (closest date first), past goals last (most recent first):
+	// past goals must not take the overview's slots, and each goal is checked on its
+	// own against the same forecast balance (see the shared-balance note in goal-words).
+	const upcoming = rows
+		.filter((r) => r.targetDate >= now)
+		.sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1));
+	const past = rows
+		.filter((r) => r.targetDate < now)
+		.sort((a, b) => (a.targetDate > b.targetDate ? -1 : 1));
+	const ordered = [...upcoming, ...past];
 	const inForecast = rows.filter(
 		(r) => r.targetDate >= now && r.targetDate <= addDays(now, FORECAST_LIMIT_DAYS)
 	);
@@ -88,14 +98,16 @@ export async function listGoalsWithStatus(userId: string) {
 		const days = Math.max(7, daysBetween(now, furthest.targetDate));
 		const forecast = await getForecast(userId, days);
 		return {
-			goals: rows.map((row) =>
+			goals: ordered.map((row) =>
 				toGoalDto(row, goalStatus(row.targetDate, forecast.points, now, row.amountCents))
 			),
 			today: now
 		};
 	}
 	return {
-		goals: rows.map((row) => toGoalDto(row, goalStatus(row.targetDate, [], now, row.amountCents))),
+		goals: ordered.map((row) =>
+			toGoalDto(row, goalStatus(row.targetDate, [], now, row.amountCents))
+		),
 		today: now
 	};
 }
@@ -125,7 +137,11 @@ export async function updateGoalById(
 	const current = await findGoal(userId, id);
 	if (!current) throw new NotFoundError('Goal not found');
 	if (Object.keys(patch).length === 0) return toGoalDto(current, await statusFor(current));
-	assertTargetDate(patch.targetDate);
+	// The date rule applies only when the date actually changes, so a past goal can
+	// still be renamed (the edit form always resends its date).
+	if (patch.targetDate !== undefined && patch.targetDate !== current.targetDate) {
+		assertTargetDate(patch.targetDate);
+	}
 	const row = await updateGoal(userId, id, {
 		...(patch.name !== undefined ? { name: patch.name } : {}),
 		...(patch.description !== undefined ? { description: patch.description } : {}),

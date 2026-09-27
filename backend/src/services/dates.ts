@@ -26,14 +26,20 @@ export const monthStart = (month: string): string => `${month}-01`;
 /** The last day of a "YYYY-MM" month: the day before the next month's first day. */
 export const monthEnd = (month: string): string => addDays(monthStart(nextMonth(month)), -1);
 
+const lastDayOf = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate();
+
 /**
- * Whole calendar months from `from` to `to`, minimum 1. Same month -> 1,
- * next month -> 1 when to-day >= from-day else still 1, e.g. Jan 15 -> Feb 14
- * is 1, Jan 15 -> Feb 15 is 1, Jan 15 -> Mar 15 is 2.
+ * Whole calendar months from `from` to `to`, minimum 1: the number of monthly
+ * saves between the two dates. Same month -> 1, Jan 15 -> Feb 14 is 1,
+ * Jan 15 -> Mar 15 is 2. Month ends count as whole months, so Mar 31 -> Jun 30
+ * is 3 (April, May, June), not 2.
  */
 export const monthsBetween = (from: string, to: string): number => {
 	const [fromY, fromM, fromD] = from.split('-').map(Number);
 	const [toY, toM, toD] = to.split('-').map(Number);
-	const months = (toY - fromY) * 12 + (toM - fromM) + (toD >= fromD ? 0 : -1);
+	const fromIsEnd = fromD === lastDayOf(fromY, fromM);
+	const toIsEnd = toD === lastDayOf(toY, toM);
+	const months =
+		(toY - fromY) * 12 + (toM - fromM) + (toD >= fromD || (toIsEnd && fromIsEnd) ? 0 : -1);
 	return Math.max(1, months);
 };

@@ -1,16 +1,20 @@
 // A goal's words: pure functions of the API's numbers, with no Svelte.
 import type { Goal } from '$lib/api/types';
-import { formatDate, formatDateWithYear } from '$lib/dates';
+import { formatDateWithYear, formatGoalDate, today } from '$lib/dates';
 import { dollars, money } from '$lib/forecast-words';
 
 export type GoalTone = 'over' | 'short' | 'none';
 
-export function goalWords(goal: Goal): { tone: GoalTone; text: string; note: string | null } {
+export function goalWords(
+	goal: Goal,
+	todayIso: string = today()
+): { tone: GoalTone; text: string; note: string | null } {
 	const { status, amountCents: target, targetDate } = goal;
+	const date = formatGoalDate(targetDate, todayIso);
 	if (status.state === 'past') {
 		return {
 			tone: 'none',
-			text: `${formatDate(targetDate)} has passed.`,
+			text: `${date} has passed.`,
 			note: 'Change the date or set a new goal.'
 		};
 	}
@@ -24,7 +28,6 @@ export function goalWords(goal: Goal): { tone: GoalTone; text: string; note: str
 	const expected = status.expectedCents!;
 	const worst = status.worstCents!;
 	const best = status.bestCents!;
-	const date = formatDate(targetDate);
 	if (expected > target) {
 		return {
 			tone: 'over',
@@ -67,4 +70,16 @@ export function monthlyWords(goal: Goal): string | null {
 	if (monthly === null || monthly === undefined) return null;
 	if (monthly === 0) return 'On track — no extra saving needed.';
 	return `≈ ${money(monthly)}/mo to get there.`;
+}
+
+/**
+ * Each goal is checked on its own against the same forecast balance, so two
+ * goals can both read "over" while together they fall short. Shown whenever
+ * more than one goal has a forecast to read.
+ */
+export function sharedBalanceNote(goals: Goal[]): string | null {
+	const readable = goals.filter((goal) => goal.status.state === 'forecast').length;
+	return readable >= 2
+		? 'Each goal is checked against the same forecast balance, so two goals can both read over while together they fall short.'
+		: null;
 }
