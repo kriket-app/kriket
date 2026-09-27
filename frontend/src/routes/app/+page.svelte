@@ -6,7 +6,6 @@
 	import ForecastChart from '$lib/components/forecast-chart.svelte';
 	import ForecastTiles from '$lib/components/forecast-tiles.svelte';
 	import GoalsSection from '$lib/components/goals/goals-section.svelte';
-	import PushSettings from '$lib/components/push-settings.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { cn } from '$lib/utils';
@@ -49,7 +48,11 @@
 		{form}
 	/>
 	{#if data.hasStreams}
-		<AnswerCard forecast={data.forecast} days={data.days} />
+		{#key data.days}
+			<div class="animate-window-in grid">
+				<AnswerCard forecast={data.forecast} days={data.days} class="h-full" />
+			</div>
+		{/key}
 	{:else}
 		<Card.Root class="border-0 bg-brand-soft ring-0">
 			<Card.Header>
@@ -67,45 +70,52 @@
 </div>
 
 {#if data.hasStreams}
-	<Card.Root class="mt-4">
-		<Card.Header>
-			<Card.Title>Balance forecast</Card.Title>
-			<Card.Description>
-				The line uses your usual amounts; the band runs from the worst case to the best. Each dot is
-				a payment; tap one for its name and amount.
-			</Card.Description>
-		</Card.Header>
-		<Card.Content>
-			<ForecastChart points={data.forecast.points} events={data.forecast.events} />
-			<ul class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground" aria-hidden="true">
-				<li class="flex items-center gap-1.5">
-					<span class="size-2.5 rounded-full bg-brand"></span>Money in
-				</li>
-				<li class="flex items-center gap-1.5">
-					<span class="size-2.5 rounded-full bg-expense"></span>Money out
-				</li>
-				{#if data.forecast.firstBelowZero}
-					<li class="flex items-center gap-1.5">
-						<span class="h-2 w-3.5 rounded-xs bg-expense/25"></span>Below zero
-					</li>
-				{/if}
-			</ul>
-		</Card.Content>
-	</Card.Root>
+	{#key data.days}
+		<div class="animate-window-in">
+			<Card.Root class="mt-4">
+				<Card.Header>
+					<Card.Title>Balance forecast</Card.Title>
+					<Card.Description>
+						The line uses your usual amounts; the band runs from the worst case to the best. Each
+						dot is a payment; tap one for its name and amount.
+					</Card.Description>
+				</Card.Header>
+				<Card.Content>
+					<ForecastChart points={data.forecast.points} events={data.forecast.events} />
+					<ul
+						class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground"
+						aria-hidden="true"
+					>
+						<li class="flex items-center gap-1.5">
+							<span class="size-2.5 rounded-full bg-brand"></span>Money in
+						</li>
+						<li class="flex items-center gap-1.5">
+							<span class="size-2.5 rounded-full bg-expense"></span>Money out
+						</li>
+						{#if data.forecast.firstBelowZero}
+							<li class="flex items-center gap-1.5">
+								<span class="h-2 w-3.5 rounded-xs bg-expense/25"></span>Below zero
+							</li>
+						{/if}
+					</ul>
+				</Card.Content>
+			</Card.Root>
 
-	<ForecastTiles forecast={data.forecast} class="mt-4" />
+			<ForecastTiles forecast={data.forecast} class="mt-4" />
+		</div>
+	{/key}
 {/if}
 
 <GoalsSection goals={data.goals} todayIso={data.comingUp.today} />
 
-<ComingUp
-	comingUp={data.comingUp}
-	tags={data.tags}
-	days={data.days}
-	hasStreams={data.hasStreams}
-	class="mt-4"
-/>
-
-<div class="mt-4">
-	<PushSettings />
-</div>
+{#key data.days}
+	<div class="animate-window-in">
+		<ComingUp
+			comingUp={data.comingUp}
+			tags={data.tags}
+			days={data.days}
+			hasStreams={data.hasStreams}
+			class="mt-4"
+		/>
+	</div>
+{/key}

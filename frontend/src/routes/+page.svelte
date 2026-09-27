@@ -2,6 +2,7 @@
 	import { ChartLine, Repeat, Target } from '@lucide/svelte';
 	import BrandMark from '$lib/components/brand-mark.svelte';
 	import InstallPrompt from '$lib/components/install-prompt.svelte';
+	import IosInstallHint from '$lib/components/ios-install-hint.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { formatCents } from '$lib/money';
@@ -145,6 +146,7 @@
 					<p class="mt-4 max-w-xl text-sm text-muted-foreground">
 						Email and password only. No bank access, nothing sold, your data is yours alone.
 					</p>
+					<IosInstallHint class="mt-6 max-w-xl" />
 				</div>
 
 				<Card.Root class="shadow-lg">

@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { page } from '$app/state';
+	import { navigating, page } from '$app/state';
 	import { cn } from '$lib/utils';
 	import BrandMark from '$lib/components/brand-mark.svelte';
-	import { ArrowDownToLine, ArrowUpFromLine, ChartLine, Tags, Target } from '@lucide/svelte';
-	import { authClient } from '$lib/auth-client';
-	import { goto } from '$app/navigation';
-	import { pushSupported, unsubscribePush } from '$lib/push';
+	import { ArrowDownToLine, ArrowUpFromLine, ChartLine, Target } from '@lucide/svelte';
 
 	let { data, children } = $props();
 
@@ -13,29 +10,33 @@
 		{ href: '/app', label: 'Overview', icon: ChartLine },
 		{ href: '/app/income', label: 'Income', icon: ArrowDownToLine },
 		{ href: '/app/expenses', label: 'Expenses', icon: ArrowUpFromLine },
-		{ href: '/app/goals', label: 'Goals', icon: Target },
-		{ href: '/app/tags', label: 'Tags', icon: Tags }
+		{ href: '/app/goals', label: 'Goals', icon: Target }
 	];
 	// /app/balances is Overview's own detail page (flipping through past check-ins), not a
-	// separate section, so it highlights Overview too.
+	// separate section, so it highlights Overview too. /app/settings is reached from the
+	// header avatar and never highlights a tab.
 	const active = (href: string) =>
 		href === '/app'
 			? page.url.pathname === '/app' || page.url.pathname.startsWith('/app/balances')
 			: page.url.pathname.startsWith(href);
+	const settingsActive = $derived(page.url.pathname.startsWith('/app/settings'));
+	const initial = $derived(data.user.email.trim().charAt(0).toUpperCase() || 'K');
 
-	async function signOut() {
-		// Drop this device's push subscription first: otherwise the next person on
-		// this browser would keep receiving the previous user's notifications.
-		// Best-effort and skipped entirely where push is unavailable.
-		if (pushSupported()) await unsubscribePush().catch(() => undefined);
-		await authClient.signOut();
-		await goto('/');
+	// A light press nudge on touch devices (Android haptic; no-op elsewhere).
+	function tap() {
+		try {
+			navigator.vibrate?.(10);
+		} catch {
+			// Haptics are best-effort.
+		}
 	}
 </script>
 
 <div class="min-h-dvh bg-background text-foreground">
 	<header class="pt-safe sticky top-0 z-20 border-b bg-background/90 backdrop-blur">
-		<div class="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
+		<div
+			class="mx-auto flex h-14 max-w-5xl items-center gap-6 ps-[max(1rem,env(safe-area-inset-left))] pe-[max(1rem,env(safe-area-inset-right))]"
+		>
 			<a href="/app" class="flex items-center gap-2 font-semibold">
 				<BrandMark class="size-6" /> kriket
 			</a>
@@ -53,26 +54,48 @@
 					>
 				{/each}
 			</nav>
-			<div class="ml-auto flex items-center gap-3 text-sm text-muted-foreground">
-				<span class="hidden sm:inline">{data.user.email}</span>
-				<button type="button" class="hover:text-foreground" onclick={signOut}>Sign out</button>
+			<div class="ml-auto flex items-center gap-3">
+				<a
+					href="/app/settings"
+					aria-label="Settings"
+					aria-current={settingsActive ? 'page' : undefined}
+					class={cn(
+						'flex size-10 items-center justify-center rounded-full text-sm font-semibold transition active:scale-95',
+						settingsActive
+							? 'bg-brand text-brand-foreground'
+							: 'bg-brand-soft text-brand-strong hover:bg-brand-soft/70'
+					)}
+				>
+					{initial}
+				</a>
 			</div>
 		</div>
+		{#if navigating}
+			<div class="nav-pending absolute inset-x-0 bottom-0 h-0.5 overflow-hidden" aria-hidden="true">
+				<div class="nav-pending-bar h-full w-1/3 bg-brand"></div>
+			</div>
+		{/if}
 	</header>
-	<main class="mx-auto max-w-5xl px-4 py-6 pb-24 md:pb-10">{@render children()}</main>
+	<main
+		class="mx-auto max-w-5xl ps-[max(1rem,env(safe-area-inset-left))] pe-[max(1rem,env(safe-area-inset-right))] pt-6 pb-24 md:pb-10"
+	>
+		{@render children()}
+	</main>
 	<nav
 		class="fixed inset-x-0 bottom-0 z-20 border-t bg-background md:hidden"
 		aria-label="Primary"
+		data-sveltekit-preload-data="tap"
 		style="padding-bottom: env(safe-area-inset-bottom)"
 	>
-		<div class="grid grid-cols-5">
+		<div class="grid grid-cols-4 ps-[env(safe-area-inset-left)] pe-[env(safe-area-inset-right)]">
 			{#each items as item (item.href)}
 				{@const Icon = item.icon}
 				<a
 					href={item.href}
 					aria-current={active(item.href) ? 'page' : undefined}
+					onclick={tap}
 					class={cn(
-						'flex flex-col items-center gap-1 py-2 text-xs',
+						'flex min-h-12 flex-col items-center justify-center gap-1 py-2 text-xs transition active:scale-95 active:bg-accent/50',
 						active(item.href) ? 'text-brand-strong' : 'text-muted-foreground'
 					)}
 				>

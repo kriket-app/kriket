@@ -124,9 +124,113 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		/* Phones: no grey flash on tap, no double-tap zoom delay. */
+		-webkit-tap-highlight-color: transparent;
+		touch-action: manipulation;
 	}
 	html {
 		@apply font-sans;
+	}
+	nav[aria-label='Primary'] {
+		user-select: none;
+		-webkit-user-select: none;
+	}
+}
+
+/* Desktop: everything clickable shows the pointer so its affordance is obvious. */
+/* Touch screens keep the default (no hover, no cursor). */
+@media (hover: hover) and (pointer: fine) {
+	button:not(:disabled),
+	a[href],
+	[role='button'],
+	summary,
+	select,
+	label[for] {
+		cursor: pointer;
+	}
+}
+
+/* Native-like screen change: a short fade with a slight rise on the incoming
+   screen. The outgoing screen just fades. Honours reduced motion. */
+::view-transition-old(root) {
+	animation: kriket-view-out 160ms ease-out both;
+}
+::view-transition-new(root) {
+	animation: kriket-view-in 180ms ease-out both;
+}
+@keyframes kriket-view-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+@keyframes kriket-view-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+	}
+}
+
+/* Forecast window change (30/90/180 days): the incoming figures fade with a
+   slight rise so the swap reads as a transition, not a flicker. */
+.animate-window-in {
+	animation: kriket-window-in 220ms ease-out both;
+}
+@keyframes kriket-window-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.animate-window-in {
+		animation: none;
+	}
+}
+
+/* Thin brand progress bar under the app header while a navigation is in flight.
+   The entrance delay keeps instant navigations from flashing. */
+.nav-pending {
+	animation: kriket-nav-pending-in 120ms ease-out both;
+}
+.nav-pending-bar {
+	animation: kriket-nav-pending-slide 1s ease-in-out infinite;
+}
+@keyframes kriket-nav-pending-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@keyframes kriket-nav-pending-slide {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(300%);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.nav-pending-bar {
+		animation: none;
 	}
 }
 
