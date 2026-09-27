@@ -119,7 +119,7 @@
 		{/if}
 	</Card.Header>
 	<Card.Content class="gap-4">
-		{#if comingUp.days.length}
+		{#if comingUp.days.length && comingUp.month >= comingUp.today.slice(0, 7)}
 			<p class="tabular-nums">
 				<span class="whitespace-nowrap">
 					In <span class="font-semibold text-brand-strong">{formatCents(comingUp.inCents)}</span>
