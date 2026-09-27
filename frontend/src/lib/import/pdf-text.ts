@@ -56,9 +56,8 @@ export async function readPdfText(file: File): Promise<TextItem[][]> {
 		let chars = 0;
 		for (let n = 1; n <= doc.numPages; n++) {
 			const page = await doc.getPage(n);
-			const content = await page.getTextContent();
 			const items: TextItem[] = [];
-			for (const it of content.items) {
+			for (const it of await textItems(page)) {
 				if (!('str' in it) || !it.str.trim()) continue;
 				const [, b, c, , x, y] = it.transform;
 				items.push({
@@ -82,4 +81,25 @@ export async function readPdfText(file: File): Promise<TextItem[][]> {
 	} finally {
 		await loadingTask.destroy();
 	}
+}
+
+/** A PDF.js text item, or a marked-content marker (which has no `str`). */
+type RawItem = { str: string; transform: number[]; width: number } | { type: string };
+
+/**
+ * A page's text items, read from PDF.js's text stream with a plain reader.
+ * Not `page.getTextContent()`: that loops `for await` over a ReadableStream, and iOS WebKit
+ * (every iPhone browser) can't async-iterate streams, so it threw "undefined is not a function".
+ */
+async function textItems(page: {
+	streamTextContent(): ReadableStream<{ items: unknown[] }>;
+}): Promise<RawItem[]> {
+	const reader = page.streamTextContent().getReader();
+	const items: unknown[] = [];
+	for (;;) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		items.push(...value.items);
+	}
+	return items as RawItem[];
 }
