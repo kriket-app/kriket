@@ -29,8 +29,9 @@
 			</Card.Header>
 			<Card.Content class="flex flex-wrap gap-2">
 				<Button href="/" class="flex-1">Back home</Button>
-				<!-- A plain reload, not a link: the prerender crawler follows hrefs, and a
-					href="/app" here would bake a signed-out redirect stub that shadows SSR. -->
+				<!-- A reload, not a link: the service worker shows this page at the address the
+					visitor asked for, so reloading retries that page. (This page is prerendered, and
+					hooks.server.ts fails the build if a prerendered page links to /app.) -->
 				<Button variant="outline" class="flex-1" onclick={() => window.location.reload()}>
 					Retry
 				</Button>
