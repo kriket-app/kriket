@@ -51,6 +51,21 @@ describe('/api/forecast', () => {
 		expect(res.body.startingBalanceCents).toBe(0);
 		expect(res.body.checkin).toBeNull();
 	});
+	it('includes a payment dated today when there is no check-in', async () => {
+		const a = testAgent();
+		await signUp(a, 'forecast3b@example.com');
+		await a.post('/api/income-streams').send({
+			name: 'Pay',
+			minCents: 50000,
+			actualCents: 50000,
+			maxCents: 50000,
+			intervalDays: 30,
+			firstDate: today()
+		});
+		const res = await a.get('/api/forecast?days=7');
+		expect(res.status).toBe(200);
+		expect(res.body.points[0].actualCents).toBe(50000);
+	});
 	it('rolls a check-in in the past forward to today, keeping events in between', async () => {
 		const a = testAgent();
 		await signUp(a, 'forecast4@example.com');

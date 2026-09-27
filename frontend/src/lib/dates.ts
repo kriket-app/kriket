@@ -23,6 +23,18 @@ export function nextOccurrence(firstDate: string, intervalDays: number, from = t
 	return toIso(new Date(toUtc(firstDate).getTime() + intervals * intervalDays * DAY_MS));
 }
 
+/** "daily", "weekly", "every 2 weeks", "monthly" for the intervals people actually use, else "every N days". */
+export const repeatText = (intervalDays: number): string =>
+	intervalDays === 1
+		? 'daily'
+		: intervalDays === 7
+			? 'weekly'
+			: intervalDays === 14
+				? 'every 2 weeks'
+				: intervalDays === 30
+					? 'monthly'
+					: `every ${intervalDays} days`;
+
 const dayFormat = new Intl.DateTimeFormat('en-CA', {
 	month: 'short',
 	day: 'numeric',

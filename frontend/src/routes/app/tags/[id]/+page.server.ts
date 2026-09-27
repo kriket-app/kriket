@@ -3,7 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import type { StreamKind } from '$lib/api/types';
 import { api, dataOf } from '$lib/server/api';
 import { actionResult, formValues, invalid } from '$lib/server/forms';
-import { streamBody } from '$lib/server/streams';
+import { resolveTagId, streamBody } from '$lib/server/streams';
 
 export const load: PageServerLoad = async (event) => {
 	const client = api(event);
@@ -40,10 +40,12 @@ export const actions = {
 		const values = await formValues(event.request);
 		const { body, details } = streamBody(values);
 		if (!body) return invalid('update', values, details);
+		const tag = await resolveTagId(event, values);
+		if ('details' in tag) return invalid('update', values, tag.details);
 		const result = await onStreamKind((kind) =>
 			api(event).PATCH(`/api/${kind}-streams/{id}`, {
 				params: { path: { id: values.id ?? '' } },
-				body
+				body: { ...body, tagId: tag.tagId }
 			})
 		);
 		return actionResult('update', values, result);

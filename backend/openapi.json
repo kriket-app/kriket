@@ -241,10 +241,10 @@
           },
           "actualCents": {
             "type": "integer",
-            "minimum": 0,
+            "minimum": 1,
             "maximum": 1000000000,
             "example": 150000,
-            "description": "integer cents"
+            "description": "integer cents, more than 0"
           },
           "intervalDays": {
             "type": "integer",
@@ -295,10 +295,10 @@
           },
           "actualCents": {
             "type": "integer",
-            "minimum": 0,
+            "minimum": 1,
             "maximum": 1000000000,
             "example": 150000,
-            "description": "integer cents"
+            "description": "integer cents, more than 0"
           },
           "intervalDays": {
             "type": "integer",
@@ -1109,7 +1109,7 @@
         "tags": [
           "forecast"
         ],
-        "summary": "Project the balance forward from the stored settings and streams",
+        "summary": "Project the balance forward from the latest check-in and streams",
         "security": [
           {
             "cookieAuth": []
@@ -1160,6 +1160,16 @@
           },
           "401": {
             "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
             "content": {
               "application/json": {
                 "schema": {

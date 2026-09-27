@@ -8,7 +8,7 @@
 	import { buttonVariants } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
-	import { formatDate, nextOccurrence } from '$lib/dates';
+	import { formatDate, nextOccurrence, repeatText as repeatTextOf } from '$lib/dates';
 	import { formatCents } from '$lib/money';
 	import StreamForm from './stream-form.svelte';
 
@@ -24,18 +24,7 @@
 	const failedEdit = $derived(
 		form?.action === 'update' && form.values?.id === stream.id ? form.details : undefined
 	);
-	/** "daily", "weekly", "every 2 weeks", "monthly" for the intervals people actually use, else "every N days". */
-	const repeatText = $derived(
-		stream.intervalDays === 1
-			? 'daily'
-			: stream.intervalDays === 7
-				? 'weekly'
-				: stream.intervalDays === 14
-					? 'every 2 weeks'
-					: stream.intervalDays === 30
-						? 'monthly'
-						: `every ${stream.intervalDays} days`
-	);
+	const repeatText = $derived(repeatTextOf(stream.intervalDays));
 	const isRanged = $derived(
 		stream.minCents !== stream.actualCents || stream.maxCents !== stream.actualCents
 	);
@@ -102,9 +91,11 @@
 	<Card.Content class="grid gap-1">
 		{#if isRanged}
 			<p class="font-medium tabular-nums">
-				Usually <span class={amountClass}>{formatCents(stream.actualCents)}</span> · {formatCents(
-					stream.minCents
-				)} to {formatCents(stream.maxCents)} · {repeatText} · {nextDateText}
+				Usually <span class={amountClass}>{formatCents(stream.actualCents)}</span> ·
+				<span class={amountClass}
+					>{formatCents(stream.minCents)} to {formatCents(stream.maxCents)}</span
+				>
+				· {repeatText} · {nextDateText}
 			</p>
 		{:else}
 			<p class="font-medium tabular-nums">

@@ -1,10 +1,10 @@
 # kriket
 
 Kriket is a budgeting app for people whose money is bumpy: students, first jobs, shift
-work. You set it up once with your income and expense streams, each as a min, max, and
-usual amount on a repeat interval, and mostly leave it alone: kriket forecasts where your
-balance is heading and tells you whether you'll hit your goal at the worst, expected, and
-best case, instead of asking you to log every receipt.
+work. You set it up once with your income and expense streams, each as the usual amount,
+how often, the next date, and an optional range, and mostly leave it alone: kriket
+forecasts where your balance is heading and tells you whether you'll hit your goal at the
+worst, expected, and best case, instead of asking you to log every receipt.
 
 SvelteKit (adapter-node) + Tailwind CSS on the frontend, Express 5 + Drizzle ORM +
 Better Auth (email/password) on the backend, PostgreSQL for storage, an OpenAPI spec
@@ -81,8 +81,8 @@ Once running:
 - `/signup`, `/signin` — Better Auth email/password
 - `/app` — the forecast: check in your balance, then see the worst/expected/best case
   over the next 90 (or 30/180) days, and what's coming up
-- `/app/income`, `/app/expenses` — income and expense streams (a minimum, usual, and
-  maximum amount, a repeat interval, and a first date)
+- `/app/income`, `/app/expenses` — income and expense streams (the usual amount, how
+  often, the next date, and an optional range)
 - `/app/tags` — tags for grouping streams
 - `/api/docs` — Swagger UI for the generated spec
 
