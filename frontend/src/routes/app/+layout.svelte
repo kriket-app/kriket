@@ -74,7 +74,7 @@
 				</a>
 			</div>
 		</div>
-		{#if navigating}
+		{#if navigating.to}
 			<div class="nav-pending absolute inset-x-0 bottom-0 h-0.5 overflow-hidden" aria-hidden="true">
 				<div class="nav-pending-bar h-full w-1/3 bg-brand"></div>
 			</div>
