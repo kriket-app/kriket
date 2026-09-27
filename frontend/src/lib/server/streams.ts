@@ -85,18 +85,29 @@ export async function resolveTagId(
 	error(result.response.status, messageOf(result.error));
 }
 
+/**
+ * Creates one stream from posted form values: validates the amounts, resolves a "New tag…" choice,
+ * and posts to the API. Shared by the income and expense pages and the import page's draft cards.
+ */
+export async function createStream(
+	event: RequestEvent,
+	kind: StreamKind,
+	values: Record<string, string>
+) {
+	const { body, details } = streamBody(values);
+	if (!body) return invalid('create', values, details);
+	const tag = await resolveTagId(event, values);
+	if ('details' in tag) return invalid('create', values, tag.details);
+	const result = await api(event).POST(`/api/${kind}-streams`, {
+		body: { ...body, tagId: tag.tagId }
+	});
+	return actionResult('create', values, result);
+}
+
 export const streamsActions = (kind: StreamKind) =>
 	({
 		async create(event) {
-			const values = await formValues(event.request);
-			const { body, details } = streamBody(values);
-			if (!body) return invalid('create', values, details);
-			const tag = await resolveTagId(event, values);
-			if ('details' in tag) return invalid('create', values, tag.details);
-			const result = await api(event).POST(`/api/${kind}-streams`, {
-				body: { ...body, tagId: tag.tagId }
-			});
-			return actionResult('create', values, result);
+			return createStream(event, kind, await formValues(event.request));
 		},
 		async update(event) {
 			const values = await formValues(event.request);

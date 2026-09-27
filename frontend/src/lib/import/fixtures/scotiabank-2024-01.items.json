@@ -1,0 +1,943 @@
+{
+	"pages": [
+		[
+			{
+				"str": "Scotiabank Statement",
+				"x": 170,
+				"y": 730,
+				"width": 80,
+				"rotated": false
+			},
+			{
+				"str": "January 02 2024 to February 03, 2024",
+				"x": 170,
+				"y": 712,
+				"width": 144,
+				"rotated": false
+			},
+			{
+				"str": "SBSAV99999_0000000_000",
+				"x": 25.9,
+				"y": 700,
+				"width": 80,
+				"rotated": true
+			},
+			{
+				"str": "Date",
+				"x": 73,
+				"y": 598,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "withdrawn ($)",
+				"x": 252.5,
+				"y": 598,
+				"width": 53.5,
+				"rotated": false
+			},
+			{
+				"str": "deposited ($)",
+				"x": 321.8,
+				"y": 598,
+				"width": 49.1,
+				"rotated": false
+			},
+			{
+				"str": "Balance ($)",
+				"x": 395.3,
+				"y": 598,
+				"width": 40.7,
+				"rotated": false
+			},
+			{
+				"str": "Jan 2 Opening Balance",
+				"x": 73,
+				"y": 580,
+				"width": 84,
+				"rotated": false
+			},
+			{
+				"str": "14,324.74",
+				"x": 391,
+				"y": 580,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 3 Point of sale purchase Fpos Valley Farms Produce",
+				"x": 73,
+				"y": 554,
+				"width": 192,
+				"rotated": false
+			},
+			{
+				"str": "15.00",
+				"x": 281,
+				"y": 554,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "14,309.74",
+				"x": 391,
+				"y": 554,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "etobicoke ONCA",
+				"x": 112.8,
+				"y": 545,
+				"width": 56,
+				"rotated": false
+			},
+			{
+				"str": "Jan 3 Point of sale purchase Sobeys #4521 Toronto ONCA",
+				"x": 73,
+				"y": 528,
+				"width": 192,
+				"rotated": false
+			},
+			{
+				"str": "10.15",
+				"x": 281,
+				"y": 528,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "14,299.96",
+				"x": 391,
+				"y": 528,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 4 Point of sale purchase Fpos Tim Hortons #3196 Toronto ONCA",
+				"x": 73,
+				"y": 502,
+				"width": 232,
+				"rotated": false
+			},
+			{
+				"str": "1.68",
+				"x": 286,
+				"y": 502,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "14,297.91",
+				"x": 391,
+				"y": 502,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 4 Deposit 1043 Payroll ACME REALTY LTD",
+				"x": 73,
+				"y": 476,
+				"width": 144,
+				"rotated": false
+			},
+			{
+				"str": "1,017.00",
+				"x": 330.90000000000003,
+				"y": 476,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "15,314.39",
+				"x": 391,
+				"y": 476,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 5 Point of sale purchase Loblaws #1060 Toronto ONCA",
+				"x": 73,
+				"y": 450,
+				"width": 196,
+				"rotated": false
+			},
+			{
+				"str": "33.64",
+				"x": 281,
+				"y": 450,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "15,281.27",
+				"x": 391,
+				"y": 450,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 6 Withdrawal",
+				"x": 73,
+				"y": 424,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "1,500.00",
+				"x": 266,
+				"y": 424,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "13,781.27",
+				"x": 391,
+				"y": 424,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 7 Pre-authorized debit ROGERS WIRELESS",
+				"x": 73,
+				"y": 398,
+				"width": 144,
+				"rotated": false
+			},
+			{
+				"str": "85.00",
+				"x": 281,
+				"y": 398,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,696.27",
+				"x": 391,
+				"y": 398,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 8 Point of sale purchase Fpos Metro #065",
+				"x": 73,
+				"y": 372,
+				"width": 152,
+				"rotated": false
+			},
+			{
+				"str": "14.94",
+				"x": 281,
+				"y": 372,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,681.33",
+				"x": 391,
+				"y": 372,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Etobicoke ONCA",
+				"x": 112.8,
+				"y": 363,
+				"width": 56,
+				"rotated": false
+			}
+		],
+		[
+			{
+				"str": "Date",
+				"x": 73,
+				"y": 598,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "withdrawn ($)",
+				"x": 252.5,
+				"y": 598,
+				"width": 53.5,
+				"rotated": false
+			},
+			{
+				"str": "deposited ($)",
+				"x": 321.8,
+				"y": 598,
+				"width": 49.1,
+				"rotated": false
+			},
+			{
+				"str": "Balance ($)",
+				"x": 395.3,
+				"y": 598,
+				"width": 40.7,
+				"rotated": false
+			},
+			{
+				"str": "Jan 9 Point of sale purchase Pho House Toronto ONCA",
+				"x": 73,
+				"y": 580,
+				"width": 180,
+				"rotated": false
+			},
+			{
+				"str": "12.87",
+				"x": 281,
+				"y": 580,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,668.46",
+				"x": 391,
+				"y": 580,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 10 Point of sale purchase Dairy Jug Toronto ONCA",
+				"x": 73,
+				"y": 554,
+				"width": 180,
+				"rotated": false
+			},
+			{
+				"str": "8.00",
+				"x": 286,
+				"y": 554,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "13,660.46",
+				"x": 391,
+				"y": 554,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 11 Pre-authorized debit TORONTO HYDRO",
+				"x": 73,
+				"y": 528,
+				"width": 136,
+				"rotated": false
+			},
+			{
+				"str": "124.30",
+				"x": 276,
+				"y": 528,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "13,536.16",
+				"x": 391,
+				"y": 528,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 12 Deposit 90000002 MB-Email Money Trf",
+				"x": 73,
+				"y": 502,
+				"width": 140,
+				"rotated": false
+			},
+			{
+				"str": "100.00",
+				"x": 340.90000000000003,
+				"y": 502,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "13,636.16",
+				"x": 391,
+				"y": 502,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 12 Point of sale purchase Sushi Garden Toronto ONCA",
+				"x": 73,
+				"y": 476,
+				"width": 192,
+				"rotated": false
+			},
+			{
+				"str": "23.40",
+				"x": 281,
+				"y": 476,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,612.76",
+				"x": 391,
+				"y": 476,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 14 Uber *Trip help.uber.com",
+				"x": 73,
+				"y": 450,
+				"width": 96,
+				"rotated": false
+			},
+			{
+				"str": "18.99",
+				"x": 281,
+				"y": 450,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,593.77",
+				"x": 391,
+				"y": 450,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 15 Service charge Monthly Fees",
+				"x": 73,
+				"y": 424,
+				"width": 108,
+				"rotated": false
+			},
+			{
+				"str": "15.95",
+				"x": 281,
+				"y": 424,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,577.82",
+				"x": 391,
+				"y": 424,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 16 Petro-Canada #0553",
+				"x": 73,
+				"y": 398,
+				"width": 72,
+				"rotated": false
+			},
+			{
+				"str": "65.00",
+				"x": 281,
+				"y": 398,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,512.82",
+				"x": 391,
+				"y": 398,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 18 Deposit 90000003 MB-Email Money Trf",
+				"x": 73,
+				"y": 372,
+				"width": 140,
+				"rotated": false
+			},
+			{
+				"str": "50.00",
+				"x": 345.90000000000003,
+				"y": 372,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,562.82",
+				"x": 391,
+				"y": 372,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 19 Opos Google *Youtube Videg.co/payhelnsca",
+				"x": 73,
+				"y": 346,
+				"width": 160,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 286,
+				"y": 346,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "13,560.33",
+				"x": 391,
+				"y": 346,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 20 Netflix.com 866-716-0414",
+				"x": 73,
+				"y": 320,
+				"width": 96,
+				"rotated": false
+			},
+			{
+				"str": "16.99",
+				"x": 281,
+				"y": 320,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "13,543.34",
+				"x": 391,
+				"y": 320,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 20 Opos Google *Youtube Premium monthly",
+				"x": 73,
+				"y": 294,
+				"width": 144,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 286,
+				"y": 294,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "13,540.85",
+				"x": 391,
+				"y": 294,
+				"width": 45,
+				"rotated": false
+			}
+		],
+		[
+			{
+				"str": "Date",
+				"x": 73,
+				"y": 598,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "withdrawn ($)",
+				"x": 252.5,
+				"y": 598,
+				"width": 53.5,
+				"rotated": false
+			},
+			{
+				"str": "deposited ($)",
+				"x": 321.8,
+				"y": 598,
+				"width": 49.1,
+				"rotated": false
+			},
+			{
+				"str": "Balance ($)",
+				"x": 395.3,
+				"y": 598,
+				"width": 40.7,
+				"rotated": false
+			},
+			{
+				"str": "Jan 21 PC Transfer to Credit Card 1234",
+				"x": 73,
+				"y": 580,
+				"width": 124,
+				"rotated": false
+			},
+			{
+				"str": "850.00",
+				"x": 276,
+				"y": 580,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "12,690.85",
+				"x": 391,
+				"y": 580,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 22 Fpos Maison Birks #741 Toronto ONCA",
+				"x": 73,
+				"y": 554,
+				"width": 140,
+				"rotated": false
+			},
+			{
+				"str": "1,299.00",
+				"x": 266,
+				"y": 554,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,391.85",
+				"x": 391,
+				"y": 554,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 23 Fpos Town Shoes #12 Toronto ONCA",
+				"x": 73,
+				"y": 528,
+				"width": 128,
+				"rotated": false
+			},
+			{
+				"str": "189.99",
+				"x": 276,
+				"y": 528,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "11,201.86",
+				"x": 391,
+				"y": 528,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 24 Opos Google *Youtube TV monthly",
+				"x": 73,
+				"y": 502,
+				"width": 124,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 286,
+				"y": 502,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "11,199.37",
+				"x": 391,
+				"y": 502,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 25 Deposit 90000004 MB-Email Money Trf",
+				"x": 73,
+				"y": 476,
+				"width": 140,
+				"rotated": false
+			},
+			{
+				"str": "1,000.00",
+				"x": 330.90000000000003,
+				"y": 476,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "12,199.37",
+				"x": 391,
+				"y": 476,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 26 PC Transfer to Credit Card 5678",
+				"x": 73,
+				"y": 450,
+				"width": 124,
+				"rotated": false
+			},
+			{
+				"str": "1,000.00",
+				"x": 266,
+				"y": 450,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,199.37",
+				"x": 391,
+				"y": 450,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 27 Opos Google *Youtube Music monthly",
+				"x": 73,
+				"y": 424,
+				"width": 136,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 286,
+				"y": 424,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "11,196.88",
+				"x": 391,
+				"y": 424,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 28 PC Transfer to ScotiaLine 0000",
+				"x": 73,
+				"y": 398,
+				"width": 120,
+				"rotated": false
+			},
+			{
+				"str": "3,400.00",
+				"x": 266,
+				"y": 398,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "7,796.88",
+				"x": 396,
+				"y": 398,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "Jan 29 Deposit 1044 Payroll ACME REALTY LTD",
+				"x": 73,
+				"y": 372,
+				"width": 144,
+				"rotated": false
+			},
+			{
+				"str": "9,503.86",
+				"x": 330.90000000000003,
+				"y": 372,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "17,300.74",
+				"x": 391,
+				"y": 372,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 29 Deposit 1045 Payroll ACME REALTY LTD",
+				"x": 73,
+				"y": 346,
+				"width": 144,
+				"rotated": false
+			},
+			{
+				"str": "933.44",
+				"x": 340.90000000000003,
+				"y": 346,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "18,234.18",
+				"x": 391,
+				"y": 346,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 29 Opos Google *Youtube Annual plan",
+				"x": 73,
+				"y": 320,
+				"width": 128,
+				"rotated": false
+			},
+			{
+				"str": "19.99",
+				"x": 281,
+				"y": 320,
+				"width": 25,
+				"rotated": false
+			},
+			{
+				"str": "18,214.19",
+				"x": 391,
+				"y": 320,
+				"width": 45,
+				"rotated": false
+			}
+		],
+		[
+			{
+				"str": "Date",
+				"x": 73,
+				"y": 598,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "withdrawn ($)",
+				"x": 252.5,
+				"y": 598,
+				"width": 53.5,
+				"rotated": false
+			},
+			{
+				"str": "deposited ($)",
+				"x": 321.8,
+				"y": 598,
+				"width": 49.1,
+				"rotated": false
+			},
+			{
+				"str": "Balance ($)",
+				"x": 395.3,
+				"y": 598,
+				"width": 40.7,
+				"rotated": false
+			},
+			{
+				"str": "Jan 30 Rent",
+				"x": 73,
+				"y": 580,
+				"width": 16,
+				"rotated": false
+			},
+			{
+				"str": "2,400.00",
+				"x": 266,
+				"y": 580,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "15,814.19",
+				"x": 391,
+				"y": 580,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Jan 31 Pre-authorized debit Auto Loan",
+				"x": 73,
+				"y": 554,
+				"width": 120,
+				"rotated": false
+			},
+			{
+				"str": "3,850.00",
+				"x": 266,
+				"y": 554,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "11,964.19",
+				"x": 391,
+				"y": 554,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Feb 1 Opos Google *Youtube Extra monthly",
+				"x": 73,
+				"y": 528,
+				"width": 136,
+				"rotated": false
+			},
+			{
+				"str": "2.49",
+				"x": 286,
+				"y": 528,
+				"width": 20,
+				"rotated": false
+			},
+			{
+				"str": "11,961.70",
+				"x": 391,
+				"y": 528,
+				"width": 45,
+				"rotated": false
+			},
+			{
+				"str": "Feb 1 Tuition University of Toronto",
+				"x": 73,
+				"y": 502,
+				"width": 116,
+				"rotated": false
+			},
+			{
+				"str": "4,121.49",
+				"x": 266,
+				"y": 502,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "7,840.21",
+				"x": 396,
+				"y": 502,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "Feb 2 Fpos Winners #340 Toronto ONCA",
+				"x": 73,
+				"y": 476,
+				"width": 120,
+				"rotated": false
+			},
+			{
+				"str": "125.00",
+				"x": 276,
+				"y": 476,
+				"width": 30,
+				"rotated": false
+			},
+			{
+				"str": "7,715.21",
+				"x": 396,
+				"y": 476,
+				"width": 40,
+				"rotated": false
+			},
+			{
+				"str": "Feb 3 Closing Balance",
+				"x": 73,
+				"y": 450,
+				"width": 84,
+				"rotated": false
+			},
+			{
+				"str": "7,698.25",
+				"x": 396,
+				"y": 450,
+				"width": 40,
+				"rotated": false
+			}
+		]
+	]
+}

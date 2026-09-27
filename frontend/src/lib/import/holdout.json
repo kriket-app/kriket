@@ -1,0 +1,29 @@
+{
+	"groceries": [
+		"Metro #12 Scarborough ONCA",
+		"Fpos Loblaws #2004 Ottawa",
+		"Co-op Food Store #12 Regina",
+		"Sobeys Fast Lane Halifax"
+	],
+	"dining": [
+		"Fpos Tim Hortons #7777 Regina SKCA",
+		"Starbucks #3001 Vancouver",
+		"Pizza Pizza Delivery",
+		"Uber Eats Order"
+	],
+	"transport": ["Petro-Canada #1123 Regina", "Uber *Trip", "Esso Regina SK", "Impark 00412"],
+	"subscription": [
+		"Netflix.com",
+		"Spotify Premium",
+		"Apple.com/bill Toronto",
+		"Disney Plus Monthly"
+	],
+	"utilities": [
+		"SaskTel Bill Payment",
+		"Rogers Bill Payment",
+		"Bell Canada Mobility",
+		"Hydro One Networks"
+	],
+	"rent": ["Loyer avril", "Rent March", "Boardwalk REIT", "Condo fees April"],
+	"other": ["Dollarama #4488", "Canadian Tire #221", "Shoppers Drug Mart #909", "Winners Regina"]
+}

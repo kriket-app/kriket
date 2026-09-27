@@ -84,6 +84,8 @@ Once running:
 - `/app/income`, `/app/expenses` — income and expense streams (the usual amount, how
   often, the next date, and an optional range)
 - `/app/tags` — tags for grouping streams
+- `/app/import` — read a bank-statement PDF in the browser (never uploaded) and add the
+  streams it finds
 - `/api/docs` — Swagger UI for the generated spec
 
 ### 1. Environment
