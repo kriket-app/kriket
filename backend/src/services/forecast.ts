@@ -141,22 +141,24 @@ export function trimForecast(f: ForecastCore, from: string): ForecastCore {
 	};
 }
 
-export function summarize(points: ForecastPointDto[], endDate: string) {
+/**
+ * The lowest expected point (earliest on ties), the first day under zero, and the first day after
+ * that back at or above zero. `recoversOn` ends the first dip, even when a later one follows; it is
+ * null when the balance never goes under zero or is still under at the last point.
+ */
+export function summarize(points: ForecastPointDto[]) {
 	let lowest = points[0];
 	let firstBelowZero: string | null = null;
-	let lastBelowZero: string | null = null;
+	let recoversOn: string | null = null;
 	for (const p of points) {
 		if (p.actualCents < lowest.actualCents) lowest = p;
-		if (p.actualCents < 0) {
-			firstBelowZero ??= p.date;
-			lastBelowZero = p.date;
-		}
+		if (p.actualCents < 0) firstBelowZero ??= p.date;
+		else if (firstBelowZero && !recoversOn) recoversOn = p.date;
 	}
-	const after = lastBelowZero ? addDays(lastBelowZero, 1) : null;
 	return {
 		lowest: { date: lowest.date, cents: lowest.actualCents },
 		firstBelowZero,
-		recoversOn: after && after <= endDate ? after : null
+		recoversOn
 	};
 }
 
@@ -197,5 +199,5 @@ export async function getForecast(
 		endDate = addDays(today(), days);
 	}
 
-	return { ...forecast, endDate, checkin: checkinDto, ...summarize(forecast.points, endDate) };
+	return { ...forecast, endDate, checkin: checkinDto, ...summarize(forecast.points) };
 }

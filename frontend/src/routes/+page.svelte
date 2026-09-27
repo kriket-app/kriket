@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { ChartLine, Repeat, Target } from '@lucide/svelte';
 	import BrandMark from '$lib/components/brand-mark.svelte';
-	import ForecastChart from '$lib/components/forecast-chart.svelte';
-	import { Badge } from '$lib/components/ui/badge';
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
 	import { formatCents } from '$lib/money';
@@ -38,38 +36,58 @@
 	const points = samplePoints();
 	const end = points[points.length - 1];
 
+	// A static illustration, not the real forecast chart: the worst-case line dips below zero
+	// around the rent day, drawn in the expense colour; a green dot marks a pay day and an orange
+	// dot marks the rent day that causes the dip.
+	const ILLO_WIDTH = 640;
+	const ILLO_HEIGHT = 200;
+	const ILLO_PAD = 4;
+	const illoLow = Math.min(...points.map((p) => p.minCents));
+	const illoHigh = Math.max(...points.map((p) => p.maxCents));
+	const illoX = (i: number) => ILLO_PAD + (i / (points.length - 1)) * (ILLO_WIDTH - 2 * ILLO_PAD);
+	const illoY = (cents: number) =>
+		ILLO_PAD + ((illoHigh - cents) / (illoHigh - illoLow)) * (ILLO_HEIGHT - 2 * ILLO_PAD);
+	const illoPath = (key: 'minCents' | 'actualCents' | 'maxCents') =>
+		points
+			.map((p, i) => `${i ? 'L' : 'M'}${illoX(i).toFixed(1)} ${illoY(p[key]).toFixed(1)}`)
+			.join(' ');
+	const illoBandPath = `${illoPath('maxCents')} ${points
+		.map((p, i) => `L${illoX(i).toFixed(1)} ${illoY(p.minCents).toFixed(1)}`)
+		.reverse()
+		.join(' ')} Z`;
+	const illoZeroY = illoY(0);
+	const payDayIndex = 2;
+	const rentDayIndex = 5;
+
 	const features = [
 		{
 			icon: Repeat,
 			title: 'Streams, not receipts',
-			body: 'Add each paycheque and bill once: its minimum, maximum, and usual amount, every how many days, from a first date. Set it up once and stop logging every coffee.',
-			next: false
+			body: 'Add each paycheque and bill once: its minimum, maximum, and usual amount, every how many days, from a first date. Set it up once and stop logging every coffee.'
 		},
 		{
 			icon: ChartLine,
 			title: 'A forecast you can act on',
-			body: 'See your balance for the next 90 days at the worst, expected, and best case, so a thin week shows up long before it arrives.',
-			next: false
+			body: 'See your balance for the next 90 days at the worst, expected, and best case, so a thin week shows up long before it arrives.'
 		},
 		{
 			icon: Target,
-			title: 'Goals',
-			body: 'Tell it the number and the date, and it says what has to change: two more shifts, or a grocery run closer to your minimum.',
-			next: true
+			title: 'Goals are next on the list',
+			body: 'Tell it the number and the date, and it says what has to change: two more shifts, or a grocery run closer to your minimum.'
 		}
 	];
 
 	const steps = [
 		{
-			title: 'Add your income and expense streams',
-			body: 'Shifts, paycheques, rent, groceries: each with its range and how often it repeats.'
-		},
-		{
-			title: "Tell it today's balance",
+			title: 'Tell kriket your balance',
 			body: 'One number to start from. Update it whenever you check your bank.'
 		},
 		{
-			title: 'Watch the forecast and adjust',
+			title: 'Add what comes in and goes out, just the usual amount',
+			body: 'Shifts, paycheques, rent, groceries: each with its range and how often it repeats.'
+		},
+		{
+			title: 'Check in now and then; kriket keeps the forecast honest',
 			body: 'See where the worst, expected, and best case land, and tweak a stream when life changes.'
 		}
 	];
@@ -113,10 +131,16 @@
 						have, ranges included, so you know weeks ahead whether you'll make it, and what to
 						change if you won't.
 					</p>
+					<p class="mt-4 max-w-xl text-lg font-semibold text-balance">
+						kriket tells you the day your money runs short, before it does.
+					</p>
 					<div class="mt-8 flex flex-wrap gap-3">
 						<Button href="/signup" size="lg" class="px-5">Get started</Button>
 						<Button href="#how" size="lg" variant="outline" class="px-5">See how it works</Button>
 					</div>
+					<p class="mt-4 max-w-xl text-sm text-muted-foreground">
+						Email and password only. No bank access, nothing sold, your data is yours alone.
+					</p>
 				</div>
 
 				<Card.Root class="shadow-lg">
@@ -131,15 +155,86 @@
 					</Card.Header>
 					<Card.Content>
 						<figure>
-							<ForecastChart {points} />
-							<figcaption class="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-								<span
-									class="relative h-3 w-6 rounded-sm border border-chart-3 bg-brand-soft"
-									aria-hidden="true"
-								>
-									<span class="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 bg-brand"></span>
+							<svg
+								viewBox="0 0 {ILLO_WIDTH} {ILLO_HEIGHT}"
+								class="w-full"
+								preserveAspectRatio="xMidYMid meet"
+								role="img"
+								aria-label="Sample forecast: pay day lifts the balance, then the rent day dips the worst case below zero before recovering."
+							>
+								<clipPath id="hero-below-zero">
+									<rect x="0" y={illoZeroY} width={ILLO_WIDTH} height={ILLO_HEIGHT - illoZeroY} />
+								</clipPath>
+								<path d={illoBandPath} fill="var(--brand-soft)" stroke="none" />
+								<line
+									x1="0"
+									x2={ILLO_WIDTH}
+									y1={illoZeroY}
+									y2={illoZeroY}
+									stroke="var(--muted-foreground)"
+									stroke-width="1"
+									stroke-dasharray="4 4"
+								/>
+								<path
+									d={illoPath('minCents')}
+									fill="none"
+									stroke="var(--chart-3)"
+									stroke-width="1.5"
+								/>
+								<path
+									d={illoPath('minCents')}
+									fill="none"
+									stroke="var(--expense)"
+									stroke-width="1.5"
+									clip-path="url(#hero-below-zero)"
+								/>
+								<path
+									d={illoPath('maxCents')}
+									fill="none"
+									stroke="var(--chart-3)"
+									stroke-width="1.5"
+								/>
+								<path
+									d={illoPath('actualCents')}
+									fill="none"
+									stroke="var(--brand)"
+									stroke-width="2.5"
+									stroke-linejoin="round"
+									stroke-linecap="round"
+								/>
+								<circle
+									cx={illoX(payDayIndex)}
+									cy={illoY(points[payDayIndex].actualCents)}
+									r="5"
+									fill="var(--brand)"
+								/>
+								<circle
+									cx={illoX(rentDayIndex)}
+									cy={illoY(points[rentDayIndex].minCents)}
+									r="5"
+									fill="var(--expense)"
+								/>
+							</svg>
+							<figcaption
+								class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground"
+							>
+								<span class="flex items-center gap-2">
+									<span
+										class="relative h-3 w-6 rounded-sm border border-chart-3 bg-brand-soft"
+										aria-hidden="true"
+									>
+										<span class="absolute inset-x-0 top-1/2 h-0.5 -translate-y-1/2 bg-brand"></span>
+									</span>
+									Worst case, expected, best case
 								</span>
-								Worst case, expected, best case
+								<span class="flex items-center gap-1.5">
+									<span class="size-2.5 rounded-full bg-brand" aria-hidden="true"></span>
+									Pay day
+								</span>
+								<span class="flex items-center gap-1.5">
+									<span class="size-2.5 rounded-full bg-expense" aria-hidden="true"></span>
+									Rent day
+								</span>
 							</figcaption>
 						</figure>
 					</Card.Content>
@@ -169,7 +264,6 @@
 							</span>
 							<Card.Title class="flex items-center gap-2 text-lg font-semibold">
 								{feature.title}
-								{#if feature.next}<Badge>Next</Badge>{/if}
 							</Card.Title>
 						</Card.Header>
 						<Card.Content>

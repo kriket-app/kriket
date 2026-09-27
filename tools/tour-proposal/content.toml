@@ -1,0 +1,174 @@
+# Every word on the tour page lives here. build.py turns it into out/index.html.
+# Text is plain: no markup. Frames name a screen of the prototype (prototype.html) to start on.
+
+[meta]
+title = "Kriket Proposed Prototype"   # keep exactly this: the published artifact is matched by its title
+name = "kriket"
+sub = "proposed prototype"
+headline = "Iteration 2, proposed."
+lede = "The proposal as Theo and Erik decided it on 2026-09-26: clickable screens to visualise iteration 2 while it is being built, and to help plan the one after. Still a proposal, not a promise: nothing here saves, and the real app may end up different."
+facts = ["Decided 2026-09-26", "from feedback on iteration 1", "nothing saves"]
+live_url = "https://app.26.cohack.tetl.ca"
+live_note = "iteration 1, as built"
+repo_url = "https://github.com/kriket-app/kriket"
+footer_note = "Nothing on this page is private."
+
+[[meta.link]]
+label = "The spec (edit it on GitHub)"
+url = "https://github.com/kriket-app/kriket/blob/main/docs/plans/2026-09-27-iteration-2-proposal.md"
+
+[[meta.link]]
+label = "The build board"
+url = "https://26.cohack.tetl.ca/kriket/board/"
+
+[[meta.link]]
+label = "The app tour, iteration 1"
+url = "https://26.cohack.tetl.ca/tour/1/"
+
+[[meta.link]]
+label = "The live app"
+url = "https://app.26.cohack.tetl.ca"
+
+# ---------------------------------------------------------------- how to read this
+
+[how]
+title = "How to read this"
+items = [
+  "Every screen is a proposal. None of it is built, and the Proposed pill in each header says so.",
+  "Click around inside each frame: the nav, the buttons, the arrows, and the pickers work. Nothing saves, and a reload puts everything back.",
+  "The numbers are Sam's made-up data, forecast with the app's real rule: a balance of $430.00 on Sep 26, two incomes, three expenses.",
+]
+
+# ---------------------------------------------------------------- the stops
+# One [[stop]] per screen. device is "desktop" or "phone"; screen is where the prototype starts;
+# path is shown in the desktop frame's address strip. "Answers" names the notes from iteration 1:
+# Erik wrote 1 to 4, Theo 4 to 11, and the review notes are Erik's.
+
+[tour]
+title = "The stops"
+intro = "The screens in the order Sam would meet them. Each frame is the prototype itself, at the real viewport; the phone frames are small, so open one full screen when the words matter."
+
+[[stop]]
+id = "overview"
+title = "Overview"
+caption = "Sam's next 90 days, in order: the balance check-in, the answer in one sentence, the chart with a dot for every payment and the dip below zero shaded, three tiles, the balance history, and, as the last card, what is coming up."
+answers = ["Erik 1", "Theo 7", "Theo 10.1", "Theo 11", "Erik: not just a spreadsheet"]
+  [[stop.frame]]
+  device = "desktop"
+  screen = "overview"
+  path = "/app"
+  title = "The proposed overview on a desktop browser"
+  [[stop.frame]]
+  device = "phone"
+  screen = "overview"
+  title = "The proposed overview on a phone"
+
+[[stop]]
+id = "answer"
+title = "The answer and the chart"
+caption = "The sentence says what the chart shows: rent lands on Oct 1, before the first café shift, and Sam is $255 under until the second shift pays on Oct 10. On the chart every payment is a dot, green in and orange out, and the stretch below zero is shaded expense-orange. Switch to 30 or 180 days and the sentence follows."
+note = "Expense-orange is orange-600 (#ea580c) for dots, lines, fills, and badges, and orange-700 (#c2410c) for text on white, which keeps it readable at small sizes. Money in stays green. Buttons stay green too, because they are actions, not amounts."
+answers = ["Theo 6", "Theo 7", "Theo 8", "Theo 11"]
+  [[stop.frame]]
+  device = "desktop"
+  screen = "overview"
+  path = "/app"
+  title = "The proposed overview, showing the answer card and the chart"
+
+[[stop]]
+id = "balances"
+title = "Balance check-in and history"
+caption = "Saving a balance now says so, in the card and in a corner toast, and every balance is kept. Flip back to Sep 19 or Sep 12 and the chart redraws from that day, so the two of you can see how the forecast moved between check-ins."
+answers = ["Erik 1", "Theo 10.1", "Theo 10.2"]
+  [[stop.frame]]
+  device = "desktop"
+  screen = "balances"
+  path = "/app/balances"
+  title = "The proposed balance history on a desktop browser"
+  [[stop.frame]]
+  device = "phone"
+  screen = "balances"
+  title = "The proposed balance history on a phone"
+
+[[stop]]
+id = "coming-up"
+title = "Coming up, month by month"
+caption = "Coming up is now the last card on the overview, not a page of its own: one month at a time, what comes in, what goes out, where the month ends, and every payment grouped by day. The arrows flip forward to December; September is as far back as it goes, because that is when Sam started."
+answers = ["Theo 9"]
+  [[stop.frame]]
+  device = "desktop"
+  screen = "coming-up"
+  path = "/app/coming-up"
+  title = "The proposed Coming up page on a desktop browser"
+  [[stop.frame]]
+  device = "phone"
+  screen = "coming-up"
+  title = "The proposed Coming up page on a phone"
+
+[[stop]]
+id = "add-expense"
+title = "Add an expense with the usual only"
+caption = "One amount, a rhythm, a next date, and a tag. The date field is styled like the rest of the form, with a calendar of its own instead of the browser's. A range is there for those who want it, folded away, and it starts equal to the usual."
+answers = ["Erik 2", "Erik 3"]
+  [[stop.frame]]
+  device = "phone"
+  screen = "add-expense"
+  title = "The proposed Add expense form on a phone"
+  [[stop.frame]]
+  device = "desktop"
+  screen = "add-expense"
+  path = "/app/expenses"
+  title = "The proposed Add expense form on a desktop browser"
+
+[[stop]]
+id = "tags"
+title = "Tags with a colour picker"
+caption = "Four presets, pay cheque, side hustle, bill, and groceries, plus one of Sam's own. Any colour: a swatch grid, a hue slider, or a hex value, styled like the rest of the app. Tags is back in the main nav; click a tag's name to open its own page."
+answers = ["Erik 4", "Theo 4", "Theo 5", "Erik: only shades of green"]
+  [[stop.frame]]
+  device = "desktop"
+  screen = "tags"
+  path = "/app/tags"
+  title = "The proposed Tags page on a desktop browser"
+  [[stop.frame]]
+  device = "phone"
+  screen = "tags"
+  title = "The proposed Tags page on a phone"
+
+[[stop]]
+id = "tag"
+title = "A tag's page"
+caption = "Click a tag's name from the Tags screen and its own page opens: the tag's colour and name as the title, a one-line summary of what it adds up to, and its streams as cards, the same as on Income and Expenses."
+answers = ["Theo: keep tags, a tag shows its streams"]
+  [[stop.frame]]
+  device = "desktop"
+  screen = "tag"
+  path = "/app/tags/bill"
+  title = "The proposed tag page on a desktop browser"
+  [[stop.frame]]
+  device = "phone"
+  screen = "tag"
+  title = "The proposed tag page on a phone"
+
+[[stop]]
+id = "streams"
+title = "Income and Expenses"
+caption = "The stream cards read as a sentence: the usual amount, the range if there is one, the rhythm, and the next date. Money out is expense-orange, money in stays green, and Add stays a green button."
+answers = ["Theo 6", "Theo 8"]
+  [[stop.frame]]
+  device = "phone"
+  screen = "expenses"
+  title = "The proposed Expenses page on a phone"
+
+# ---------------------------------------------------------------- what is left out
+
+[not_here]
+title = "Not in this prototype"
+items = [
+  "Bank connections and statement import — planned, not built.",
+  "Goals — planned for after iteration 2.",
+  "One-time incomes and expenses.",
+  "The phone install (PWA).",
+  "Dark mode.",
+  "Anything that saves.",
+]

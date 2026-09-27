@@ -6,10 +6,10 @@ usual amount on a repeat interval, and mostly leave it alone: kriket forecasts w
 balance is heading and tells you whether you'll hit your goal at the worst, expected, and
 best case, instead of asking you to log every receipt.
 
-Built on a full-stack template: SvelteKit (adapter-node) + Tailwind CSS on the frontend,
-Express 5 + Drizzle ORM + Better Auth (email/password) on the backend, PostgreSQL for
-storage, an OpenAPI spec generated from Zod schemas driving a typed frontend API client,
-and Docker Compose + Caddy (auto-TLS) for deployment.
+SvelteKit (adapter-node) + Tailwind CSS on the frontend, Express 5 + Drizzle ORM +
+Better Auth (email/password) on the backend, PostgreSQL for storage, an OpenAPI spec
+generated from Zod schemas driving a typed frontend API client, and Docker Compose +
+Caddy (auto-TLS) for deployment.
 
 ## Running locally
 
@@ -75,12 +75,15 @@ Swagger UI is served at `/api/docs` and the raw spec at `/api/openapi.json`.
 
 ### Try it
 
-Once running, the demo shows:
+Once running:
 
-- `/` — pings the backend health check
+- `/` — the marketing landing page
 - `/signup`, `/signin` — Better Auth email/password
-- `/items` — protected page (sign-in required) listing the signed-in user's items and
-  letting them add more; demonstrates the type-safe OpenAPI client for an authed resource
+- `/app` — the forecast: check in your balance, then see the worst/expected/best case
+  over the next 90 (or 30/180) days, and what's coming up
+- `/app/income`, `/app/expenses` — income and expense streams (a minimum, usual, and
+  maximum amount, a repeat interval, and a first date)
+- `/app/tags` — tags for grouping streams
 - `/api/docs` — Swagger UI for the generated spec
 
 ### 1. Environment
@@ -157,12 +160,16 @@ npm run test:e2e:ui               # interactive UI
 npm run test:e2e:headed           # headed browser
 ```
 
-Tests cover the health check, the sign-up / sign-out / sign-in flow, and the
-protected items page.
+Tests cover the sign-up / sign-out / sign-in flow, seeded tags, adding an income
+stream and seeing it forecast, the bottom tab bar on a phone-width viewport, and the
+landing page.
 
 ### CI
 
-`.github/workflows/ci.yml` runs three jobs on every pull request:
+`.github/workflows/check.yml` runs `make check` (typecheck, oxlint, `prettier --check`
+in both packages) plus a gitleaks secret scan on every pull request and push to `main`.
+
+`.github/workflows/ci.yml` runs three more jobs on every pull request:
 
 - **Backend tests** — typecheck, oxlint + prettier, Vitest against a Postgres
   service, and `drizzle-kit check` to catch pending/broken migrations.
@@ -230,12 +237,14 @@ never needs to be run by hand.
 - **Graceful shutdown** — SIGTERM/SIGINT close the HTTP server and the
   Postgres pool before exiting, so Docker `stop` is clean.
 
-## Customizing this template
+## Plans and feedback
 
-- Rename the packages (`backend/package.json`, `frontend/package.json`) and the
-  root `package.json` name.
-- Replace the demo `items` feature (route + page + e2e spec) with your own
-  domain.
+- `docs/plans/` — the proposal and build plans for each iteration.
+- `docs/feedback/` — feedback written after each iteration.
+- `docs/handoffs/` — notes handing an iteration's build to a fresh session.
+
+## Notes
+
 - Email verification and password reset are not enabled — they require an SMTP
   provider through Better Auth's `sendVerificationEmail` / `sendResetPassword`
   hooks.
@@ -265,11 +274,12 @@ backend/
     app.ts              # express setup, helmet, pino logging, CORS, Better Auth, Swagger UI
     auth.ts             # Better Auth config (drizzle adapter, rate limiting)
     env.ts              # zod validation of required env vars
-    db/                 # drizzle pool + schema (Better Auth tables, items)
+    db/                 # drizzle pool + schema (Better Auth tables, streams, tags, check-ins)
     middleware/validate.ts
     middleware/require-auth.ts
     openapi/            # registry + spec generator
-    routes/             # health, me, items (+ *.test.ts colocated tests)
+    routes/             # health, me, tags, income/expense streams, check-ins, forecast,
+                         # coming-up (+ *.test.ts colocated tests)
   tests/                # vitest global setup/setup/helpers, e2e DB reset
   drizzle/              # committed migrations
   openapi.json          # generated
@@ -281,7 +291,9 @@ backend/
 frontend/
   src/lib/api/          # generated schema.d.ts + typed client
   src/lib/auth-client.ts
-  src/routes/           # health (/), signup, signin, items (protected)
+  src/lib/components/   # forecast chart, streams UI, shadcn-svelte primitives
+  src/routes/           # landing page (/), signup, signin, app/ (forecast, income,
+                         # expenses, tags — sign-in required)
   e2e/                  # Playwright specs + helpers
   playwright.config.ts
   .oxlintrc.json        # oxlint config (excludes .svelte)
@@ -294,6 +306,7 @@ compose.yaml
 Caddyfile
 LICENSE                 # MIT
 .env.example
-.github/workflows/ci.yml
-.github/dependabot.yml  # dependency update PRs
+.github/workflows/check.yml  # make check + gitleaks, on every PR and push to main
+.github/workflows/ci.yml     # backend tests, e2e, generated-artifacts check
+.github/dependabot.yml       # dependency update PRs
 ```
