@@ -9,7 +9,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { formatDate, nextOccurrence } from '$lib/dates';
-	import { formatRange } from '$lib/money';
+	import { formatCents } from '$lib/money';
 	import StreamForm from './stream-form.svelte';
 
 	let {
@@ -24,8 +24,24 @@
 	const failedEdit = $derived(
 		form?.action === 'update' && form.values?.id === stream.id ? form.details : undefined
 	);
-	const every = $derived(
-		stream.intervalDays === 1 ? 'Every day' : `Every ${stream.intervalDays} days`
+	/** "daily", "weekly", "every 2 weeks", "monthly" for the intervals people actually use, else "every N days". */
+	const repeatText = $derived(
+		stream.intervalDays === 1
+			? 'daily'
+			: stream.intervalDays === 7
+				? 'weekly'
+				: stream.intervalDays === 14
+					? 'every 2 weeks'
+					: stream.intervalDays === 30
+						? 'monthly'
+						: `every ${stream.intervalDays} days`
+	);
+	const isRanged = $derived(
+		stream.minCents !== stream.actualCents || stream.maxCents !== stream.actualCents
+	);
+	const amountClass = $derived(kind === 'income' ? 'text-brand-strong' : 'text-expense-strong');
+	const nextDateText = $derived(
+		`next ${formatDate(nextOccurrence(stream.firstDate, stream.intervalDays))}`
 	);
 	let editing = $state(false);
 </script>
@@ -84,11 +100,16 @@
 		</Card.Action>
 	</Card.Header>
 	<Card.Content class="grid gap-1">
-		<p class="font-medium tabular-nums">
-			{formatRange(stream.minCents, stream.actualCents, stream.maxCents)}
-		</p>
-		<p class="text-muted-foreground">
-			{every}, next on {formatDate(nextOccurrence(stream.firstDate, stream.intervalDays))}
-		</p>
+		{#if isRanged}
+			<p class="font-medium tabular-nums">
+				Usually <span class={amountClass}>{formatCents(stream.actualCents)}</span> · {formatCents(
+					stream.minCents
+				)} to {formatCents(stream.maxCents)} · {repeatText} · {nextDateText}
+			</p>
+		{:else}
+			<p class="font-medium tabular-nums">
+				<span class={amountClass}>{formatCents(stream.actualCents)}</span> · {repeatText} · {nextDateText}
+			</p>
+		{/if}
 	</Card.Content>
 </Card.Root>
