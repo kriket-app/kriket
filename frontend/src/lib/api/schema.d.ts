@@ -971,7 +971,7 @@ export interface components {
              */
             maxCents?: number;
             /**
-             * @description integer cents
+             * @description integer cents, more than 0
              * @example 150000
              */
             actualCents: number;
@@ -999,7 +999,7 @@ export interface components {
              */
             maxCents?: number;
             /**
-             * @description integer cents
+             * @description integer cents, more than 0
              * @example 150000
              */
             actualCents?: number;

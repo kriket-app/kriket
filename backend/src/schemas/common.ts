@@ -9,6 +9,15 @@ export const cents = z.number().int().min(0).max(1_000_000_000).openapi({
 	example: 150000,
 	description: 'integer cents'
 });
+export const positiveCents = z
+	.number()
+	.int()
+	.min(1, 'the usual amount must be more than $0')
+	.max(1_000_000_000)
+	.openapi({
+		example: 150000,
+		description: 'integer cents, more than 0'
+	});
 export const ErrorMessage = registry.register('ErrorMessage', z.object({ message: z.string() }));
 export const ValidationError = registry.register(
 	'ValidationError',

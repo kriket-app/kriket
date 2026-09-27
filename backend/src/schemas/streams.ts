@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { registry } from '../openapi/registry.js';
-import { cents, isoDate } from './common.js';
+import { cents, isoDate, positiveCents } from './common.js';
 
 export const Stream = registry.register(
 	'Stream',
@@ -24,7 +24,7 @@ const fields = {
 	tagId: z.string().uuid().nullable().optional(),
 	minCents: cents,
 	maxCents: cents,
-	actualCents: cents,
+	actualCents: positiveCents,
 	intervalDays: z.number().int().min(1).max(366).openapi({ example: 14 }),
 	firstDate: isoDate
 };

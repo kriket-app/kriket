@@ -29,6 +29,8 @@ export function streamBody(values: Record<string, string>) {
 	const actualCents = parseDollars(values.usual ?? '');
 	if (actualCents === null) {
 		details.push({ path: 'actualCents', message: 'Enter an amount like 85.00' });
+	} else if (actualCents <= 0) {
+		details.push({ path: 'actualCents', message: 'The usual amount must be more than $0.' });
 	}
 
 	const rangeGiven = values.minimum !== undefined || values.maximum !== undefined;
@@ -42,6 +44,8 @@ export function streamBody(values: Record<string, string>) {
 		if (max === null) details.push({ path: 'maxCents', message: 'Enter an amount like 120.00' });
 		else maxCents = max;
 	}
+
+	if (!values.firstDate) details.push({ path: 'firstDate', message: 'Pick the next date.' });
 
 	if (details.length) return { details };
 	return {

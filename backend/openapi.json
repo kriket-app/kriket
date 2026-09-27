@@ -241,10 +241,10 @@
           },
           "actualCents": {
             "type": "integer",
-            "minimum": 0,
+            "minimum": 1,
             "maximum": 1000000000,
             "example": 150000,
-            "description": "integer cents"
+            "description": "integer cents, more than 0"
           },
           "intervalDays": {
             "type": "integer",
@@ -295,10 +295,10 @@
           },
           "actualCents": {
             "type": "integer",
-            "minimum": 0,
+            "minimum": 1,
             "maximum": 1000000000,
             "example": 150000,
-            "description": "integer cents"
+            "description": "integer cents, more than 0"
           },
           "intervalDays": {
             "type": "integer",
