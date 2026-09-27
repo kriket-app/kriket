@@ -28,7 +28,10 @@ const fields = {
 	intervalDays: z.number().int().min(1).max(366).openapi({ example: 14 }),
 	firstDate: isoDate
 };
-export const CreateStreamBody = registry.register('CreateStreamBody', z.object(fields));
+export const CreateStreamBody = registry.register(
+	'CreateStreamBody',
+	z.object({ ...fields, minCents: cents.optional(), maxCents: cents.optional() })
+);
 export const UpdateStreamBody = registry.register('UpdateStreamBody', z.object(fields).partial());
 export type StreamDto = z.infer<typeof Stream>;
 export type CreateStreamInput = z.infer<typeof CreateStreamBody>;

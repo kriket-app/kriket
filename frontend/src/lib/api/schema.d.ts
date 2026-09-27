@@ -307,14 +307,14 @@ export interface paths {
         };
         trace?: never;
     };
-    "/api/settings": {
+    "/api/checkins": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get the current settings (defaults when nothing is stored) */
+        /** List balance check-ins, newest first */
         get: {
             parameters: {
                 query?: never;
@@ -324,13 +324,13 @@ export interface paths {
             };
             requestBody?: never;
             responses: {
-                /** @description Settings */
+                /** @description Checkins */
                 200: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Settings"];
+                        "application/json": components["schemas"]["CheckinList"];
                     };
                 };
                 /** @description Not authenticated */
@@ -344,8 +344,9 @@ export interface paths {
                 };
             };
         };
-        /** Replace the current settings */
-        put: {
+        put?: never;
+        /** Save today's balance check-in (a second save the same day replaces it) */
+        post: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -354,17 +355,26 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["Settings"];
+                    "application/json": components["schemas"]["CheckinCreate"];
                 };
             };
             responses: {
-                /** @description Settings */
-                200: {
+                /** @description Created */
+                201: {
                     headers: {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["Settings"];
+                        "application/json": components["schemas"]["Checkin"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
                     };
                 };
                 /** @description Not authenticated */
@@ -378,7 +388,6 @@ export interface paths {
                 };
             };
         };
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -397,6 +406,7 @@ export interface paths {
             parameters: {
                 query?: {
                     days?: number;
+                    checkinId?: string;
                 };
                 header?: never;
                 path?: never;
@@ -411,6 +421,62 @@ export interface paths {
                     };
                     content: {
                         "application/json": components["schemas"]["Forecast"];
+                    };
+                };
+                /** @description Invalid body */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ValidationError"];
+                    };
+                };
+                /** @description Not authenticated */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorMessage"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/coming-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A month's scheduled events and expected balance */
+        get: {
+            parameters: {
+                query?: {
+                    month?: string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Coming up */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ComingUp"];
                     };
                 };
                 /** @description Invalid body */
@@ -898,12 +964,12 @@ export interface components {
              * @description integer cents
              * @example 150000
              */
-            minCents: number;
+            minCents?: number;
             /**
              * @description integer cents
              * @example 150000
              */
-            maxCents: number;
+            maxCents?: number;
             /**
              * @description integer cents
              * @example 150000
@@ -945,14 +1011,26 @@ export interface components {
              */
             firstDate?: string;
         };
-        Settings: {
+        Checkin: {
+            id: string;
             /** @example 42000 */
-            startingBalanceCents: number;
+            balanceCents: number;
             /**
              * Format: date
              * @example 2026-10-01
              */
-            startingDate: string;
+            checkedOn: string;
+            /** Format: date-time */
+            createdAt: string;
+            expectedCents: number | null;
+            differenceCents: number | null;
+        };
+        CheckinList: {
+            checkins: components["schemas"]["Checkin"][];
+        };
+        CheckinCreate: {
+            /** @example 42000 */
+            balanceCents: number;
         };
         ForecastPoint: {
             /**
@@ -974,6 +1052,7 @@ export interface components {
             kind: "income" | "expense";
             streamId: string;
             name: string;
+            tagId: string | null;
             minCents: number;
             actualCents: number;
             maxCents: number;
@@ -997,6 +1076,68 @@ export interface components {
                 actualCents: number;
                 maxCents: number;
             };
+            checkin: {
+                id: string;
+                balanceCents: number;
+                /**
+                 * Format: date
+                 * @example 2026-10-01
+                 */
+                checkedOn: string;
+            } | null;
+            lowest: {
+                /**
+                 * Format: date
+                 * @example 2026-10-01
+                 */
+                date: string;
+                cents: number;
+            };
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
+            firstBelowZero: string | null;
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
+            recoversOn: string | null;
+        };
+        ComingUpEvent: {
+            streamId: string;
+            /** @enum {string} */
+            kind: "income" | "expense";
+            name: string;
+            tagId: string | null;
+            minCents: number;
+            actualCents: number;
+            maxCents: number;
+        };
+        ComingUp: {
+            /** @example 2026-10 */
+            month: string;
+            /**
+             * Format: date
+             * @example 2026-10-01
+             */
+            today: string;
+            /** @example 2026-10 */
+            firstMonth: string;
+            /** @example 2026-10 */
+            lastMonth: string;
+            days: {
+                /**
+                 * Format: date
+                 * @example 2026-10-01
+                 */
+                date: string;
+                past: boolean;
+                events: components["schemas"]["ComingUpEvent"][];
+            }[];
+            inCents: number;
+            outCents: number;
+            endBalanceCents: number | null;
         };
     };
     responses: never;

@@ -260,8 +260,6 @@
         },
         "required": [
           "name",
-          "minCents",
-          "maxCents",
           "actualCents",
           "intervalDays",
           "firstDate"
@@ -315,24 +313,71 @@
           }
         }
       },
-      "Settings": {
+      "Checkin": {
         "type": "object",
         "properties": {
-          "startingBalanceCents": {
+          "id": {
+            "type": "string"
+          },
+          "balanceCents": {
             "type": "integer",
             "minimum": -1000000000,
             "maximum": 1000000000,
             "example": 42000
           },
-          "startingDate": {
+          "checkedOn": {
             "type": "string",
             "format": "date",
             "example": "2026-10-01"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expectedCents": {
+            "type": "integer",
+            "nullable": true
+          },
+          "differenceCents": {
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
-          "startingBalanceCents",
-          "startingDate"
+          "id",
+          "balanceCents",
+          "checkedOn",
+          "createdAt",
+          "expectedCents",
+          "differenceCents"
+        ]
+      },
+      "CheckinList": {
+        "type": "object",
+        "properties": {
+          "checkins": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Checkin"
+            }
+          }
+        },
+        "required": [
+          "checkins"
+        ]
+      },
+      "CheckinCreate": {
+        "type": "object",
+        "properties": {
+          "balanceCents": {
+            "type": "integer",
+            "minimum": -1000000000,
+            "maximum": 1000000000,
+            "example": 42000
+          }
+        },
+        "required": [
+          "balanceCents"
         ]
       },
       "ForecastPoint": {
@@ -381,6 +426,10 @@
           "name": {
             "type": "string"
           },
+          "tagId": {
+            "type": "string",
+            "nullable": true
+          },
           "minCents": {
             "type": "integer"
           },
@@ -396,6 +445,7 @@
           "kind",
           "streamId",
           "name",
+          "tagId",
           "minCents",
           "actualCents",
           "maxCents"
@@ -447,6 +497,57 @@
               "actualCents",
               "maxCents"
             ]
+          },
+          "checkin": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "balanceCents": {
+                "type": "integer"
+              },
+              "checkedOn": {
+                "type": "string",
+                "format": "date",
+                "example": "2026-10-01"
+              }
+            },
+            "required": [
+              "id",
+              "balanceCents",
+              "checkedOn"
+            ]
+          },
+          "lowest": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date",
+                "example": "2026-10-01"
+              },
+              "cents": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "date",
+              "cents"
+            ]
+          },
+          "firstBelowZero": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2026-10-01"
+          },
+          "recoversOn": {
+            "type": "string",
+            "nullable": true,
+            "format": "date",
+            "example": "2026-10-01"
           }
         },
         "required": [
@@ -455,7 +556,123 @@
           "startingBalanceCents",
           "points",
           "events",
-          "endBalance"
+          "endBalance",
+          "checkin",
+          "lowest",
+          "firstBelowZero",
+          "recoversOn"
+        ]
+      },
+      "ComingUpEvent": {
+        "type": "object",
+        "properties": {
+          "streamId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "income",
+              "expense"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "tagId": {
+            "type": "string",
+            "nullable": true
+          },
+          "minCents": {
+            "type": "integer"
+          },
+          "actualCents": {
+            "type": "integer"
+          },
+          "maxCents": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "streamId",
+          "kind",
+          "name",
+          "tagId",
+          "minCents",
+          "actualCents",
+          "maxCents"
+        ]
+      },
+      "ComingUp": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10"
+          },
+          "today": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-10-01"
+          },
+          "firstMonth": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10"
+          },
+          "lastMonth": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+            "example": "2026-10"
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "2026-10-01"
+                },
+                "past": {
+                  "type": "boolean"
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ComingUpEvent"
+                  }
+                }
+              },
+              "required": [
+                "date",
+                "past",
+                "events"
+              ]
+            }
+          },
+          "inCents": {
+            "type": "integer"
+          },
+          "outCents": {
+            "type": "integer"
+          },
+          "endBalanceCents": {
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "required": [
+          "month",
+          "today",
+          "firstMonth",
+          "lastMonth",
+          "days",
+          "inCents",
+          "outCents",
+          "endBalanceCents"
         ]
       }
     },
@@ -800,12 +1017,12 @@
         }
       }
     },
-    "/api/settings": {
+    "/api/checkins": {
       "get": {
         "tags": [
-          "settings"
+          "checkins"
         ],
-        "summary": "Get the current settings (defaults when nothing is stored)",
+        "summary": "List balance check-ins, newest first",
         "security": [
           {
             "cookieAuth": []
@@ -813,11 +1030,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Settings",
+            "description": "Checkins",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Settings"
+                  "$ref": "#/components/schemas/CheckinList"
                 }
               }
             }
@@ -834,11 +1051,11 @@
           }
         }
       },
-      "put": {
+      "post": {
         "tags": [
-          "settings"
+          "checkins"
         ],
-        "summary": "Replace the current settings",
+        "summary": "Save today's balance check-in (a second save the same day replaces it)",
         "security": [
           {
             "cookieAuth": []
@@ -848,18 +1065,28 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Settings"
+                "$ref": "#/components/schemas/CheckinCreate"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Settings",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Settings"
+                  "$ref": "#/components/schemas/Checkin"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
                 }
               }
             }
@@ -899,6 +1126,15 @@
             "required": false,
             "name": "days",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": false,
+            "name": "checkinId",
+            "in": "query"
           }
         ],
         "responses": {
@@ -908,6 +1144,63 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Forecast"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/coming-up": {
+      "get": {
+        "tags": [
+          "coming-up"
+        ],
+        "summary": "A month's scheduled events and expected balance",
+        "security": [
+          {
+            "cookieAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$",
+              "example": "2026-10"
+            },
+            "required": false,
+            "name": "month",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Coming up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComingUp"
                 }
               }
             }
