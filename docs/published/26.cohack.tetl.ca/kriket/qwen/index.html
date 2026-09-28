@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Kriket Qwen Experiment</title>
+<style>:root{color-scheme:light dark}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #ffffff; --surface: #f7f6f2; --ink: #1c1b18; --ink-2: #45423c; --muted: #6d685f; --rule: #e4e0d7;
+  --brand-strong: #15803d; --brand-soft: #f0fbf3; --brand-line: #bfe3ca;
+  --warn: #c2410c; --warn-soft: #fff7ed; --warn-line: #fed7aa; --run: #2563eb; --run-soft: #eff6ff; --run-line: #bfdbfe;
+  --font-display: "Gabarito", "Avenir Next", system-ui, sans-serif; --font-body: "Instrument Sans", "Helvetica Neue", system-ui, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; --ground: #131310; --surface: #1c1b17; --ink: #f1eee7; --ink-2: #d3cfc6; --muted: #a39e93; --rule: #34322c; --brand-strong: #4ade80; --brand-soft: #14231a; --brand-line: #25482f; --warn: #fdba74; --warn-soft: #2a1a0e; --warn-line: #5a3417; --run: #60a5fa; --run-soft: #111c2e; --run-line: #1e3a5f; } }
+:root[data-theme="dark"] { color-scheme: dark; --ground: #131310; --surface: #1c1b17; --ink: #f1eee7; --ink-2: #d3cfc6; --muted: #a39e93; --rule: #34322c; --brand-strong: #4ade80; --brand-soft: #14231a; --brand-line: #25482f; --warn: #fdba74; --warn-soft: #2a1a0e; --warn-line: #5a3417; --run: #60a5fa; --run-soft: #111c2e; --run-line: #1e3a5f; }
+* { box-sizing: border-box; }
+body { margin: 0; padding-inline: 16px; background: var(--ground); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1000px; margin-inline: auto; padding-block: 36px 56px; display: grid; gap: 34px; }
+a { color: var(--brand-strong); text-underline-offset: 3px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(30px, 5vw, 42px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.05; }
+h2 { font-size: 21px; font-weight: 700; }
+p { margin: 0; }
+code { font-family: var(--font-mono); font-size: 0.86em; background: var(--surface); padding: 0.05em 0.35em; border-radius: 5px; }
+.lede { font-size: 17px; color: var(--ink-2); max-width: 66ch; }
+.k { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.verdict { display: grid; gap: 10px; padding: 18px 20px; border-radius: 14px; background: var(--surface); }
+.verdict p { color: var(--ink-2); max-width: 75ch; }
+.verdict p strong { color: var(--ink); }
+.findings, .next { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; color: var(--ink-2); max-width: 78ch; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.runs { min-width: 760px; }
+table.compare { min-width: 640px; }
+th, td { text-align: left; padding: 9px 12px 9px 0; vertical-align: top; border-bottom: 1px solid var(--rule); }
+thead th { font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+.v { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 9px; border-radius: 999px; border: 1px solid var(--l); background: var(--s); color: var(--t); white-space: nowrap; }
+.v.pass { --l: var(--brand-line); --s: var(--brand-soft); --t: var(--brand-strong); }
+.v.blocked { --l: var(--warn-line); --s: var(--warn-soft); --t: var(--warn); }
+.v.running { --l: var(--run-line); --s: var(--run-soft); --t: var(--run); }
+.v.none { --l: var(--rule); --s: var(--surface); --t: var(--muted); }
+.note { color: var(--ink-2); }
+.foot { padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13.5px; color: var(--muted); }
+section { display: grid; gap: 12px; }
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:12px">
+    <p class="k">kriket · iteration 2 · experiment</p>
+    <h1>The same plan, built by Qwen.</h1>
+    <p class="lede">While Claude agents built and shipped iteration 2 (<a href="https://26.cohack.tetl.ca/kriket/board/">the board</a>), agents on the hackathon kit's team model built the same plan in parallel, to see how an open-weight model on our own GPU compares. Nothing from this track merges.</p>
+    <p class="note" style="font-size:14.5px">Setup: Qwen3 Coder 30B (4-bit) on the GPU box, reached through the kit's gateway by Claude Code in headless mode, inside the kit's dev container: a fresh clone per task, a default-deny firewall, a private Postgres, no credentials, an explicit tool allowlist. Each run's work is judged by the kit's verifier (<code>make check</code> plus its incident checks) and the backend tests, never by the agent's report.</p>
+    <p class="k" id="updated"></p>
+  </header>
+
+  <section aria-labelledby="where-h">
+    <h2 id="where-h">Where it stands</h2>
+    <div class="verdict">
+      <p><strong>The experiment is over. The Claude track shipped all of iteration 2 in about two hours</strong> (first PR opened 19:32, the refreshed tour merged 21:29). <strong>In six and a half hours (18:47 to 01:18), 30 runs, and about 110 million input tokens, the Qwen track finished no task.</strong> Two tasks, the stream form and the landing page, passed the gate, and every review found them not done. Tags stayed blocked after ten runs. The backend never committed in eight runs, so the overview and the balances page, which depend on it, never started.</p>
+      <p>The gate alone is not proof of done. The stream form passed <code>make check</code> twice, and the whole gate once, while its form still could not save a new stream: the hidden minimum and maximum were empty, and editing would have stored amounts a hundred times too large. The landing page passed while skipping, for the third time, the validation messages and the readme it had been asked for, and its new copy and sample chart were not there.</p>
+    </div>
+    <div class="table-wrap">
+      <table class="compare">
+        <thead><tr><th>Task</th><th>Qwen track</th><th class="num">Qwen runs</th><th>Claude track</th></tr></thead>
+        <tbody id="compare"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="find-h">
+    <h2 id="find-h">What we learned</h2>
+    <ol class="findings" id="findings"></ol>
+  </section>
+
+  <section aria-labelledby="next-h">
+    <h2 id="next-h">What happens next</h2>
+    <ol class="next" id="next"></ol>
+  </section>
+
+  <section aria-labelledby="runs-h">
+    <h2 id="runs-h">Every run</h2>
+    <p class="note" style="font-size:14.5px">Start and minutes come from the transcript files; tokens are what the gateway reported for that run. Runs driven by hand come first; from 20:09 a script ran them unattended.</p>
+    <div class="table-wrap">
+      <table class="runs">
+        <thead><tr><th>Task</th><th>Run</th><th>Start</th><th class="num">Minutes</th><th class="num">Turns</th><th class="num">Tokens in</th><th class="num">Tokens out</th><th>Gate</th><th>Notes</th></tr></thead>
+        <tbody id="runs"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="foot">Nothing on this page is private. Times are Saskatoon time (CST). The GPU box costs about $1.86 an hour whether busy or idle; the experiment used it from 18:47 Saturday to 01:18 Sunday.</p>
+</div>
+
+<script>
+const QWEN = {
+  updated: "Sun 27 Sep, 01:22, final (times from the clock and the transcript files)",
+  compare: [
+    { task: "1 Backend", qwen: "blocked", qnote: "stopped at 00:29 after 8 runs: 9 of 20 tests failing, 72 type errors, nothing ever committed", runs: 8, claude: "merged 19:56 (PR 28)" },
+    { task: "4 Stream form", qwen: "blocked", qnote: "passed the gate 20:43, failed review (new streams can't be saved); its last run left its fixes uncommitted and a report file in the root", runs: 5, claude: "merged 19:56 (PR 27)" },
+    { task: "5 Tags", qwen: "blocked", qnote: "make check failing and a report file in the root, after 10 runs", runs: 10, claude: "merged 20:23 (PR 29)" },
+    { task: "6 Landing page", qwen: "blocked", qnote: "passed the gate twice (22:02, 01:18), failed both reviews: validation messages never written, trust line missing, readme still the template's", runs: 5, claude: "merged 19:55 (PR 26)" },
+    { task: "2 Overview", qwen: "none", qnote: "not started; needs the backend", runs: 0, claude: "merged 20:27 (PR 31)" },
+    { task: "3 Balances page", qwen: "none", qnote: "not started; needs the overview", runs: 0, claude: "merged 20:33 (PR 32)" },
+    { task: "Review and fixes", qwen: "none", qnote: "not reached", runs: 0, claude: "merged 21:17 (PR 34)" },
+    { task: "Prototype tour", qwen: "none", qnote: "withdrawn at 19:49 so it could land tonight", runs: 2, claude: "a Claude agent finished it; published 20:12 (PR 30)" }
+  ],
+  findings: [
+    "What it did well: small, exactly specified edits. The CI image pin with its digest and comment, the date format, the form hints, the page subtitles, and restoring two dropped awaits all came out right the first time they were asked for with the exact text or code. Anything that needed a multi-file feature, a design choice, or holding several requirements at once did not get finished.",
+    "Its reports claim more than it did. Every early run ended with a summary saying all requirements were met and all checks passed; the verifier blocked every one. One claimed changes to a file it never touched.",
+    "It writes code against APIs this repo doesn't have. The commonest errors: options from older component libraries (asChild in bits-ui v2), Svelte 4 syntax in Svelte 5 files (on:input, $props() in the wrong place), an API route that doesn't exist, and test helpers it invented.",
+    "Each fix run fixes some findings and introduces new ones. Tags took ten runs and is still failing: runs fixed the route and the imports, then reintroduced asChild and missed a required slider option.",
+    "It keeps writing report files into the repo root against its instructions (IMPLEMENTATION_SUMMARY.md, FINAL_REPORT.md and similar), in almost every run. The verifier's root-files check exists because of exactly this.",
+    "Passing the checks is not enough, and this is the finding that matters most. Both tasks that passed the gate failed review against their tasks: the stream form twice passed make check while unable to save a new stream, and the landing page passed while most of its task was undone. With the kit's checks alone, broken work would have looked finished.",
+    "The gateway key's rate limit shaped the whole run. A key allows 400,000 tokens a minute; Qwen resends the whole conversation every turn with no caching (about 30,000 to 50,000 tokens a turn), and on this GPU a turn takes a few seconds, so even two agents at once hit the limit and runs died on 429s. Raising Claude Code's retry count and running one agent at a time fixed it, at the cost of doing everything serially.",
+    "It reads instructions literally. Given a path to its brief, it looked for it under the repo and wandered; putting the brief in the prompt fixed it. Paths with brackets ([id]) were refused by the tool allowlist on every rm, which the orchestrator had to clean up by hand once.",
+    "Longer runs did not help the hardest task. The backend's last four runs each spent 30 to 40 minutes and about 10 million input tokens, three of them hitting the 200-turn cap, and it ended with more type errors than it started with.",
+    "Volume: about 110 million input tokens across 24 finished runs, nearly all of it the same conversation resent turn after turn."
+  ],
+  next: [
+    "Nothing more runs. The containers are stopped; the clones stay on disk in ~/Code/kriket-agents for anyone who wants to read what Qwen wrote.",
+    "For next time: the team model is worth trying for narrow, fully specified edits (a pinned version, a copy change, one function with its test given), each followed by the checks and a review. It is not ready to own a feature task in this repo, with this setup and this rate limit.",
+    "The backend is finished: eight runs, no commit. It gets no more runs.",
+    "The stream form and the landing page each got one more run with their review's list. The stream form's ended blocked, with nothing committed. The landing page passed the gate again at 01:18 and failed its final review.",
+    "Tags gets no more runs tonight; ten is enough to show the pattern.",
+    "The overview and the balances page were never started, because the backend they build on never passed.",
+    "When the chain ends, a final line here compares the two tracks task by task; the Claude track's own numbers are in its iteration 2 handoff."
+  ],
+  runs: [
+    { task: "all five", run: 1, start: "18:48", min: 1, gate: "blocked", note: "misread the instructions' path; stopped with nothing changed." },
+    { task: "1 Backend", run: 2, start: "18:49", min: 28, turns: 102, tin: 4584208, tout: 33081, gate: "blocked", note: "report said all 8 steps done. make check failed (typecheck); 12 of 21 tests failing; invented test helpers; migration not registered; steps 7 and 8 not done; nothing committed." },
+    { task: "1 Backend", run: 3, start: "19:18", min: 9, turns: 40, tin: 1542611, tout: 6331, gate: "blocked", note: "cut off by the rate limit (429) after fixing one finding." },
+    { task: "1 Backend", run: 4, start: "19:34", min: 32, turns: 94, tin: 4719973, tout: 27539, gate: "blocked", note: "died on a 429 even with 40 retries while another agent ran. Registered the migration; 11 of 20 tests failing; nothing committed." },
+    { task: "1 Backend", run: 5, start: "22:03", min: 29, turns: 201, tin: 10458500, tout: 64368, gate: "blocked", note: "unattended. Hit the 200-turn cap; tests still failing; nothing committed." },
+    { task: "1 Backend", run: 6, start: "22:32", min: 33, turns: 173, tin: 9956091, tout: 49763, gate: "blocked", note: "unattended. Finished by itself; tests still failing; nothing committed." },
+    { task: "1 Backend", run: 7, start: "23:06", min: 38, turns: 201, tin: 11406959, tout: 64913, gate: "blocked", note: "unattended. Hit the turn cap; nothing committed." },
+    { task: "1 Backend", run: 8, start: "23:50", min: 39, turns: 201, tin: 11134046, tout: 68530, gate: "blocked", note: "unattended, last. Hit the turn cap. Ends with 9 of 20 tests failing and 72 type errors; nothing committed in 8 runs." },
+    { task: "4 Stream form", run: 2, start: "18:49", min: 44, turns: 112, tin: 5706767, tout: 58766, gate: "blocked", note: "cut off by a 429. asChild (not in bits-ui v2), the calendar given a string, an e2e lint error. Nothing committed." },
+    { task: "4 Stream form", run: 3, start: "19:52", min: 5, turns: 28, tin: 1134281, tout: 13051, gate: "blocked", note: "make check passed and committed, blocked only for two report files. A review found the form would fail on every save, two tests broken by removed awaits, and several parts missing." },
+    { task: "4 Stream form", run: 4, start: "20:07", min: 35, turns: 201, tin: 10680248, tout: 73797, gate: "pass", note: "fed the review's eight fixes; ended on a 429 after committing. Passed the gate at 20:43. Review: not done. Four of the eight fixes done (awaits, date format, hints, subtitles); new streams still can't be saved (hidden minimum and maximum empty; edits would store cents as dollars), no role=\"radio\" so three e2e tests would fail, the popover still nests a button in a button, three repeat options instead of four." },
+    { task: "4 Stream form", run: 5, start: "00:30", min: 7, turns: 40, tin: 2145890, tout: 15582, gate: "blocked", note: "fed the review's five fixes. Changed the form but committed nothing and wrote IMPLEMENTATION_SUMMARY.md again. Last run for this task." },
+    { task: "5 Tags", run: 2, start: "18:49", min: 11, turns: 42, tin: 1378283, tout: 12284, gate: "blocked", note: "a +page.test.ts in a route folder broke the build; 2 report files; report said all done." },
+    { task: "5 Tags", run: 3, start: "19:04", min: 3, turns: 8, gate: "blocked", note: "rm refused on the [id] path, then a 429." },
+    { task: "5 Tags", run: 4, start: "19:13", min: 7, turns: 47, tin: 1565683, tout: 9288, gate: "blocked", note: "API route that doesn't exist, $props() misused, wrong popover import; 2 new report files. Orchestrator deleted the stray files by hand." },
+    { task: "5 Tags", run: 5, start: "19:22", min: 11, turns: 30, tin: 1079789, tout: 17796, gate: "blocked", note: "cut off by a 429." },
+    { task: "5 Tags", run: 6, start: "19:38", min: 14, turns: 41, tin: 1536452, tout: 16302, gate: "blocked", note: "fixed the route and the import; used asChild again, missed the slider's type, used on:input, wrote a report file." },
+    { task: "5 Tags", run: 7, start: "19:58", min: 9, turns: 6, tin: 122930, tout: 266, gate: "blocked", note: "ended on a 429 almost at once." },
+    { task: "5 Tags", run: 8, start: "20:43", min: 28, turns: 104, tin: 5080011, tout: 50222, gate: "blocked", note: "unattended. First commit; make check still failing." },
+    { task: "5 Tags", run: 9, start: "21:12", min: 13, turns: 67, tin: 3245080, tout: 17854, gate: "blocked", note: "unattended. Second commit; still failing." },
+    { task: "5 Tags", run: 10, start: "21:26", min: 18, turns: 71, tin: 3706807, tout: 41671, gate: "blocked", note: "unattended. Third commit; make check still failing and IMPLEMENTATION_SUMMARY.md back in the root." },
+    { task: "6 Landing", run: 2, start: "18:49", min: 12, turns: 45, tin: 1955350, tout: 13857, gate: "blocked", note: "formatting failed; forms.ts untouched though the report said done; readme barely changed." },
+    { task: "6 Landing", run: 3, start: "19:04", min: 7, turns: 14, tin: 390954, tout: 1221, gate: "blocked", note: "fixed the formatting, then a 429; validation messages and readme not done; nothing committed." },
+    { task: "6 Landing", run: 4, start: "21:46", min: 15, turns: 101, tin: 5278717, tout: 31271, gate: "pass", note: "unattended. Committed and passed the gate at 22:02. Review: not done. CI pin correct; validation messages still untouched (put in another task's file instead); new landing copy, trust line, and inline sample chart missing; readme still describes the template." },
+    { task: "6 Landing", run: 5, start: "00:38", min: 39, turns: 201, tin: 11036503, tout: 120562, gate: "pass", note: "fed the review's five items; hit the turn cap after committing. Passed the gate at 01:18. Final review: not done. forms.ts still untouched and streams.ts not reverted; steps reworded but the trust line and \"Goals are next on the list\" missing; the sample chart inline now and to scale, but still a step function, flat after day 14; readme still describes the template; the unused variable still there." },
+    { task: "Tour", run: 2, start: "18:49", min: 24, gate: "none", note: "paused at 19:13 for the rate limit, withdrawn at 19:49; a Claude agent finished it." }
+  ]
+};
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const n = (v) => (v == null ? "—" : Number(v).toLocaleString("en-CA"));
+const WORD = { pass: "passed the gate", blocked: "blocked", running: "running", none: "not run" };
+document.getElementById("updated").textContent = "Updated " + QWEN.updated;
+document.getElementById("compare").innerHTML = QWEN.compare.map((c) => `<tr><td>${esc(c.task)}</td><td><span class="v ${esc(c.qwen)}">${WORD[c.qwen]}</span> <span class="note">${esc(c.qnote)}</span></td><td class="num">${n(c.runs)}</td><td class="note">${esc(c.claude)}</td></tr>`).join("");
+document.getElementById("findings").innerHTML = QWEN.findings.map((f) => `<li>${esc(f)}</li>`).join("");
+document.getElementById("next").innerHTML = QWEN.next.map((f) => `<li>${esc(f)}</li>`).join("");
+document.getElementById("runs").innerHTML = QWEN.runs.map((r) => `<tr><td>${esc(r.task)}</td><td>${esc(r.run)}</td><td>${esc(r.start)}</td><td class="num">${n(r.min)}</td><td class="num">${n(r.turns)}</td><td class="num">${n(r.tin)}</td><td class="num">${n(r.tout)}</td><td><span class="v ${esc(r.gate)}">${WORD[r.gate]}</span></td><td class="note">${esc(r.note)}</td></tr>`).join("");
+</script>
+
+</body>
+</html>

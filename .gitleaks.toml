@@ -6,7 +6,9 @@ useDefault = true
 [[rules]]
 id = "litellm-virtual-key"
 description = "LiteLLM virtual or master key (sk-...)"
-regex = '''sk-[A-Za-z0-9_-]{20,}'''
+# \b: a key starts a token (after =, a quote, a space, "Bearer "); without it the rule matched the
+# tail of words like "task-7-gateway-..." in the archived kit site's heading anchors.
+regex = '''\bsk-[A-Za-z0-9_-]{20,}'''
 keywords = ["sk-"]
 
 [allowlist]

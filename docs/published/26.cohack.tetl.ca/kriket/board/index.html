@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Kriket Iteration 2 Board</title>
+<style>:root{color-scheme:light dark}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #ffffff; --surface: #f7f6f2; --surface-2: #eeece6; --ink: #1c1b18; --ink-2: #45423c; --muted: #6d685f; --rule: #e4e0d7;
+  --brand: #16a34a; --brand-strong: #15803d; --brand-soft: #f0fbf3; --brand-line: #bfe3ca;
+  --expense: #ea580c; --expense-strong: #c2410c; --expense-soft: #fff7ed; --expense-line: #fed7aa;
+  --run: #2563eb; --run-soft: #eff6ff; --run-line: #bfdbfe;
+  --focus: #15803d;
+  --font-display: "Gabarito", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #131310; --surface: #1c1b17; --surface-2: #26251f; --ink: #f1eee7; --ink-2: #d3cfc6; --muted: #a39e93; --rule: #34322c;
+    --brand: #22c55e; --brand-strong: #4ade80; --brand-soft: #14231a; --brand-line: #25482f;
+    --expense: #fb923c; --expense-strong: #fdba74; --expense-soft: #2a1a0e; --expense-line: #5a3417;
+    --run: #60a5fa; --run-soft: #111c2e; --run-line: #1e3a5f; --focus: #4ade80;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #131310; --surface: #1c1b17; --surface-2: #26251f; --ink: #f1eee7; --ink-2: #d3cfc6; --muted: #a39e93; --rule: #34322c;
+  --brand: #22c55e; --brand-strong: #4ade80; --brand-soft: #14231a; --brand-line: #25482f;
+  --expense: #fb923c; --expense-strong: #fdba74; --expense-soft: #2a1a0e; --expense-line: #5a3417;
+  --run: #60a5fa; --run-soft: #111c2e; --run-line: #1e3a5f; --focus: #4ade80;
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding-inline: 16px; background: var(--ground); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 980px; margin-inline: auto; padding-block: 36px 56px; display: grid; gap: 36px; }
+a { color: var(--brand-strong); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+code { font-family: var(--font-mono); font-size: 0.86em; background: var(--surface-2); padding: 0.08em 0.36em; border-radius: 5px; }
+h1, h2, h3 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(32px, 5vw, 46px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.04; }
+h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 16px; font-weight: 600; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.k { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+.top { display: grid; gap: 12px; padding-bottom: 24px; border-bottom: 1px solid var(--rule); }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 700; font-size: 20px; }
+.brand svg { width: 30px; height: 30px; }
+.brand span.sub { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding-left: 10px; border-left: 1px solid var(--rule); }
+.lede { font-size: 18px; color: var(--ink-2); max-width: 60ch; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14.5px; font-weight: 500; }
+
+.now { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 14px; }
+.panel { padding: 18px 20px; border-radius: 14px; background: var(--surface); display: grid; gap: 10px; align-content: start; }
+.panel--eta { background: var(--brand-soft); border: 1px solid var(--brand-line); }
+.status-line { font-size: 17px; color: var(--ink); }
+.eta-big { font-family: var(--font-display); font-weight: 800; font-size: 30px; letter-spacing: -0.02em; line-height: 1.1; color: var(--brand-strong); }
+.updated { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+.bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+.bar i { display: block; height: 100%; }
+.bar .b-merged { background: var(--brand); }
+.bar .b-active { background: var(--run); }
+.bar .b-blocked { background: var(--expense); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--ink-2); }
+.legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; background: var(--c); vertical-align: 0; }
+
+.tasks { display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.task { display: grid; grid-template-columns: 56px minmax(0, 1fr) 150px; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+.tid { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--muted); padding-top: 2px; }
+.tbody { display: grid; gap: 4px; min-width: 0; }
+.tbody p { font-size: 14.5px; color: var(--ink-2); }
+.tmeta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); }
+.tright { display: grid; gap: 6px; justify-items: end; text-align: right; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--soft); color: var(--txt); white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--dot); }
+.pill.merged { --line: var(--brand-line); --soft: var(--brand-soft); --txt: var(--brand-strong); --dot: var(--brand); }
+.pill.active { --line: var(--run-line); --soft: var(--run-soft); --txt: var(--run); --dot: var(--run); }
+.pill.active::before { animation: pulse 1.6s ease-in-out infinite; }
+.pill.queued { --line: var(--rule); --soft: var(--surface); --txt: var(--muted); --dot: var(--muted); }
+.pill.blocked { --line: var(--expense-line); --soft: var(--expense-soft); --txt: var(--expense-strong); --dot: var(--expense); }
+@keyframes pulse { 50% { opacity: 0.3; } }
+@media (prefers-reduced-motion: reduce) { .pill.active::before { animation: none; } }
+.when { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+
+.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.steps li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 14px; font-size: 15px; }
+.steps .t { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); padding-top: 2px; }
+.steps li.done .t { color: var(--brand-strong); }
+.steps li.done span.what { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--rule); }
+
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.log { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.log li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; font-size: 14px; color: var(--ink-2); }
+.log .t { font-family: var(--font-mono); font-size: 12px; color: var(--muted); padding-top: 2px; font-variant-numeric: tabular-nums; }
+.rulings { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; font-size: 14px; color: var(--ink-2); }
+.rulings li::marker { color: var(--brand-strong); }
+.how { font-size: 14.5px; color: var(--ink-2); display: grid; gap: 8px; max-width: 75ch; }
+.foot { padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13.5px; color: var(--muted); }
+
+@media (max-width: 760px) {
+  .wrap { padding-block: 24px 40px; gap: 28px; }
+  .now, .two { grid-template-columns: minmax(0, 1fr); }
+  .task { grid-template-columns: 40px minmax(0, 1fr); }
+  .tright { grid-column: 2; justify-items: start; text-align: left; grid-auto-flow: column; justify-content: start; align-items: center; gap: 10px; }
+  .steps li { grid-template-columns: 76px minmax(0, 1fr); }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--brand)"/><g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 13.4C24 9.6 26 7.6 28.4 6.6M21 13C21.2 9.4 22.6 6.9 24.8 5.4" stroke-width="1.2"/><path d="M13.4 17.6 8.6 11.8 6.2 22.4" stroke-width="1.8"/><path d="M18.4 20.2 19.6 24.4M15 21 14.4 24.8" stroke-width="1.3"/></g><g fill="#fff"><ellipse cx="14.6" cy="18.4" rx="6.8" ry="3.5" transform="rotate(-14 14.6 18.4)"/><circle cx="21.6" cy="15.6" r="2.6"/></g></svg>kriket<span class="sub">iteration 2 board</span></p>
+    <h1>Iteration 2, being built.</h1>
+    <p class="lede">What is running, what has merged, and what comes next, refreshed at every step. Every merge deploys to the live app, so each merged task is something to try.</p>
+    <nav class="links" aria-label="Links">
+      <a href="https://app.26.cohack.tetl.ca">The live app</a>
+      <a href="https://github.com/kriket-app/kriket/pull/20">PR 20, where Theo follows along</a>
+      <a href="https://github.com/kriket-app/kriket/blob/main/docs/plans/2026-09-27-iteration-2-proposal.md">The spec</a>
+      <a href="https://github.com/kriket-app/kriket/blob/main/docs/plans/2026-09-27-iteration-2-build.md">The build plan</a>
+      <a href="https://26.cohack.tetl.ca/kriket/qwen/">The Qwen experiment</a>
+      <a href="https://26.cohack.tetl.ca/tour/2-proposal/">The proposed prototype</a>
+      <a href="https://26.cohack.tetl.ca/tour/1/">Iteration 1 tour</a>
+    </nav>
+  </header>
+
+  <section class="now" aria-label="Where things stand">
+    <div class="panel">
+      <p class="k">Right now</p>
+      <p class="status-line" id="status-line"></p>
+      <div class="bar" id="bar" role="img"></div>
+      <div class="legend" id="legend"></div>
+      <p class="updated" id="updated"></p>
+    </div>
+    <div class="panel panel--eta">
+      <p class="k">Estimate</p>
+      <p class="eta-big" id="eta-big"></p>
+      <p id="eta-note" class="muted"></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="tasks-h" style="display:grid;gap:14px">
+    <h2 id="tasks-h">Tasks</h2>
+    <div class="tasks" id="tasks"></div>
+  </section>
+
+  <section aria-labelledby="next-h" style="display:grid;gap:14px">
+    <h2 id="next-h">Next steps, with rough times</h2>
+    <ol class="steps" id="steps"></ol>
+  </section>
+
+  <div class="two">
+    <section aria-labelledby="log-h" style="display:grid;gap:14px">
+      <h2 id="log-h">Log</h2>
+      <ol class="log" id="log" reversed></ol>
+    </section>
+    <section aria-labelledby="rul-h" style="display:grid;gap:14px">
+      <h2 id="rul-h">Rulings made on the founders' behalf</h2>
+      <ol class="rulings" id="rulings"></ol>
+      <p class="muted" style="font-size:13.5px">Undo any of them by editing the build plan on <code>main</code>; the build follows the file.</p>
+    </section>
+  </div>
+
+  <section aria-labelledby="how-h" class="how">
+    <h2 id="how-h">How it runs</h2>
+    <p><strong>Two tracks, one plan.</strong> The tasks on this board are the Claude track, which ships: Claude agents build each task in their own branch, then <code>make check</code>, the backend tests, the kit's verifier, a reviewer, and CI decide whether it is done, never the agent's own report. One PR per task, merged by hand when green; every merge deploys.</p>
+    <p>At the same time, the Qwen track builds the same plan as an experiment: agents on the kit's team model (Qwen3 Coder on the GPU box) inside the kit's dev container, with a default-deny firewall and no credentials, gated by the same checks. It never merges. <a href="https://26.cohack.tetl.ca/kriket/qwen/">The experiment page</a> shows how far it gets, and the two are compared at the end.</p>
+  </section>
+
+  <p class="foot">Nothing on this page is private. Times are Saskatoon time (CST).</p>
+</div>
+
+<script>
+// Everything that changes lives in BOARD; the page renders from it.
+const BOARD = {
+  updated: "Sat 26 Sep, 21:39",
+  status: "Iteration 2 is done and live: six build tasks, the review's fix PR, the refreshed tour, the goals plan for iteration 3, and the handoff. Three live browser checks passed. Next: Theo and Erik answer the goals plan's open questions (1 to 3 first).",
+  eta: "Done, 21:39",
+  etaNote: "The Claude track finished about two hours after it started (19:14 to 21:39), well ahead of the midnight estimate. The Qwen experiment's numbers are on its own page.",
+  tasks: [
+    { id: "0", title: "Foundation", what: "Expense-orange colours and the calendar, popover, and slider components.", who: "Mac session", status: "merged", pr: 24, when: "merged 17:06" },
+    { id: "1", title: "Backend", what: "Every check-in kept, the forecast starting today, the lowest point and recovery date, Coming up by month, the new presets, usual-only amounts.", who: "Claude track", status: "merged", pr: 28, when: "merged 19:56" },
+    { id: "4", title: "Stream form", what: "Usual amount only, Weekly / Every 2 weeks / Monthly, a styled date picker, orange expense amounts.", who: "Claude track", status: "merged", pr: 27, when: "merged 19:56" },
+    { id: "5", title: "Tags", what: "A colour picker with any colour, and a page per tag listing its streams.", who: "Claude track", status: "merged", pr: 29, when: "merged 20:23" },
+    { id: "6", title: "Landing page and housekeeping", what: "The landing page says what changed; readable form errors; readme; CI image pinned.", who: "Claude track", status: "merged", pr: 26, when: "merged 19:55" },
+    { id: "2", title: "Overview", what: "Check-in first with a Saved line, the answer sentence, dots and the orange dip on the chart, three tiles, Coming up month by month.", who: "Claude track", status: "merged", pr: 31, when: "merged 20:27" },
+    { id: "3", title: "Balances page", what: "Flip through past check-ins and see how the forecast looked then.", who: "Claude track", status: "merged", pr: 32, when: "merged 20:33" },
+    { id: "R", title: "Review and fix wave", what: "One review of the whole iteration against the plan, one fix PR, one re-review.", who: "Claude track", status: "merged", pr: 34, when: "merged 21:17" },
+    { id: "7", title: "Goals plan and handoff", what: "The plan for goals, the refreshed tour and index, the handoff, and the Qwen versus Claude comparison.", who: "Claude track", status: "merged", pr: 36, when: "merged 21:39 (PRs 33, 35, 36)" },
+    { id: "T", title: "Prototype tour", what: "Theo's five changes applied to the clickable prototype, then published at /tour/2-proposal/.", who: "Claude agent (withdrawn from the Qwen experiment at 19:49)", note: "Source on branch tour/2-proposal; its PR is opened by the Qwen session and only touches tools/tour-proposal/ and tools/pages/index.html.", status: "merged", when: "published 20:12" }
+  ],
+  steps: [
+    { t: "16:31", what: "Spec merged: the proposal with Theo's decisions (PR 20, PR 22).", done: true },
+    { t: "17:06", what: "Build plan and foundation merged (PR 23, PR 24).", done: true },
+    { t: "18:47", what: "Gateway key minted; the Qwen experiment starts.", done: true },
+    { t: "19:15", what: "Handoff written for the Claude track.", done: true },
+    { t: "~21:00", what: "First wave merged one by one: backend, stream form, tags, landing page. Each merge is live.", done: true },
+    { t: "~22:30", what: "Overview merged: the sentence, the orange dip, the dots, the month switcher.", done: true },
+    { t: "~23:00", what: "Balances page merged.", done: true },
+    { t: "~23:45", what: "Whole-iteration review, one fix PR.", done: true },
+    { t: "~00:15", what: "Goals plan, refreshed tour and index, handoff, and the comparison with the Qwen track.", done: true }
+  ],
+  log: [
+    { t: "16:31", text: "Theo merged the proposal (PR 20); his decisions folded in by PR 22." },
+    { t: "17:04", text: "Build plan merged (PR 23): the API contract and eight tasks." },
+    { t: "17:06", text: "Foundation merged (PR 24)." },
+    { t: "17:12", text: "Five agent containers staged; the verifier and all 33 backend tests pass on untouched main." },
+    { t: "18:47", text: "Gateway key minted by Erik." },
+    { t: "18:48", text: "First run: the team model misread the brief's path and wandered; stopped with nothing changed." },
+    { t: "18:49", text: "Restarted all five with the brief placed in the prompt." },
+    { t: "19:01", text: "Qwen: tags and landing page finished; both blocked by the checks (make check failing, stray files, reports claiming more than was done). Second runs started with the checks' findings." },
+    { t: "19:10", text: "Erik: build on two tracks. Claude ships; Qwen continues as an experiment for comparison." },
+    { t: "19:19", text: "Claude track: tasks 1, 4, 5, and 6 started in parallel, one worktree each (Sonnet implementers; each gets a fresh reviewer before its PR)." },
+    { t: "19:27", text: "Landing page and housekeeping built and through the checks; a fresh reviewer is reading it." },
+    { t: "19:29", text: "Stream form and tags built and through the checks; each has a fresh reviewer reading it. The backend is still being built." },
+    { t: "19:32", text: "Landing page and housekeeping: review clean; PR 26 opened, waiting for CI." },
+    { t: "19:36", text: "Landing page PR 26: every check green on the first run; the merge waits for Erik's go-ahead (this session's permissions refuse an unattended merge)." },
+    { t: "19:39", text: "Stream form: the review caught the date button's accessible name; fixed and re-reviewed clean. PR 27 opened, waiting for CI." },
+    { t: "19:40", text: "Backend built (54 tests pass) and in review. Overview started early on top of the backend branch, since merges are waiting on Erik." },
+    { t: "19:41", text: "Stream form PR 27: every check green on the first run, including the calendar e2e steps; waits for the merge go-ahead with PR 26." },
+    { t: "19:51", text: "Backend: one review fix (month-end dates through dates.ts), re-reviewed clean; PR 28 opened. Tags: one review fix (reuses the stream form's body builder, clearer summary), re-reviewed clean; its PR opens after 27 and 28 merge." },
+    { t: "19:52", text: "Backend PR 28: every check green on the first run. PRs 26, 27, and 28 all wait for Erik's merge go-ahead." },
+    { t: "20:01", text: "Erik gave the merge go-ahead. Merged PR 26 (landing page), PR 27 (stream form), PR 28 (backend); deployed at 19:58. Tags PR 29 is green; a live smoke test is running." },
+    { t: "20:16", text: "The proposed-prototype tour is published at /tour/2-proposal/ (20:12), linked above." },
+    { t: "20:19", text: "Overview built on Opus and reviewed clean; it is merging main and taking one ruling (the 'until' date now names the first recovery, as the proposal says). Balances page started on top of it." },
+    { t: "20:26", text: "Tags merged (PR 29) and live. Overview through review and one ruling; PR 31 opened. Balances page built and in review. Progress comment posted on PR 20 for Theo." },
+    { t: "20:27", text: "Overview merged (PR 31): the check-in first, the answer sentence, dots and the orange dip, three tiles, Coming up by month. Deploying; a live check follows." },
+    { t: "20:31", text: "Balances page: the review caught the disabled arrows and an ambiguous e2e check; fixed and re-reviewed clean. PR 32 opened. A live check of the overview and tags is running." },
+    { t: "20:34", text: "Balances page merged (PR 32). All six build tasks are on main. The whole-iteration review started on Opus." },
+    { t: "20:35", text: "Goals plan started early (a document; it doesn't touch code)." },
+    { t: "20:48", text: "Goals plan merged (PR 33): one goal, a line under the answer, a target on the chart; eight open questions for the founders at the end." },
+    { t: "20:52", text: "Whole-iteration review (Opus): nothing critical; seven fixes, the biggest being Coming up counting a check-in day's payments as still to come, and the check-in card showing a stale balance. One fix PR is being built, including making a new tag from the stream form (Theo's row 17)." },
+    { t: "20:53", text: "Live check of the overview with Sam's data: the sentence reads exactly 'You go $255 short on Oct 1. You are under zero from Oct 1 until Oct 10.' Found one bug: a new tag colour doesn't stick after a reload; added to the fix PR." },
+    { t: "21:15", text: "Fix PR 34 opened: a check-in day adds up in Coming up, no stale balance in the check-in card, right form messages, usual amount above $0, new tags from the stream form, tag colours stick. Re-review and CI running." },
+    { t: "21:18", text: "Fix PR 34 merged: green on the first run, including the new tests for making a tag from the stream form and for tag colours sticking. Deploying (with the small migration for future-dated check-ins). The tour is being re-captured on the final app." },
+    { t: "21:27", text: "The app tour is refreshed for iteration 2 and live at /tour/ (iteration 1 kept at /tour/1/, iteration 2 at /tour/2/); its scripts are PR 35." },
+    { t: "21:39", text: "Handoff merged (PR 36) with the Claude track's measurements; the team index links the goals plan, the handoff, and the iteration 2 tour. Iteration 2 is done. Next: Theo and Erik answer the goals plan's open questions." }
+  ],
+  rulings: [
+    "A check-in is the end-of-day balance: payments dated that day are already in it.",
+    "\"Monthly\" means every 30 days; calendar months would be a model change.",
+    "One check-in per day; saving again the same day replaces it.",
+    "The old single saved balance becomes each user's first check-in.",
+    "The answer sentence names the dates, not the cause.",
+    "Coming up reaches 12 months ahead and back to the month of the first check-in."
+  ]
+};
+
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const LABEL = { merged: "Merged", active: "Running", queued: "Queued", blocked: "Needs attention", review: "In review", pr: "PR open" };
+const CLASS = { merged: "merged", active: "active", queued: "queued", blocked: "blocked", review: "active", pr: "active" };
+
+document.getElementById("status-line").textContent = BOARD.status;
+document.getElementById("updated").textContent = "Updated " + BOARD.updated;
+document.getElementById("eta-big").textContent = BOARD.eta;
+document.getElementById("eta-note").textContent = BOARD.etaNote;
+
+const count = (k) => BOARD.tasks.filter((t) => CLASS[t.status] === k).length;
+const total = BOARD.tasks.length;
+const parts = [["merged", "b-merged", "var(--brand)", "merged"], ["active", "b-active", "var(--run)", "in progress"], ["blocked", "b-blocked", "var(--expense)", "need attention"]];
+const bar = document.getElementById("bar");
+bar.innerHTML = parts.map(([k, cls]) => `<i class="${cls}" style="width:${(count(k) / total) * 100}%"></i>`).join("");
+bar.setAttribute("aria-label", parts.map(([k, , , word]) => `${count(k)} ${word}`).join(", ") + ` of ${total} tasks`);
+document.getElementById("legend").innerHTML =
+  parts.filter(([k]) => count(k) > 0).map(([k, , c, word]) => `<span style="--c:${c}">${count(k)} ${word}</span>`).join("") +
+  `<span style="--c:var(--surface-2)">${count("queued")} queued</span>`;
+
+document.getElementById("tasks").innerHTML = BOARD.tasks.map((t) => `
+  <article class="task">
+    <span class="tid">${esc(t.id)}</span>
+    <div class="tbody">
+      <h3>${esc(t.title)}</h3>
+      <p>${esc(t.what)}</p>
+      <div class="tmeta"><span>${esc(t.who)}</span>${t.note ? `<span>${esc(t.note)}</span>` : ""}</div>
+    </div>
+    <div class="tright">
+      <span class="pill ${CLASS[t.status]}">${LABEL[t.status]}</span>
+      ${t.pr ? `<a class="when" href="https://github.com/kriket-app/kriket/pull/${t.pr}">PR ${t.pr}</a>` : ""}
+      <span class="when">${esc(t.when || "")}</span>
+    </div>
+  </article>`).join("");
+
+document.getElementById("steps").innerHTML = BOARD.steps.map((s) => `<li class="${s.done ? "done" : ""}"><span class="t">${esc(s.t)}</span><span class="what">${esc(s.what)}</span></li>`).join("");
+document.getElementById("log").innerHTML = [...BOARD.log].reverse().map((l) => `<li><span class="t">${esc(l.t)}</span><span>${esc(l.text)}</span></li>`).join("");
+document.getElementById("rulings").innerHTML = BOARD.rulings.map((r) => `<li>${esc(r)}</li>`).join("");
+</script>
+
+</body>
+</html>
