@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>kriket · proposed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ---------------------------------------------------------------- tokens (frontend/src/routes/layout.css) */
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.2 0.02 150);
+  --card: oklch(1 0 0);
+  --popover: oklch(1 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --brand: oklch(0.627 0.194 149.2);        /* green-600 */
+  --brand-strong: oklch(0.527 0.154 150.1); /* green-700 */
+  --brand-soft: oklch(0.982 0.018 155.8);   /* green-50 */
+  --brand-foreground: oklch(0.985 0 0);
+  --primary: var(--brand-strong);
+  --primary-foreground: var(--brand-foreground);
+  --ring: var(--brand);
+  --accent: var(--brand-soft);
+  --accent-foreground: var(--brand-strong);
+  --chart-3: oklch(0.87 0.1 150);
+  /* Proposed: expense-orange. Dots, lines, fills, and badges use --expense; text on white uses
+     --expense-strong (orange-700, 5:1 on white); soft backgrounds use --expense-soft. */
+  --expense: #ea580c;
+  --expense-strong: #c2410c;
+  --expense-soft: #fff7ed;
+  --radius: 0.625rem;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --ring-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+  --card-ring: 0 0 0 1px color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+
+/* ---------------------------------------------------------------- base */
+*, ::before, ::after { box-sizing: border-box; border: 0 solid var(--border); }
+html { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; line-height: 1.5; -webkit-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--background); color: var(--foreground); font-size: 16px; }
+button, input { font: inherit; color: inherit; margin: 0; padding: 0; background: transparent; }
+button { cursor: pointer; }
+h1, h2, h3, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+svg { display: block; flex-shrink: 0; }
+a { color: inherit; }
+[hidden] { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+.tabular { font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted-foreground); }
+.in { color: var(--brand-strong); }
+.out { color: var(--expense-strong); }
+.icon { width: 16px; height: 16px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+
+/* ---------------------------------------------------------------- app shell (routes/app/+layout.svelte) */
+.app { min-height: 100dvh; }
+.hdr { position: sticky; top: 0; z-index: 20; border-bottom: 1px solid var(--border); background: rgb(255 255 255 / 0.9); backdrop-filter: blur(8px); }
+.hdr-in { margin-inline: auto; display: flex; height: 56px; max-width: 64rem; align-items: center; gap: 24px; padding-inline: 16px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; }
+.brand svg { width: 24px; height: 24px; }
+.proposed { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 9999px; background: var(--brand-soft); color: var(--brand-strong); border: 1px solid color-mix(in oklch, var(--brand) 35%, white); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-left: 2px; }
+.nav-top { display: none; align-items: center; gap: 4px; }
+.nav-top a { border-radius: var(--radius-md); padding: 8px 12px; font-size: 14px; font-weight: 500; color: var(--muted-foreground); text-decoration: none; }
+.nav-top a:hover { color: var(--foreground); }
+.nav-top a[aria-current="page"] { background: var(--accent); color: var(--accent-foreground); }
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted-foreground); }
+.hdr-right .who { display: none; }
+.hdr-right button:hover { color: var(--foreground); }
+main { margin-inline: auto; max-width: 64rem; padding: 24px 16px 96px; }
+.nav-bottom { position: fixed; inset-inline: 0; bottom: 0; z-index: 20; border-top: 1px solid var(--border); background: var(--background); padding-bottom: env(safe-area-inset-bottom); }
+.nav-bottom div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.nav-bottom a { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0; font-size: 12px; color: var(--muted-foreground); text-decoration: none; }
+.nav-bottom a svg { width: 20px; height: 20px; }
+.nav-bottom a[aria-current="page"] { color: var(--brand-strong); }
+@media (min-width: 640px) { .hdr-right .who { display: inline; } }
+@media (min-width: 768px) { .nav-top { display: flex; } .nav-bottom { display: none; } main { padding-bottom: 40px; } }
+:focus-visible { outline: none; box-shadow: var(--ring-shadow); border-radius: var(--radius-md); }
+
+/* ---------------------------------------------------------------- page heads */
+.page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 16px; }
+h1 { font-size: 24px; line-height: 32px; font-weight: 600; letter-spacing: -0.025em; }
+.h1-tag { display: flex; align-items: center; gap: 10px; }
+.sub { margin-top: 4px; font-size: 14px; color: var(--muted-foreground); }
+.head-actions { display: flex; align-items: center; gap: 8px; }
+.back { display: inline-block; font-size: 14px; font-weight: 500; color: var(--brand-strong); text-decoration: none; }
+.back:hover { text-decoration: underline; }
+
+/* ---------------------------------------------------------------- cards (ui/card) */
+.card { --sp: 24px; display: flex; flex-direction: column; gap: var(--sp); overflow: hidden; border-radius: var(--radius-xl); background: var(--card); padding-block: var(--sp); font-size: 14px; box-shadow: var(--shadow-xs), var(--card-ring); }
+.card--sm { --sp: 16px; }
+.card--list { padding-block: 0; }
+.card-h { display: grid; gap: 4px; padding-inline: var(--sp); align-items: start; }
+.card-h--action { grid-template-columns: minmax(0, 1fr) auto; }
+.card-t { font-size: 16px; line-height: 1.5; font-weight: 500; }
+.card--sm .card-t { font-size: 14px; }
+.card-t--strong { font-size: 16px; font-weight: 600; }
+.card-d { font-size: 14px; color: var(--muted-foreground); }
+.card-a { grid-column: 2; grid-row: 1 / span 2; justify-self: end; align-self: start; display: flex; gap: 4px; }
+.card-c { display: flex; flex-direction: column; gap: 12px; padding-inline: var(--sp); }
+.grid-2 { display: grid; gap: 16px; }
+@media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------------------------------------------------------------- buttons (ui/button) */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding-inline: 10px; border-radius: var(--radius-md); border: 1px solid transparent; font-size: 14px; font-weight: 500; white-space: nowrap; background: var(--primary); color: var(--primary-foreground); user-select: none; text-decoration: none; flex-shrink: 0; transition: background-color 0.15s, color 0.15s, box-shadow 0.15s; }
+.btn svg { width: 16px; height: 16px; pointer-events: none; }
+.btn:hover { background: color-mix(in oklch, var(--primary) 80%, white); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled, .btn[aria-disabled="true"] { pointer-events: none; opacity: 0.5; }
+.btn--outline { border-color: var(--border); background: var(--background); color: var(--foreground); box-shadow: var(--shadow-xs); }
+.btn--outline:hover { background: var(--muted); }
+.btn--ghost { background: transparent; color: var(--foreground); }
+.btn--ghost:hover { background: var(--muted); }
+.btn--destructive { background: color-mix(in oklch, var(--destructive) 10%, transparent); color: var(--destructive); }
+.btn--destructive:hover { background: color-mix(in oklch, var(--destructive) 20%, transparent); }
+.btn--link { background: transparent; color: var(--primary); padding: 0; height: auto; border: 0; text-underline-offset: 4px; }
+.btn--link:hover { background: transparent; text-decoration: underline; }
+.btn--sm { height: 32px; gap: 4px; border-radius: 8px; }
+.btn--xs { height: 24px; padding-inline: 8px; font-size: 12px; gap: 4px; border-radius: 8px; }
+.btn--xs svg { width: 12px; height: 12px; }
+.btn--icon-sm { width: 32px; height: 32px; padding: 0; border-radius: 8px; }
+.btn--icon-xs { width: 28px; height: 28px; padding: 0; border-radius: 8px; }
+.btn--full { width: 100%; }
+.btn .sm-only-hide { display: none; }
+@media (min-width: 640px) { .btn .sm-only-hide { display: inline; } .btn--full { width: auto; } }
+
+/* ---------------------------------------------------------------- fields (ui/input, ui/label, ui/select) */
+.field { display: grid; gap: 8px; align-content: start; }
+.label { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 1; font-weight: 500; user-select: none; }
+.input { display: block; height: 36px; width: 100%; min-width: 0; border-radius: var(--radius-md); border: 1px solid var(--input); background: transparent; padding: 4px 10px; font-size: 16px; box-shadow: var(--shadow-xs); outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.input::placeholder { color: var(--muted-foreground); }
+.input:focus-visible { border-color: var(--ring); box-shadow: var(--ring-shadow); }
+.input--quiet { border-color: transparent; box-shadow: none; height: 32px; font-weight: 500; }
+.input--quiet:hover { border-color: var(--input); }
+.input--num { width: 96px; }
+@media (min-width: 768px) { .input { font-size: 14px; } }
+.hint { font-size: 12px; color: var(--muted-foreground); }
+/* A date field: the same box as an input, with the date as text and a calendar icon. */
+.datefield, .select { display: flex; height: 36px; width: 100%; align-items: center; justify-content: space-between; gap: 6px; border-radius: var(--radius-md); border: 1px solid var(--input); padding: 8px 8px 8px 10px; font-size: 14px; text-align: left; box-shadow: var(--shadow-xs); white-space: nowrap; }
+.datefield:focus-visible, .select:focus-visible { border-color: var(--ring); box-shadow: var(--ring-shadow); }
+.datefield svg, .select svg { width: 16px; height: 16px; color: var(--muted-foreground); }
+.select span { display: flex; align-items: center; gap: 8px; }
+.form { display: grid; gap: 16px; }
+.form-row { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; }
+@media (max-width: 639.98px) { .form-actions .btn { flex: 1; } }
+.disclosure { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 500; color: var(--brand-strong); padding: 4px 0; border-radius: 4px; }
+.disclosure svg { width: 16px; height: 16px; transition: transform 0.15s; }
+.disclosure[aria-expanded="true"] svg { transform: rotate(90deg); }
+
+/* ---------------------------------------------------------------- pill toggles (the overview's window nav) */
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; border-radius: 9999px; background: var(--muted); padding: 4px; }
+.seg button { border-radius: 9999px; padding: 4px 12px; font-size: 14px; font-weight: 500; color: var(--muted-foreground); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.seg button:hover { color: var(--foreground); }
+.seg button[aria-pressed="true"] { background: var(--background); color: var(--brand-strong); box-shadow: var(--shadow-xs); }
+/* The form's Repeats control: four options in one row where they fit, two by two on a phone. */
+.seg--repeats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+.seg--repeats button { font-size: 13px; padding-inline: 10px; text-align: center; }
+@media (min-width: 640px) { .seg--repeats { display: inline-grid; grid-template-columns: repeat(4, auto); width: auto; } }
+
+/* ---------------------------------------------------------------- badges and dots */
+.badge { display: inline-flex; width: fit-content; align-items: center; gap: 4px; height: 20px; border-radius: 9999px; border: 1px solid var(--border); padding: 2px 8px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.badge--secondary { border-color: transparent; background: var(--secondary); color: var(--secondary-foreground); }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 9999px; flex-shrink: 0; }
+.dot--lg { width: 12px; height: 12px; }
+
+/* ---------------------------------------------------------------- overview */
+.top-row { display: grid; gap: 16px; }
+@media (min-width: 768px) { .top-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.checkin-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.checkin-row .field { flex: 1; min-width: 120px; }
+.saved { display: none; align-items: center; gap: 6px; font-size: 13px; color: var(--brand-strong); }
+.saved.show { display: flex; }
+.saved svg { width: 16px; height: 16px; }
+.answer { border-radius: var(--radius-xl); padding: 20px 24px; border-left: 4px solid var(--expense); background: var(--expense-soft); display: grid; gap: 6px; align-content: center; }
+.answer--ok { border-left-color: var(--brand); background: var(--brand-soft); }
+.answer h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.answer p { font-size: 14px; color: oklch(0.42 0.02 60); }
+.answer--ok p { color: oklch(0.42 0.02 150); }
+.tiles { display: grid; gap: 12px; }
+@media (min-width: 640px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.tile-c { gap: 4px; }
+.tile-v { font-size: 24px; line-height: 32px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.rows li { display: flex; align-items: center; gap: 12px; padding-block: 8px; border-top: 1px solid var(--border); }
+.rows li:first-child { border-top: 0; }
+.rows .date { width: 56px; flex-shrink: 0; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.rows .name { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rows .amt { font-weight: 500; font-variant-numeric: tabular-nums; }
+.rows .tagname-label { color: var(--muted-foreground); font-size: 12px; }
+.card-link { font-size: 14px; font-weight: 500; color: var(--brand-strong); text-decoration: none; }
+.card-link:hover { text-decoration: underline; }
+.md-only { display: none; }
+@media (min-width: 768px) { .md-only { display: flex; } }
+
+/* ---------------------------------------------------------------- chart (forecast-chart.svelte) */
+.chart { width: 100%; }
+.chart-wrap { position: relative; }
+.chart svg { width: 100%; height: auto; }
+.tick { pointer-events: none; position: absolute; left: 0; transform: translateY(-100%); border-radius: 4px; background: rgb(255 255 255 / 0.8); padding: 2px 4px 2px 0; font-size: 11px; line-height: 1; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.chart-dates { margin-top: 6px; display: flex; justify-content: space-between; font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.chart-key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted-foreground); }
+.chart-key span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-key i { width: 10px; height: 10px; border-radius: 9999px; display: inline-block; }
+.chart-key i.band { width: 14px; height: 8px; border-radius: 2px; background: color-mix(in srgb, var(--expense) 25%, white); }
+
+/* ---------------------------------------------------------------- balances */
+.flip { display: flex; align-items: center; gap: 12px; }
+.flip-body { flex: 1; min-width: 0; text-align: center; display: grid; gap: 2px; }
+.flip-v { font-size: 24px; line-height: 32px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.checkins li { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: var(--radius-md); cursor: pointer; }
+.checkins li:hover { background: var(--muted); }
+.checkins li[aria-current="true"] { background: var(--accent); color: var(--accent-foreground); }
+.checkins .date { width: 96px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.checkins .amt { font-weight: 500; font-variant-numeric: tabular-nums; width: 80px; }
+.checkins .note { flex: 1; min-width: 0; color: var(--muted-foreground); font-size: 13px; }
+.checkins li[aria-current="true"] .note { color: inherit; }
+/* The overview's compact "Your balances" card: the same three check-ins, side by side, read-only. */
+.checkins-row { display: flex; flex-wrap: wrap; gap: 16px 28px; padding-inline: var(--sp); }
+.checkins-row li { display: grid; gap: 2px; min-width: 108px; }
+.checkins-row .date { font-size: 12px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.checkins-row .amt { font-weight: 600; font-variant-numeric: tabular-nums; }
+.checkins-row .note { font-size: 12px; color: var(--muted-foreground); }
+
+/* ---------------------------------------------------------------- coming up (now the overview's last card) */
+.coming-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; }
+.coming-h .edge-note { order: 3; flex-basis: 100%; }
+.month-nav { display: flex; align-items: center; gap: 8px; }
+.month-nav h2 { font-size: 18px; font-weight: 600; min-width: 160px; text-align: center; font-variant-numeric: tabular-nums; }
+.edge-note { font-size: 13px; color: var(--muted-foreground); text-align: right; width: 100%; }
+.strip { display: flex; flex-wrap: wrap; gap: 8px 24px; padding-inline: var(--sp); font-variant-numeric: tabular-nums; }
+.strip span b { font-weight: 600; }
+.days > li { border-top: 1px solid var(--border); }
+.days > li:first-child { border-top: 0; }
+.day-h { display: flex; align-items: baseline; gap: 8px; padding: 12px 16px 0; font-size: 13px; font-weight: 500; color: var(--muted-foreground); }
+.day-h small { font-weight: 400; font-size: 12px; }
+.day--past { opacity: 0.55; }
+.day .rows { padding: 4px 16px 8px; }
+.day .rows li { border-top: 0; padding-block: 6px; }
+.today-line { display: flex; align-items: center; gap: 10px; padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--brand-strong); }
+.today-line::before, .today-line::after { content: ""; flex: 1; height: 2px; background: var(--brand); border-radius: 2px; }
+.today-line::before { flex: 0 0 12px; }
+
+/* ---------------------------------------------------------------- streams (streams-page, stream-card) */
+.streams { display: grid; gap: 16px; }
+@media (min-width: 768px) { .streams { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stream-amt { font-weight: 500; font-variant-numeric: tabular-nums; }
+.stream-amt .range { font-weight: 400; color: var(--muted-foreground); }
+.stream-meta { color: var(--muted-foreground); }
+
+/* ---------------------------------------------------------------- tags */
+.tagrow { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--border); }
+.tagrow:first-child { border-top: 0; }
+.tagname { flex: 1; min-width: 0; text-align: left; font-weight: 500; background: transparent; border: 0; padding: 6px 0; border-radius: var(--radius-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tagname:hover { color: var(--brand-strong); text-decoration: underline; }
+.swatch { width: 28px; height: 28px; border-radius: 9999px; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.1); }
+.swatch:focus-visible { box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); }
+.tagrow--add { gap: 12px; }
+.tagrow--add .label { flex-shrink: 0; }
+.tagrow--add .input { flex: 1; min-width: 120px; }
+.picker { width: 232px; display: grid; gap: 12px; padding: 12px; }
+.swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.swatches button { aspect-ratio: 1; border-radius: var(--radius-md); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08); }
+.swatches button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground); }
+.swatches button:focus-visible { box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); }
+.hue { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 9999px; background: linear-gradient(to right, hsl(0 80% 45%), hsl(60 80% 45%), hsl(120 80% 45%), hsl(180 80% 45%), hsl(240 80% 45%), hsl(300 80% 45%), hsl(360 80% 45%)); outline: none; }
+.hue::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 9999px; border: 1px solid var(--primary); background: var(--background); box-shadow: var(--shadow-xs); cursor: pointer; }
+.hue::-moz-range-thumb { width: 16px; height: 16px; border-radius: 9999px; border: 1px solid var(--primary); background: var(--background); box-shadow: var(--shadow-xs); cursor: pointer; }
+.hue:focus-visible { box-shadow: var(--ring-shadow); }
+.hexrow { display: flex; align-items: center; gap: 8px; }
+.hexrow .input { font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- popovers, calendar, menus */
+#popover-root { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
+.popover { position: absolute; pointer-events: auto; border-radius: var(--radius-md); background: var(--popover); box-shadow: var(--shadow-md), var(--card-ring); outline: none; }
+.cal { padding: 12px; width: 252px; display: grid; gap: 8px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; }
+.cal-title { font-size: 14px; font-weight: 500; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 32px); gap: 2px; justify-content: center; }
+.cal-wd { font-size: 12.8px; color: var(--muted-foreground); text-align: center; line-height: 32px; }
+.cal-day { height: 32px; border-radius: var(--radius-md); font-size: 14px; font-weight: 400; }
+.cal-day:hover { background: var(--accent); color: var(--accent-foreground); }
+.cal-day.today { background: var(--accent); color: var(--accent-foreground); }
+.cal-day.outside { color: var(--muted-foreground); opacity: 0.6; }
+.cal-day[aria-selected="true"] { background: var(--primary); color: var(--primary-foreground); }
+.menu { padding: 4px; min-width: 180px; }
+.menu-item { display: flex; width: 100%; align-items: center; gap: 8px; border-radius: var(--radius-sm); padding: 6px 32px 6px 8px; font-size: 14px; text-align: left; position: relative; }
+.menu-item:hover, .menu-item:focus-visible { background: var(--accent); color: var(--accent-foreground); box-shadow: none; }
+.menu-item svg { position: absolute; right: 8px; width: 16px; height: 16px; }
+
+/* ---------------------------------------------------------------- dialogs (ui/dialog, ui/alert-dialog) */
+.overlay { position: fixed; inset: 0; z-index: 40; background: rgb(0 0 0 / 0.5); }
+.dialog { position: fixed; top: 50%; left: 50%; z-index: 45; display: grid; width: 100%; max-width: calc(100% - 2rem); transform: translate(-50%, -50%); gap: 24px; border-radius: var(--radius-xl); background: var(--popover); padding: 24px; font-size: 14px; box-shadow: var(--card-ring); outline: none; max-height: calc(100dvh - 2rem); overflow-y: auto; }
+.dialog-h { display: grid; gap: 6px; padding-right: 32px; }
+.dialog-t { font-size: 16px; font-weight: 600; line-height: 1.25; }
+.dialog-x { position: absolute; top: 16px; right: 16px; }
+@media (min-width: 640px) { .dialog { max-width: 28rem; } }
+/* On a phone the stream form is a sheet: full height, from the bottom. */
+@media (max-width: 639.98px) {
+  .dialog--sheet { top: auto; bottom: 0; left: 0; transform: none; max-width: none; max-height: none; height: calc(100dvh - 24px); border-radius: var(--radius-xl) var(--radius-xl) 0 0; padding-bottom: calc(24px + env(safe-area-inset-bottom)); align-content: start; }
+}
+
+/* ---------------------------------------------------------------- toast */
+.toast { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: none; align-items: center; gap: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--background); padding: 12px 16px; font-size: 14px; box-shadow: var(--shadow-lg); }
+.toast.show { display: flex; }
+.toast svg { width: 16px; height: 16px; color: var(--brand); }
+@media (max-width: 767.98px) { .toast { display: none !important; } }
+</style>
+</head>
+<body>
+<svg hidden aria-hidden="true">
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="m6 11 6 6 6-6"/><path d="M19 21H5"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 9-6-6-6 6"/><path d="M12 3v14"/><path d="M5 21h14"/></symbol>
+  <symbol id="i-tags" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z"/><path d="M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193"/><circle cx="10.5" cy="6.5" r=".5" fill="currentColor"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-circle-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="hdr">
+    <div class="hdr-in">
+      <a class="brand" href="#overview" data-go="overview">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--brand)"/><g fill="none" stroke="var(--brand-foreground)" stroke-linecap="round" stroke-linejoin="round"><path d="M22.5 13.4C24 9.6 26 7.6 28.4 6.6M21 13C21.2 9.4 22.6 6.9 24.8 5.4" stroke-width="1.2"/><path d="M13.4 17.6 8.6 11.8 6.2 22.4" stroke-width="1.8"/><path d="M18.4 20.2 19.6 24.4M15 21 14.4 24.8" stroke-width="1.3"/></g><g fill="var(--brand-foreground)"><ellipse cx="14.6" cy="18.4" rx="6.8" ry="3.5" transform="rotate(-14 14.6 18.4)"/><circle cx="21.6" cy="15.6" r="2.6"/></g></svg>
+        kriket
+      </a>
+      <span class="proposed" title="A proposal for iteration 2, not a promise">Proposed</span>
+      <nav class="nav-top" aria-label="Primary">
+        <a href="#overview" data-go="overview">Overview</a>
+        <a href="#income" data-go="income">Income</a>
+        <a href="#expenses" data-go="expenses">Expenses</a>
+        <a href="#tags" data-go="tags">Tags</a>
+      </nav>
+      <div class="hdr-right">
+        <span class="who">sam</span>
+        <button type="button" data-signout>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ------------------------------------------------------------ overview -->
+    <section class="screen" data-screen="overview" aria-labelledby="ov-title">
+      <div class="page-head">
+        <h1 id="ov-title">Your next <span data-days>90</span> days</h1>
+        <div class="seg" role="group" aria-label="Forecast length" data-window-nav>
+          <button type="button" data-window="30" aria-pressed="false">30 days</button>
+          <button type="button" data-window="90" aria-pressed="true">90 days</button>
+          <button type="button" data-window="180" aria-pressed="false">180 days</button>
+        </div>
+      </div>
+
+      <div class="top-row mt-6">
+        <div class="card card--sm">
+          <div class="card-h">
+            <div class="card-t">Your balance today</div>
+            <p class="card-d">The forecast starts from here.</p>
+          </div>
+          <div class="card-c">
+            <form class="form" data-checkin-form novalidate>
+              <div class="checkin-row">
+                <div class="field">
+                  <label class="label" for="balance">Balance</label>
+                  <input class="input" id="balance" name="balance" autocomplete="off" value="430.00">
+                </div>
+                <button type="submit" class="btn">Save</button>
+              </div>
+              <p class="saved" role="status" aria-live="polite" data-saved></p>
+              <a class="card-link" href="#balances" data-go="balances">Your balances ›</a>
+            </form>
+          </div>
+        </div>
+        <div class="answer" data-answer></div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-h">
+          <div class="card-t">Balance forecast</div>
+          <p class="card-d">The line uses your usual amounts; the band runs from the worst case to the best. A dot marks every payment in or out.</p>
+        </div>
+        <div class="card-c">
+          <div data-chart></div>
+          <p class="chart-key"><span><i style="background: var(--brand)"></i>Money in</span><span><i style="background: var(--expense)"></i>Money out</span><span><i class="band"></i>Below zero</span></p>
+        </div>
+      </div>
+
+      <div class="tiles mt-4" data-tiles></div>
+
+      <div class="card md-only mt-4">
+        <div class="card-h">
+          <div class="card-t">Your balances</div>
+          <p class="card-d">Kept every time you save one.</p>
+        </div>
+        <div class="card-c">
+          <ul class="checkins-row" data-checkins-plain></ul>
+          <a class="card-link" href="#balances" data-go="balances">Flip through them →</a>
+        </div>
+      </div>
+
+      <!-- Coming up: one month at a time, at the bottom of the overview. -->
+      <div class="card mt-4" data-coming-up>
+        <div class="card-h coming-h">
+          <div class="card-t">Coming up</div>
+          <p class="card-d edge-note" data-edge-note hidden></p>
+          <div class="month-nav">
+            <button type="button" class="btn btn--outline btn--icon-sm" data-month="-1" aria-label="Previous month"><svg><use href="#i-left"/></svg></button>
+            <h2 data-month-label aria-live="polite">October 2026</h2>
+            <button type="button" class="btn btn--outline btn--icon-sm" data-month="1" aria-label="Next month"><svg><use href="#i-right"/></svg></button>
+          </div>
+        </div>
+        <div class="card-c">
+          <p class="strip" data-strip></p>
+          <ul class="days" data-days></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------ balances -->
+    <section class="screen" data-screen="balances" aria-labelledby="bal-title" hidden>
+      <div class="page-head">
+        <div>
+          <h1 id="bal-title">Your balances</h1>
+          <p class="sub">Every time you save a balance, kriket keeps it. Flip back to see what the forecast looked like then.</p>
+        </div>
+      </div>
+
+      <div class="card card--sm mt-6">
+        <div class="card-c">
+          <div class="flip">
+            <button type="button" class="btn btn--outline btn--icon-sm" data-flip="-1" aria-label="Older check-in"><svg><use href="#i-left"/></svg></button>
+            <div class="flip-body" data-flip-body></div>
+            <button type="button" class="btn btn--outline btn--icon-sm" data-flip="1" aria-label="Newer check-in"><svg><use href="#i-right"/></svg></button>
+          </div>
+          <ul class="checkins" data-checkins></ul>
+        </div>
+      </div>
+
+      <div class="answer mt-4" data-answer></div>
+
+      <div class="card mt-4">
+        <div class="card-h">
+          <div class="card-t">Balance forecast</div>
+          <p class="card-d" data-asof></p>
+        </div>
+        <div class="card-c">
+          <div data-chart></div>
+          <p class="chart-key"><span><i style="background: var(--brand)"></i>Money in</span><span><i style="background: var(--expense)"></i>Money out</span><span><i class="band"></i>Below zero</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------ income -->
+    <section class="screen" data-screen="income" aria-labelledby="in-title" hidden>
+      <div class="page-head">
+        <div>
+          <h1 id="in-title">Income</h1>
+          <p class="sub">Add what comes in on a rhythm. Just the usual amount is enough.</p>
+        </div>
+        <button type="button" class="btn" data-add="income"><svg><use href="#i-plus"/></svg>Add income</button>
+      </div>
+      <ul class="streams mt-6" data-streams="income"></ul>
+    </section>
+
+    <!-- ------------------------------------------------------------ expenses -->
+    <section class="screen" data-screen="expenses" aria-labelledby="ex-title" hidden>
+      <div class="page-head">
+        <div>
+          <h1 id="ex-title">Expenses</h1>
+          <p class="sub">Add what goes out on a rhythm. Just the usual amount is enough.</p>
+        </div>
+        <button type="button" class="btn" data-add="expense"><svg><use href="#i-plus"/></svg>Add expense</button>
+      </div>
+      <ul class="streams mt-6" data-streams="expense"></ul>
+    </section>
+
+    <!-- ------------------------------------------------------------ tags -->
+    <section class="screen" data-screen="tags" aria-labelledby="tg-title" hidden>
+      <div class="page-head">
+        <div>
+          <h1 id="tg-title">Tags</h1>
+          <p class="sub">Four presets to start. Any colour you like.</p>
+        </div>
+      </div>
+      <div class="card card--list mt-6">
+        <ul data-tag-list></ul>
+        <form class="tagrow tagrow--add" data-add-tag-form novalidate>
+          <label class="label" for="new-tag">Add a tag</label>
+          <input class="input" id="new-tag" placeholder="Coffee" autocomplete="off" maxlength="40">
+          <button type="button" class="swatch" data-new-swatch aria-label="Colour of the new tag" aria-haspopup="dialog"></button>
+          <button type="submit" class="btn"><svg><use href="#i-plus"/></svg>Add</button>
+        </form>
+      </div>
+      <p class="hint mt-4">Presets you delete can't be brought back; rename them instead.</p>
+    </section>
+
+    <!-- ------------------------------------------------------------ one tag -->
+    <section class="screen" data-screen="tag" aria-labelledby="tag-title" hidden>
+      <a class="back" href="#tags" data-go="tags">← Tags</a>
+      <div class="page-head mt-4">
+        <div>
+          <h1 id="tag-title" class="h1-tag"></h1>
+          <p class="sub" data-tag-summary></p>
+        </div>
+      </div>
+      <ul class="streams mt-6" data-tag-streams></ul>
+    </section>
+  </main>
+
+  <nav class="nav-bottom" aria-label="Primary">
+    <div>
+      <a href="#overview" data-go="overview"><svg><use href="#i-chart"/></svg><span>Overview</span></a>
+      <a href="#income" data-go="income"><svg><use href="#i-in"/></svg><span>Income</span></a>
+      <a href="#expenses" data-go="expenses"><svg><use href="#i-out"/></svg><span>Expenses</span></a>
+      <a href="#tags" data-go="tags"><svg><use href="#i-tags"/></svg><span>Tags</span></a>
+    </div>
+  </nav>
+</div>
+
+<div id="dialog-root"></div>
+<div id="popover-root"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// Sam's data and forecasts, computed by build.py with the app's rule. Nothing here is saved.
+const DATA = {"today":"2026-09-26","startedOn":"2026-09-12","tags":[{"id":"pay","name":"Pay cheque","color":"#16a34a","preset":true},{"id":"side","name":"Side hustle","color":"#059669","preset":true},{"id":"bill","name":"Bill","color":"#ea580c","preset":true},{"id":"groceries","name":"Groceries","color":"#d97706","preset":true},{"id":"fun","name":"Fun","color":"#a855f7","preset":false}],"streams":[{"id":"cafe","kind":"income","name":"Café shifts","min":15000,"usual":22000,"max":30000,"every":7,"first":"2026-10-03","tag":"pay","next":"2026-10-03"},{"id":"tutoring","kind":"income","name":"Tutoring","min":8000,"usual":12000,"max":16000,"every":14,"first":"2026-10-08","tag":"side","next":"2026-10-08"},{"id":"rent","kind":"expense","name":"Rent","min":60000,"usual":60000,"max":60000,"every":30,"first":"2026-10-01","tag":"bill","next":"2026-10-01"},{"id":"groceries","kind":"expense","name":"Groceries","min":6000,"usual":8500,"max":12000,"every":7,"first":"2026-09-15","tag":"groceries","next":"2026-09-29"},{"id":"phone","kind":"expense","name":"Phone and subscriptions","min":4200,"usual":4200,"max":4200,"every":30,"first":"2026-10-06","tag":"bill","next":"2026-10-06"}],"checkins":[{"date":"2026-09-12","cents":61000,"note":"first check-in","forecasts":{"30":{"start":"2026-09-12","days":30,"end":"2026-10-12","points":[[61000,61000,61000],[61000,61000,61000],[61000,61000,61000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[25000,35500,43000],[25000,35500,43000],[-35000,-24500,-17000],[-35000,-24500,-17000],[-20000,-2500,13000],[-20000,-2500,13000],[-20000,-2500,13000],[-36200,-15200,2800],[-36200,-15200,2800],[-28200,-3200,18800],[-28200,-3200,18800],[-13200,18800,48800],[-13200,18800,48800],[-13200,18800,48800]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":19,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":24,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":26,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}],"low":{"day":19,"cents":-24500},"end_balance":[-13200,18800,48800],"recovery":28,"answer":{"kind":"short","title":"You go $245 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$245.00."}},"90":{"start":"2026-09-12","days":90,"end":"2026-12-11","points":[[61000,61000,61000],[61000,61000,61000],[61000,61000,61000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[25000,35500,43000],[25000,35500,43000],[-35000,-24500,-17000],[-35000,-24500,-17000],[-20000,-2500,13000],[-20000,-2500,13000],[-20000,-2500,13000],[-36200,-15200,2800],[-36200,-15200,2800],[-28200,-3200,18800],[-28200,-3200,18800],[-13200,18800,48800],[-13200,18800,48800],[-13200,18800,48800],[-25200,10300,42800],[-25200,10300,42800],[-25200,10300,42800],[-25200,10300,42800],[-10200,32300,72800],[-10200,32300,72800],[-10200,32300,72800],[-22200,23800,66800],[-22200,23800,66800],[-14200,35800,82800],[-14200,35800,82800],[800,57800,112800],[800,57800,112800],[800,57800,112800],[-11200,49300,106800],[-11200,49300,106800],[-11200,49300,106800],[-11200,49300,106800],[-56200,11300,76800],[-56200,11300,76800],[-56200,11300,76800],[-68200,2800,70800],[-68200,2800,70800],[-64400,10600,82600],[-64400,10600,82600],[-49400,32600,112600],[-49400,32600,112600],[-49400,32600,112600],[-61400,24100,106600],[-61400,24100,106600],[-61400,24100,106600],[-61400,24100,106600],[-46400,46100,136600],[-46400,46100,136600],[-46400,46100,136600],[-58400,37600,130600],[-58400,37600,130600],[-50400,49600,146600],[-50400,49600,146600],[-35400,71600,176600],[-35400,71600,176600],[-35400,71600,176600],[-47400,63100,170600],[-47400,63100,170600],[-47400,63100,170600],[-47400,63100,170600],[-32400,85100,200600],[-32400,85100,200600],[-92400,25100,140600],[-104400,16600,134600],[-104400,16600,134600],[-96400,28600,150600],[-96400,28600,150600],[-85600,46400,176400],[-85600,46400,176400],[-85600,46400,176400],[-97600,37900,170400],[-97600,37900,170400],[-97600,37900,170400],[-97600,37900,170400]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":19,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":24,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":26,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":31,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":35,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":38,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":40,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":42,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":45,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":49,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":49,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":52,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":54,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":54,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":56,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":59,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":63,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":66,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":68,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":70,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":73,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":77,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":79,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":80,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":82,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":84,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":84,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":87,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}],"low":{"day":19,"cents":-24500},"end_balance":[-97600,37900,170400],"recovery":28,"answer":{"kind":"short","title":"You go $245 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$245.00."}},"180":{"start":"2026-09-12","days":180,"end":"2027-03-11","points":[[61000,61000,61000],[61000,61000,61000],[61000,61000,61000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[49000,52500,55000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[37000,44000,49000],[25000,35500,43000],[25000,35500,43000],[-35000,-24500,-17000],[-35000,-24500,-17000],[-20000,-2500,13000],[-20000,-2500,13000],[-20000,-2500,13000],[-36200,-15200,2800],[-36200,-15200,2800],[-28200,-3200,18800],[-28200,-3200,18800],[-13200,18800,48800],[-13200,18800,48800],[-13200,18800,48800],[-25200,10300,42800],[-25200,10300,42800],[-25200,10300,42800],[-25200,10300,42800],[-10200,32300,72800],[-10200,32300,72800],[-10200,32300,72800],[-22200,23800,66800],[-22200,23800,66800],[-14200,35800,82800],[-14200,35800,82800],[800,57800,112800],[800,57800,112800],[800,57800,112800],[-11200,49300,106800],[-11200,49300,106800],[-11200,49300,106800],[-11200,49300,106800],[-56200,11300,76800],[-56200,11300,76800],[-56200,11300,76800],[-68200,2800,70800],[-68200,2800,70800],[-64400,10600,82600],[-64400,10600,82600],[-49400,32600,112600],[-49400,32600,112600],[-49400,32600,112600],[-61400,24100,106600],[-61400,24100,106600],[-61400,24100,106600],[-61400,24100,106600],[-46400,46100,136600],[-46400,46100,136600],[-46400,46100,136600],[-58400,37600,130600],[-58400,37600,130600],[-50400,49600,146600],[-50400,49600,146600],[-35400,71600,176600],[-35400,71600,176600],[-35400,71600,176600],[-47400,63100,170600],[-47400,63100,170600],[-47400,63100,170600],[-47400,63100,170600],[-32400,85100,200600],[-32400,85100,200600],[-92400,25100,140600],[-104400,16600,134600],[-104400,16600,134600],[-96400,28600,150600],[-96400,28600,150600],[-85600,46400,176400],[-85600,46400,176400],[-85600,46400,176400],[-97600,37900,170400],[-97600,37900,170400],[-97600,37900,170400],[-97600,37900,170400],[-82600,59900,200400],[-82600,59900,200400],[-82600,59900,200400],[-94600,51400,194400],[-94600,51400,194400],[-86600,63400,210400],[-86600,63400,210400],[-71600,85400,240400],[-71600,85400,240400],[-71600,85400,240400],[-83600,76900,234400],[-83600,76900,234400],[-83600,76900,234400],[-83600,76900,234400],[-68600,98900,264400],[-68600,98900,264400],[-68600,98900,264400],[-80600,90400,258400],[-140600,30400,198400],[-132600,42400,214400],[-132600,42400,214400],[-117600,64400,244400],[-117600,64400,244400],[-121800,60200,240200],[-133800,51700,234200],[-133800,51700,234200],[-133800,51700,234200],[-133800,51700,234200],[-118800,73700,264200],[-118800,73700,264200],[-118800,73700,264200],[-130800,65200,258200],[-130800,65200,258200],[-122800,77200,274200],[-122800,77200,274200],[-107800,99200,304200],[-107800,99200,304200],[-107800,99200,304200],[-119800,90700,298200],[-119800,90700,298200],[-119800,90700,298200],[-119800,90700,298200],[-104800,112700,328200],[-104800,112700,328200],[-104800,112700,328200],[-116800,104200,322200],[-116800,104200,322200],[-108800,116200,338200],[-168800,56200,278200],[-153800,78200,308200],[-153800,78200,308200],[-153800,78200,308200],[-165800,69700,302200],[-170000,65500,298000],[-170000,65500,298000],[-170000,65500,298000],[-155000,87500,328000],[-155000,87500,328000],[-155000,87500,328000],[-167000,79000,322000],[-167000,79000,322000],[-159000,91000,338000],[-159000,91000,338000],[-144000,113000,368000],[-144000,113000,368000],[-144000,113000,368000],[-156000,104500,362000],[-156000,104500,362000],[-156000,104500,362000],[-156000,104500,362000],[-141000,126500,392000],[-141000,126500,392000],[-141000,126500,392000],[-153000,118000,386000],[-153000,118000,386000],[-145000,130000,402000],[-145000,130000,402000],[-130000,152000,432000],[-190000,92000,372000],[-190000,92000,372000],[-202000,83500,366000],[-202000,83500,366000],[-202000,83500,366000],[-206200,79300,361800],[-191200,101300,391800],[-191200,101300,391800],[-191200,101300,391800],[-203200,92800,385800],[-203200,92800,385800],[-195200,104800,401800]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":19,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":24,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":26,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":31,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":35,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":38,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":40,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":42,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":45,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":49,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":49,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":52,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":54,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":54,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":56,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":59,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":63,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":66,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":68,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":70,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":73,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":77,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":79,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":80,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":82,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":84,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":84,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":87,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":91,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":94,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":96,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":98,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":101,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":105,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":108,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":109,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":110,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":112,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":114,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":115,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":119,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":122,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":124,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":126,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":129,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":133,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":136,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":138,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":139,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":140,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":143,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":144,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":147,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":150,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":152,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":154,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":157,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":161,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":164,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":166,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":168,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":169,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":171,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":174,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":175,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":178,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":180,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}],"low":{"day":19,"cents":-24500},"end_balance":[-195200,104800,401800],"recovery":28,"answer":{"kind":"short","title":"You go $245 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$245.00."}}}},{"date":"2026-09-19","cents":52000,"note":"$5.00 under forecast","forecasts":{"30":{"start":"2026-09-19","days":30,"end":"2026-10-19","points":[[52000,52000,52000],[52000,52000,52000],[52000,52000,52000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[28000,35000,40000],[28000,35000,40000],[-32000,-25000,-20000],[-32000,-25000,-20000],[-17000,-3000,10000],[-17000,-3000,10000],[-17000,-3000,10000],[-33200,-15700,-200],[-33200,-15700,-200],[-25200,-3700,15800],[-25200,-3700,15800],[-10200,18300,45800],[-10200,18300,45800],[-10200,18300,45800],[-22200,9800,39800],[-22200,9800,39800],[-22200,9800,39800],[-22200,9800,39800],[-7200,31800,69800],[-7200,31800,69800],[-7200,31800,69800]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":12,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":14,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":17,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":19,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}],"low":{"day":12,"cents":-25000},"end_balance":[-7200,31800,69800],"recovery":21,"answer":{"kind":"short","title":"You go $250 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$250.00."}},"90":{"start":"2026-09-19","days":90,"end":"2026-12-18","points":[[52000,52000,52000],[52000,52000,52000],[52000,52000,52000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[28000,35000,40000],[28000,35000,40000],[-32000,-25000,-20000],[-32000,-25000,-20000],[-17000,-3000,10000],[-17000,-3000,10000],[-17000,-3000,10000],[-33200,-15700,-200],[-33200,-15700,-200],[-25200,-3700,15800],[-25200,-3700,15800],[-10200,18300,45800],[-10200,18300,45800],[-10200,18300,45800],[-22200,9800,39800],[-22200,9800,39800],[-22200,9800,39800],[-22200,9800,39800],[-7200,31800,69800],[-7200,31800,69800],[-7200,31800,69800],[-19200,23300,63800],[-19200,23300,63800],[-11200,35300,79800],[-11200,35300,79800],[3800,57300,109800],[3800,57300,109800],[3800,57300,109800],[-8200,48800,103800],[-8200,48800,103800],[-8200,48800,103800],[-8200,48800,103800],[-53200,10800,73800],[-53200,10800,73800],[-53200,10800,73800],[-65200,2300,67800],[-65200,2300,67800],[-61400,10100,79600],[-61400,10100,79600],[-46400,32100,109600],[-46400,32100,109600],[-46400,32100,109600],[-58400,23600,103600],[-58400,23600,103600],[-58400,23600,103600],[-58400,23600,103600],[-43400,45600,133600],[-43400,45600,133600],[-43400,45600,133600],[-55400,37100,127600],[-55400,37100,127600],[-47400,49100,143600],[-47400,49100,143600],[-32400,71100,173600],[-32400,71100,173600],[-32400,71100,173600],[-44400,62600,167600],[-44400,62600,167600],[-44400,62600,167600],[-44400,62600,167600],[-29400,84600,197600],[-29400,84600,197600],[-89400,24600,137600],[-101400,16100,131600],[-101400,16100,131600],[-93400,28100,147600],[-93400,28100,147600],[-82600,45900,173400],[-82600,45900,173400],[-82600,45900,173400],[-94600,37400,167400],[-94600,37400,167400],[-94600,37400,167400],[-94600,37400,167400],[-79600,59400,197400],[-79600,59400,197400],[-79600,59400,197400],[-91600,50900,191400],[-91600,50900,191400],[-83600,62900,207400],[-83600,62900,207400]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":12,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":14,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":17,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":19,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":31,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":33,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":35,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":38,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":42,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":42,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":45,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":47,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":47,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":49,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":52,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":56,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":59,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":61,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":63,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":66,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":70,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":72,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":73,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":75,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":77,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":77,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":80,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":84,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":87,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":89,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}],"low":{"day":12,"cents":-25000},"end_balance":[-83600,62900,207400],"recovery":21,"answer":{"kind":"short","title":"You go $250 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$250.00."}},"180":{"start":"2026-09-19","days":180,"end":"2027-03-18","points":[[52000,52000,52000],[52000,52000,52000],[52000,52000,52000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[40000,43500,46000],[28000,35000,40000],[28000,35000,40000],[-32000,-25000,-20000],[-32000,-25000,-20000],[-17000,-3000,10000],[-17000,-3000,10000],[-17000,-3000,10000],[-33200,-15700,-200],[-33200,-15700,-200],[-25200,-3700,15800],[-25200,-3700,15800],[-10200,18300,45800],[-10200,18300,45800],[-10200,18300,45800],[-22200,9800,39800],[-22200,9800,39800],[-22200,9800,39800],[-22200,9800,39800],[-7200,31800,69800],[-7200,31800,69800],[-7200,31800,69800],[-19200,23300,63800],[-19200,23300,63800],[-11200,35300,79800],[-11200,35300,79800],[3800,57300,109800],[3800,57300,109800],[3800,57300,109800],[-8200,48800,103800],[-8200,48800,103800],[-8200,48800,103800],[-8200,48800,103800],[-53200,10800,73800],[-53200,10800,73800],[-53200,10800,73800],[-65200,2300,67800],[-65200,2300,67800],[-61400,10100,79600],[-61400,10100,79600],[-46400,32100,109600],[-46400,32100,109600],[-46400,32100,109600],[-58400,23600,103600],[-58400,23600,103600],[-58400,23600,103600],[-58400,23600,103600],[-43400,45600,133600],[-43400,45600,133600],[-43400,45600,133600],[-55400,37100,127600],[-55400,37100,127600],[-47400,49100,143600],[-47400,49100,143600],[-32400,71100,173600],[-32400,71100,173600],[-32400,71100,173600],[-44400,62600,167600],[-44400,62600,167600],[-44400,62600,167600],[-44400,62600,167600],[-29400,84600,197600],[-29400,84600,197600],[-89400,24600,137600],[-101400,16100,131600],[-101400,16100,131600],[-93400,28100,147600],[-93400,28100,147600],[-82600,45900,173400],[-82600,45900,173400],[-82600,45900,173400],[-94600,37400,167400],[-94600,37400,167400],[-94600,37400,167400],[-94600,37400,167400],[-79600,59400,197400],[-79600,59400,197400],[-79600,59400,197400],[-91600,50900,191400],[-91600,50900,191400],[-83600,62900,207400],[-83600,62900,207400],[-68600,84900,237400],[-68600,84900,237400],[-68600,84900,237400],[-80600,76400,231400],[-80600,76400,231400],[-80600,76400,231400],[-80600,76400,231400],[-65600,98400,261400],[-65600,98400,261400],[-65600,98400,261400],[-77600,89900,255400],[-137600,29900,195400],[-129600,41900,211400],[-129600,41900,211400],[-114600,63900,241400],[-114600,63900,241400],[-118800,59700,237200],[-130800,51200,231200],[-130800,51200,231200],[-130800,51200,231200],[-130800,51200,231200],[-115800,73200,261200],[-115800,73200,261200],[-115800,73200,261200],[-127800,64700,255200],[-127800,64700,255200],[-119800,76700,271200],[-119800,76700,271200],[-104800,98700,301200],[-104800,98700,301200],[-104800,98700,301200],[-116800,90200,295200],[-116800,90200,295200],[-116800,90200,295200],[-116800,90200,295200],[-101800,112200,325200],[-101800,112200,325200],[-101800,112200,325200],[-113800,103700,319200],[-113800,103700,319200],[-105800,115700,335200],[-165800,55700,275200],[-150800,77700,305200],[-150800,77700,305200],[-150800,77700,305200],[-162800,69200,299200],[-167000,65000,295000],[-167000,65000,295000],[-167000,65000,295000],[-152000,87000,325000],[-152000,87000,325000],[-152000,87000,325000],[-164000,78500,319000],[-164000,78500,319000],[-156000,90500,335000],[-156000,90500,335000],[-141000,112500,365000],[-141000,112500,365000],[-141000,112500,365000],[-153000,104000,359000],[-153000,104000,359000],[-153000,104000,359000],[-153000,104000,359000],[-138000,126000,389000],[-138000,126000,389000],[-138000,126000,389000],[-150000,117500,383000],[-150000,117500,383000],[-142000,129500,399000],[-142000,129500,399000],[-127000,151500,429000],[-187000,91500,369000],[-187000,91500,369000],[-199000,83000,363000],[-199000,83000,363000],[-199000,83000,363000],[-203200,78800,358800],[-188200,100800,388800],[-188200,100800,388800],[-188200,100800,388800],[-200200,92300,382800],[-200200,92300,382800],[-192200,104300,398800],[-192200,104300,398800],[-177200,126300,428800],[-177200,126300,428800],[-177200,126300,428800],[-189200,117800,422800],[-189200,117800,422800],[-189200,117800,422800]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":12,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":14,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":17,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":19,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":31,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":33,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":35,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":38,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":42,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":42,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":45,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":47,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":47,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":49,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":52,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":56,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":59,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":61,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":63,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":66,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":70,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":72,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":73,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":75,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":77,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":77,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":80,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":84,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":87,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":89,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":91,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":94,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":98,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":101,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":102,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":103,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":105,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":107,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":108,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":112,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":115,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":117,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":119,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":122,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":126,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":129,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":131,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":132,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":133,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":136,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":137,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":140,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":143,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":145,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":147,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":150,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":154,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":157,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":159,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":161,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":162,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":164,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":167,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":168,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":171,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":173,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":175,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":178,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}],"low":{"day":12,"cents":-25000},"end_balance":[-189200,117800,422800],"recovery":21,"answer":{"kind":"short","title":"You go $250 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$250.00."}}}},{"date":"2026-09-26","cents":43000,"note":"$5.00 under forecast","forecasts":{"30":{"start":"2026-09-26","days":30,"end":"2026-10-26","points":[[43000,43000,43000],[43000,43000,43000],[43000,43000,43000],[31000,34500,37000],[31000,34500,37000],[-29000,-25500,-23000],[-29000,-25500,-23000],[-14000,-3500,7000],[-14000,-3500,7000],[-14000,-3500,7000],[-30200,-16200,-3200],[-30200,-16200,-3200],[-22200,-4200,12800],[-22200,-4200,12800],[-7200,17800,42800],[-7200,17800,42800],[-7200,17800,42800],[-19200,9300,36800],[-19200,9300,36800],[-19200,9300,36800],[-19200,9300,36800],[-4200,31300,66800],[-4200,31300,66800],[-4200,31300,66800],[-16200,22800,60800],[-16200,22800,60800],[-8200,34800,76800],[-8200,34800,76800],[6800,56800,106800],[6800,56800,106800],[6800,56800,106800]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":5,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":7,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":12,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":14,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":26,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}],"low":{"day":5,"cents":-25500},"end_balance":[6800,56800,106800],"recovery":14,"answer":{"kind":"short","title":"You go $255 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$255.00."}},"90":{"start":"2026-09-26","days":90,"end":"2026-12-25","points":[[43000,43000,43000],[43000,43000,43000],[43000,43000,43000],[31000,34500,37000],[31000,34500,37000],[-29000,-25500,-23000],[-29000,-25500,-23000],[-14000,-3500,7000],[-14000,-3500,7000],[-14000,-3500,7000],[-30200,-16200,-3200],[-30200,-16200,-3200],[-22200,-4200,12800],[-22200,-4200,12800],[-7200,17800,42800],[-7200,17800,42800],[-7200,17800,42800],[-19200,9300,36800],[-19200,9300,36800],[-19200,9300,36800],[-19200,9300,36800],[-4200,31300,66800],[-4200,31300,66800],[-4200,31300,66800],[-16200,22800,60800],[-16200,22800,60800],[-8200,34800,76800],[-8200,34800,76800],[6800,56800,106800],[6800,56800,106800],[6800,56800,106800],[-5200,48300,100800],[-5200,48300,100800],[-5200,48300,100800],[-5200,48300,100800],[-50200,10300,70800],[-50200,10300,70800],[-50200,10300,70800],[-62200,1800,64800],[-62200,1800,64800],[-58400,9600,76600],[-58400,9600,76600],[-43400,31600,106600],[-43400,31600,106600],[-43400,31600,106600],[-55400,23100,100600],[-55400,23100,100600],[-55400,23100,100600],[-55400,23100,100600],[-40400,45100,130600],[-40400,45100,130600],[-40400,45100,130600],[-52400,36600,124600],[-52400,36600,124600],[-44400,48600,140600],[-44400,48600,140600],[-29400,70600,170600],[-29400,70600,170600],[-29400,70600,170600],[-41400,62100,164600],[-41400,62100,164600],[-41400,62100,164600],[-41400,62100,164600],[-26400,84100,194600],[-26400,84100,194600],[-86400,24100,134600],[-98400,15600,128600],[-98400,15600,128600],[-90400,27600,144600],[-90400,27600,144600],[-79600,45400,170400],[-79600,45400,170400],[-79600,45400,170400],[-91600,36900,164400],[-91600,36900,164400],[-91600,36900,164400],[-91600,36900,164400],[-76600,58900,194400],[-76600,58900,194400],[-76600,58900,194400],[-88600,50400,188400],[-88600,50400,188400],[-80600,62400,204400],[-80600,62400,204400],[-65600,84400,234400],[-65600,84400,234400],[-65600,84400,234400],[-77600,75900,228400],[-77600,75900,228400],[-77600,75900,228400],[-77600,75900,228400]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":5,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":7,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":12,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":14,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":26,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":31,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":35,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":35,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":38,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":40,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":40,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":42,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":45,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":49,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":52,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":54,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":56,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":59,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":63,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":65,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":66,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":68,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":70,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":70,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":73,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":77,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":80,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":82,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":84,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":87,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}],"low":{"day":5,"cents":-25500},"end_balance":[-77600,75900,228400],"recovery":14,"answer":{"kind":"short","title":"You go $255 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$255.00."}},"180":{"start":"2026-09-26","days":180,"end":"2027-03-25","points":[[43000,43000,43000],[43000,43000,43000],[43000,43000,43000],[31000,34500,37000],[31000,34500,37000],[-29000,-25500,-23000],[-29000,-25500,-23000],[-14000,-3500,7000],[-14000,-3500,7000],[-14000,-3500,7000],[-30200,-16200,-3200],[-30200,-16200,-3200],[-22200,-4200,12800],[-22200,-4200,12800],[-7200,17800,42800],[-7200,17800,42800],[-7200,17800,42800],[-19200,9300,36800],[-19200,9300,36800],[-19200,9300,36800],[-19200,9300,36800],[-4200,31300,66800],[-4200,31300,66800],[-4200,31300,66800],[-16200,22800,60800],[-16200,22800,60800],[-8200,34800,76800],[-8200,34800,76800],[6800,56800,106800],[6800,56800,106800],[6800,56800,106800],[-5200,48300,100800],[-5200,48300,100800],[-5200,48300,100800],[-5200,48300,100800],[-50200,10300,70800],[-50200,10300,70800],[-50200,10300,70800],[-62200,1800,64800],[-62200,1800,64800],[-58400,9600,76600],[-58400,9600,76600],[-43400,31600,106600],[-43400,31600,106600],[-43400,31600,106600],[-55400,23100,100600],[-55400,23100,100600],[-55400,23100,100600],[-55400,23100,100600],[-40400,45100,130600],[-40400,45100,130600],[-40400,45100,130600],[-52400,36600,124600],[-52400,36600,124600],[-44400,48600,140600],[-44400,48600,140600],[-29400,70600,170600],[-29400,70600,170600],[-29400,70600,170600],[-41400,62100,164600],[-41400,62100,164600],[-41400,62100,164600],[-41400,62100,164600],[-26400,84100,194600],[-26400,84100,194600],[-86400,24100,134600],[-98400,15600,128600],[-98400,15600,128600],[-90400,27600,144600],[-90400,27600,144600],[-79600,45400,170400],[-79600,45400,170400],[-79600,45400,170400],[-91600,36900,164400],[-91600,36900,164400],[-91600,36900,164400],[-91600,36900,164400],[-76600,58900,194400],[-76600,58900,194400],[-76600,58900,194400],[-88600,50400,188400],[-88600,50400,188400],[-80600,62400,204400],[-80600,62400,204400],[-65600,84400,234400],[-65600,84400,234400],[-65600,84400,234400],[-77600,75900,228400],[-77600,75900,228400],[-77600,75900,228400],[-77600,75900,228400],[-62600,97900,258400],[-62600,97900,258400],[-62600,97900,258400],[-74600,89400,252400],[-134600,29400,192400],[-126600,41400,208400],[-126600,41400,208400],[-111600,63400,238400],[-111600,63400,238400],[-115800,59200,234200],[-127800,50700,228200],[-127800,50700,228200],[-127800,50700,228200],[-127800,50700,228200],[-112800,72700,258200],[-112800,72700,258200],[-112800,72700,258200],[-124800,64200,252200],[-124800,64200,252200],[-116800,76200,268200],[-116800,76200,268200],[-101800,98200,298200],[-101800,98200,298200],[-101800,98200,298200],[-113800,89700,292200],[-113800,89700,292200],[-113800,89700,292200],[-113800,89700,292200],[-98800,111700,322200],[-98800,111700,322200],[-98800,111700,322200],[-110800,103200,316200],[-110800,103200,316200],[-102800,115200,332200],[-162800,55200,272200],[-147800,77200,302200],[-147800,77200,302200],[-147800,77200,302200],[-159800,68700,296200],[-164000,64500,292000],[-164000,64500,292000],[-164000,64500,292000],[-149000,86500,322000],[-149000,86500,322000],[-149000,86500,322000],[-161000,78000,316000],[-161000,78000,316000],[-153000,90000,332000],[-153000,90000,332000],[-138000,112000,362000],[-138000,112000,362000],[-138000,112000,362000],[-150000,103500,356000],[-150000,103500,356000],[-150000,103500,356000],[-150000,103500,356000],[-135000,125500,386000],[-135000,125500,386000],[-135000,125500,386000],[-147000,117000,380000],[-147000,117000,380000],[-139000,129000,396000],[-139000,129000,396000],[-124000,151000,426000],[-184000,91000,366000],[-184000,91000,366000],[-196000,82500,360000],[-196000,82500,360000],[-196000,82500,360000],[-200200,78300,355800],[-185200,100300,385800],[-185200,100300,385800],[-185200,100300,385800],[-197200,91800,379800],[-197200,91800,379800],[-189200,103800,395800],[-189200,103800,395800],[-174200,125800,425800],[-174200,125800,425800],[-174200,125800,425800],[-186200,117300,419800],[-186200,117300,419800],[-186200,117300,419800],[-186200,117300,419800],[-171200,139300,449800],[-171200,139300,449800],[-171200,139300,449800],[-183200,130800,443800],[-183200,130800,443800],[-175200,142800,459800]],"events":[{"day":3,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":5,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":7,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":10,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":10,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":12,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":14,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":17,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":21,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":24,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":26,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":28,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":31,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":35,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":35,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":38,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":40,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":40,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":42,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":45,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":49,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":52,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":54,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":56,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":59,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":63,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":65,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":66,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":68,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":70,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":70,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":73,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":77,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":80,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":82,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":84,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":87,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":91,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":94,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":95,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":96,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":98,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":100,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":101,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":105,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":108,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":110,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":112,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":115,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":119,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":122,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":124,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":125,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":126,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":129,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":130,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":133,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":136,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":138,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":140,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":143,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":147,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":150,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":152,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":154,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":155,"stream":"rent","kind":"expense","name":"Rent","cents":60000},{"day":157,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":160,"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200},{"day":161,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":164,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":166,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"day":168,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":171,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":175,"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"day":178,"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"day":180,"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}],"low":{"day":5,"cents":-25500},"end_balance":[-175200,142800,459800],"recovery":14,"answer":{"kind":"short","title":"You go $255 short on Oct 1","body":"Rent lands before your first café shift. You are under zero until Oct 10, when the second café shift pays. Lowest point −$255.00."}}}}],"months":[{"key":"2026-09","label":"September 2026","from":"2026-09-12","in":0,"out":8500,"end":34500,"days":[{"date":"2026-09-15","past":true,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-09-22","past":true,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-09-29","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]}]},{"key":"2026-10","label":"October 2026","from":"2026-10-01","in":134000,"out":158200,"end":10300,"days":[{"date":"2026-10-01","past":false,"events":[{"stream":"rent","kind":"expense","name":"Rent","cents":60000}]},{"date":"2026-10-03","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-10-06","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500},{"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200}]},{"date":"2026-10-08","past":false,"events":[{"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}]},{"date":"2026-10-10","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-10-13","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-10-17","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-10-20","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-10-22","past":false,"events":[{"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}]},{"date":"2026-10-24","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-10-27","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-10-31","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"stream":"rent","kind":"expense","name":"Rent","cents":60000}]}]},{"key":"2026-11","label":"November 2026","from":"2026-11-01","in":112000,"out":98200,"end":24100,"days":[{"date":"2026-11-03","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-11-05","past":false,"events":[{"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000},{"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200}]},{"date":"2026-11-07","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-11-10","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-11-14","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-11-17","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-11-19","past":false,"events":[{"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}]},{"date":"2026-11-21","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-11-24","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-11-28","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-11-30","past":false,"events":[{"stream":"rent","kind":"expense","name":"Rent","cents":60000}]}]},{"key":"2026-12","label":"December 2026","from":"2026-12-01","in":124000,"out":106700,"end":41400,"days":[{"date":"2026-12-01","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-12-03","past":false,"events":[{"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}]},{"date":"2026-12-05","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000},{"stream":"phone","kind":"expense","name":"Phone and subscriptions","cents":4200}]},{"date":"2026-12-08","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-12-12","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-12-15","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-12-17","past":false,"events":[{"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}]},{"date":"2026-12-19","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-12-22","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-12-26","past":false,"events":[{"stream":"cafe","kind":"income","name":"Café shifts","cents":22000}]},{"date":"2026-12-29","past":false,"events":[{"stream":"groceries","kind":"expense","name":"Groceries","cents":8500}]},{"date":"2026-12-30","past":false,"events":[{"stream":"rent","kind":"expense","name":"Rent","cents":60000}]},{"date":"2026-12-31","past":false,"events":[{"stream":"tutoring","kind":"income","name":"Tutoring","cents":12000}]}]}]};
+
+// ---------------------------------------------------------------- state
+const S = {
+  screen: 'overview',
+  days: 90,
+  checkin: DATA.checkins.length - 1,           // the balances screen's selection
+  month: DATA.months.findIndex((m) => m.key === DATA.today.slice(0, 7)) + 1, // next month first
+  tags: DATA.tags.map((t) => ({ ...t })),
+  streams: DATA.streams.map((s) => ({ ...s })),
+  newTagColor: '#64748b',
+  currentTag: 'bill'                            // the tag page's selection
+};
+if (S.month >= DATA.months.length) S.month = DATA.months.length - 1;
+
+// ---------------------------------------------------------------- formatting (lib/money.ts, lib/dates.ts)
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const utc = (iso) => new Date(iso + 'T00:00:00Z');
+const addDays = (iso, n) => { const d = utc(iso); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const dayLabel = (iso) => { const [, m, d] = iso.split('-').map(Number); return MONTHS[m - 1] + ' ' + d; };
+const longLabel = (iso) => { const [y, m, d] = iso.split('-').map(Number); return MONTHS[m - 1] + ' ' + d + ', ' + y; };
+const weekdayLabel = (iso) => WEEKDAYS[utc(iso).getUTCDay()] + ', ' + dayLabel(iso);
+function money(cents) {
+  const sign = cents < 0 ? '−' : '';
+  const abs = Math.abs(cents);
+  return sign + '$' + Math.floor(abs / 100).toLocaleString('en-CA') + '.' + String(abs % 100).padStart(2, '0');
+}
+const signed = (cents) => (cents < 0 ? '−' : '+') + money(Math.abs(cents));
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const tag = (id) => S.tags.find((t) => t.id === id);
+const dot = (id, extra = '') => { const t = tag(id); return t ? `<span class="dot ${extra}" data-tag-dot="${esc(t.id)}" style="background:${esc(t.color)}" aria-hidden="true"></span>` : ''; };
+const kindClass = (kind) => (kind === 'income' ? 'in' : 'out');
+const amountText = (kind, cents) => (kind === 'income' ? '+' : '−') + money(cents);
+
+// ---------------------------------------------------------------- the chart (forecast-chart.svelte, plus dots and the below-zero fill)
+function niceStep(raw) {
+  const power = 10 ** Math.floor(Math.log10(raw));
+  return ([1, 2, 2.5, 5, 10].find((m) => m * power >= raw) ?? 10) * power;
+}
+function chartHTML(f) {
+  const W = 640, H = 240, PAD = 4;
+  const pts = f.points, n = pts.length;
+  const low = Math.min(...pts.map((p) => p[0]));
+  const high = Math.max(...pts.map((p) => p[2]));
+  const unit = niceStep(Math.max((high - low) / 10, 100));
+  const base = Math.floor(low / unit) * unit;
+  const step = Math.max(Math.ceil((high - base) / 2 / unit), 1) * unit;
+  const ticks = [base, base + step, base + 2 * step];
+  const dLow = ticks[0], dHigh = ticks[2] + 0.3 * (ticks[1] - ticks[0]);
+  const x = (i) => PAD + (i / Math.max(n - 1, 1)) * (W - 2 * PAD);
+  const y = (c) => PAD + ((dHigh - c) / (dHigh - dLow)) * (H - 2 * PAD);
+  const line = (k) => pts.map((p, i) => (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(p[k]).toFixed(1)).join(' ');
+  const minPath = line(0), actualPath = line(1), maxPath = line(2);
+  const band = maxPath + ' ' + pts.map((p, i) => 'L' + x(i).toFixed(1) + ' ' + y(p[0]).toFixed(1)).reverse().join(' ') + ' Z';
+  const crossesZero = low < 0 && high > 0;
+  const zeroY = y(0);
+  // The expected line down to the zero line and back, clipped to what lies below zero.
+  const belowZero = actualPath + ' L' + x(n - 1).toFixed(1) + ' ' + zeroY.toFixed(1) + ' L' + x(0).toFixed(1) + ' ' + zeroY.toFixed(1) + ' Z';
+  const clipId = 'below-' + Math.random().toString(36).slice(2, 8);
+
+  // One dot per payment on the expected line; several on one day fan out a few pixels apart.
+  const stepPx = (W - 2 * PAD) / Math.max(n - 1, 1);
+  const fan = Math.min(6, stepPx * 0.45);
+  const yAt = (t) => {
+    t = Math.min(Math.max(t, 0), n - 1);
+    const i0 = Math.floor(t), i1 = Math.min(i0 + 1, n - 1);
+    return y(pts[i0][1] + (pts[i1][1] - pts[i0][1]) * (t - i0));
+  };
+  const byDay = new Map();
+  for (const e of f.events) (byDay.get(e.day) ?? byDay.set(e.day, []).get(e.day)).push(e);
+  let dots = '';
+  for (const [day, events] of byDay) {
+    events.forEach((e, k) => {
+      const off = (k - (events.length - 1) / 2) * fan;
+      const cx = x(day) + off, cy = yAt(day + off / stepPx);
+      const date = addDays(f.start, day);
+      dots += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="3.5" fill="${e.kind === 'income' ? 'var(--brand)' : 'var(--expense)'}" stroke="#fff" stroke-width="1.5"><title>${esc(dayLabel(date))} · ${esc(e.name)} · ${amountText(e.kind, e.cents)}</title></circle>`;
+    });
+  }
+
+  const first = addDays(f.start, 0), middle = addDays(f.start, Math.floor((n - 1) / 2)), last = f.end;
+  const end = pts[n - 1];
+  const lowDate = addDays(f.start, f.low.day);
+  const summary = `Forecast balance from ${dayLabel(first)} to ${dayLabel(last)}: ends between ${money(end[0])} and ${money(end[2])}, expected ${money(end[1])}. Lowest expected point ${money(f.low.cents)} on ${dayLabel(lowDate)}. ${f.events.length} payments marked.`;
+  const tickLabels = ticks.map((t) => `<span class="tick" style="top:${((y(t) / H) * 100).toFixed(2)}%" aria-hidden="true">${money(t)}</span>`).join('');
+  return `<div class="chart"><div class="chart-wrap">
+<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(summary)}">
+<defs><clipPath id="${clipId}"><rect x="0" y="${zeroY.toFixed(1)}" width="${W}" height="${H * 2}"/></clipPath></defs>
+${ticks.map((t) => `<line x1="0" x2="${W}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}" stroke="var(--border)" stroke-width="1"/>`).join('')}
+<path d="${band}" fill="var(--brand-soft)" stroke="none"/>
+${crossesZero ? `<path d="${belowZero}" fill="var(--expense)" fill-opacity="0.25" stroke="none" clip-path="url(#${clipId})"/>` : ''}
+${crossesZero ? `<line x1="0" x2="${W}" y1="${zeroY.toFixed(1)}" y2="${zeroY.toFixed(1)}" stroke="var(--muted-foreground)" stroke-width="1" stroke-dasharray="4 4"/>` : ''}
+<path d="${minPath}" fill="none" stroke="var(--chart-3)" stroke-width="1"/>
+<path d="${maxPath}" fill="none" stroke="var(--chart-3)" stroke-width="1"/>
+<path d="${actualPath}" fill="none" stroke="var(--brand)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+${dots}
+</svg>${tickLabels}</div>
+<div class="chart-dates" aria-hidden="true"><span>${dayLabel(first)}</span><span>${dayLabel(middle)}</span><span>${dayLabel(last)}</span></div></div>`;
+}
+
+// Amounts never break across lines, so a minus sign stays with its number.
+const glueMoney = (text) => esc(text).replace(/−?\$[\d,]+(?:\.\d\d)?/g, (m) => `<span style="white-space:nowrap">${m}</span>`);
+function answerHTML(f) {
+  const a = f.answer;
+  return `<div class="answer ${a.kind === 'ok' ? 'answer--ok' : ''}"><h2>${glueMoney(a.title)}</h2><p>${glueMoney(a.body)}</p></div>`;
+}
+
+// ---------------------------------------------------------------- screens
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const screenEl = (name) => $(`.screen[data-screen="${name}"]`);
+const forecastFor = (checkin, days) => DATA.checkins[checkin].forecasts[String(days)];
+
+function renderOverview() {
+  const el = screenEl('overview');
+  const current = DATA.checkins.length - 1;
+  const f = forecastFor(current, S.days);
+  $('[data-days]', el).textContent = S.days;
+  $$('[data-window]', el).forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.window) === S.days)));
+  $('[data-answer]', el).outerHTML = answerHTML(f).replace('class="answer', 'data-answer class="answer');
+  $('[data-chart]', el).innerHTML = chartHTML(f);
+
+  const start = DATA.checkins[current].cents;
+  const end = f.points[f.points.length - 1];
+  const change = end[1] - start;
+  const lowDate = addDays(f.start, f.low.day);
+  $('[data-tiles]', el).innerHTML = [
+    ['Lowest point', `<span class="${f.low.cents < 0 ? 'out' : ''}">${money(f.low.cents)}</span>`, dayLabel(lowDate)],
+    [`Expected on ${dayLabel(f.end)}`, money(end[1]), `<span class="${change >= 0 ? 'in' : 'out'} tabular">${signed(change)} from today</span>`],
+    [`Worst to best on ${dayLabel(f.end)}`, `${money(end[0])} to ${money(end[2])}`, 'Incomes at their minimum and expenses at their maximum, then the reverse']
+  ].map(([label, value, sub]) => `<div class="card card--sm"><div class="card-c tile-c"><p class="muted">${label}</p><p class="tile-v">${value}</p><p class="muted">${sub}</p></div></div>`).join('');
+
+  $('[data-checkins-plain]', el).innerHTML = [...DATA.checkins].reverse().map((c) =>
+    `<li><span class="date">${longLabel(c.date)}</span><span class="amt">${money(c.cents)}</span><span class="note">${esc(c.note)}</span></li>`
+  ).join('');
+
+  renderComingUp();
+}
+
+function renderBalances() {
+  const el = screenEl('balances');
+  const c = DATA.checkins[S.checkin];
+  const f = forecastFor(S.checkin, S.days);
+  $('[data-flip-body]', el).innerHTML = `<p class="flip-v">${money(c.cents)}</p><p class="muted">${longLabel(c.date)} · ${esc(c.note)}</p>`;
+  $('[data-flip="-1"]', el).setAttribute('aria-disabled', String(S.checkin === 0));
+  $('[data-flip="1"]', el).setAttribute('aria-disabled', String(S.checkin === DATA.checkins.length - 1));
+  $('[data-checkins]', el).innerHTML = [...DATA.checkins].map((ci, i) => ({ ci, i })).reverse().map(({ ci, i }) =>
+    `<li data-select-checkin="${i}" aria-current="${i === S.checkin}" tabindex="0" role="button"><span class="date">${longLabel(ci.date)}</span><span class="amt">${money(ci.cents)}</span><span class="note">${esc(ci.note)}</span></li>`
+  ).join('');
+  $('[data-asof]', el).textContent = `Forecast as of ${dayLabel(c.date)}, from ${money(c.cents)} · the next ${S.days} days, with today's streams.`;
+  $('[data-answer]', el).outerHTML = answerHTML(f).replace('class="answer', 'data-answer class="answer');
+  $('[data-chart]', el).innerHTML = chartHTML(f);
+}
+
+function renderComingUp() {
+  // The coming-up card lives at the bottom of the overview now, not on a screen of its own.
+  const cu = $('[data-coming-up]');
+  const m = DATA.months[S.month];
+  $('[data-month-label]', cu).textContent = m.label;
+  const atStart = S.month === 0, atEnd = S.month === DATA.months.length - 1;
+  const prev = $('[data-month="-1"]', cu), next = $('[data-month="1"]', cu);
+  prev.setAttribute('aria-disabled', String(atStart));
+  next.setAttribute('aria-disabled', String(atEnd));
+  prev.title = atStart ? `You started kriket on ${dayLabel(DATA.startedOn)}` : '';
+  next.title = atEnd ? 'Three months ahead is as far as this proposal goes' : '';
+  const note = $('[data-edge-note]', cu);
+  note.hidden = !(atStart || atEnd);
+  note.textContent = atStart ? `You started kriket on ${dayLabel(DATA.startedOn)}` : atEnd ? 'Three months ahead is as far as this proposal goes.' : '';
+  const isThisMonth = m.key === DATA.today.slice(0, 7);
+  $('[data-strip]', cu).innerHTML =
+    `<span>In <b class="in">${money(m.in)}</b></span><span>Out <b class="out">${money(m.out)}</b></span>` +
+    (m.end == null ? '' : `<span>Ends at <b>${money(m.end)}</b> expected</span>`) +
+    (isThisMonth ? `<span class="muted">counting from today</span>` : '');
+
+  const items = [];
+  let todayShown = false;
+  for (const d of m.days) {
+    if (isThisMonth && !todayShown && d.date >= DATA.today) {
+      items.push(`<li class="today-line"><span>Today, ${dayLabel(DATA.today)}</span></li>`);
+      todayShown = true;
+    }
+    const rows = d.events.map((e) => {
+      const st = S.streams.find((s) => s.id === e.stream);
+      const t = tag(st?.tag);
+      return `<li>${dot(st?.tag)}<span class="name">${esc(e.name)}${t ? ` <span class="tagname-label">${esc(t.name)}</span>` : ''}</span><span class="amt ${kindClass(e.kind)}">${amountText(e.kind, e.cents)}</span></li>`;
+    }).join('');
+    items.push(`<li class="day ${d.past ? 'day--past' : ''}"><h3 class="day-h">${weekdayLabel(d.date)}${d.past ? '<small>before today</small>' : ''}</h3><ul class="rows">${rows}</ul></li>`);
+  }
+  if (isThisMonth && !todayShown) items.push(`<li class="today-line"><span>Today, ${dayLabel(DATA.today)}</span></li>`);
+  $('[data-days]', cu).innerHTML = items.join('') || '<li class="day"><p class="day-h">Nothing this month.</p></li>';
+}
+
+function streamCard(s) {
+  const t = tag(s.tag);
+  const fixed = s.min === s.usual && s.max === s.usual;
+  const amount = fixed
+    ? `<span class="${kindClass(s.kind)}">${money(s.usual)}</span>`
+    : `Usually <span class="${kindClass(s.kind)}">${money(s.usual)}</span> <span class="range">· ${money(s.min)} to ${money(s.max)}</span>`;
+  return `<li><div class="card card--sm" style="height:100%">
+  <div class="card-h card-h--action">
+    <div class="card-t card-t--strong">${esc(s.name)}</div>
+    ${t ? `<p class="card-d"><span class="badge">${dot(s.tag)}${esc(t.name)}</span></p>` : ''}
+    <div class="card-a">
+      <button type="button" class="btn btn--ghost btn--sm" aria-label="Edit ${esc(s.name)}" data-edit="${esc(s.id)}"><svg><use href="#i-pencil"/></svg><span class="sm-only-hide">Edit</span></button>
+      <button type="button" class="btn btn--ghost btn--sm" aria-label="Delete ${esc(s.name)}" data-delete-stream="${esc(s.id)}"><svg><use href="#i-trash"/></svg><span class="sm-only-hide">Delete</span></button>
+    </div>
+  </div>
+  <div class="card-c" style="gap:4px">
+    <p class="stream-amt">${amount}</p>
+    <p class="stream-meta">every ${s.every} days · next ${dayLabel(s.next)}</p>
+  </div>
+</div></li>`;
+}
+function renderStreams(kind) {
+  const list = $(`[data-streams="${kind}"]`);
+  list.innerHTML = S.streams.filter((s) => s.kind === kind).map(streamCard).join('');
+}
+
+function tagRow(t) {
+  return `<li class="tagrow" data-tag-row="${esc(t.id)}">
+  <button type="button" class="swatch" data-tag-dot="${esc(t.id)}" data-pick="${esc(t.id)}" style="background:${esc(t.color)}" aria-label="Colour of ${esc(t.name)}" aria-haspopup="dialog"></button>
+  <button type="button" class="tagname" data-open-tag="${esc(t.id)}">${esc(t.name)}</button>
+  ${t.preset ? '<span class="badge badge--secondary">preset</span>' : ''}
+  <button type="button" class="btn btn--ghost btn--icon-sm" aria-label="Rename ${esc(t.name)}" data-rename-tag="${esc(t.id)}"><svg><use href="#i-pencil"/></svg></button>
+  <button type="button" class="btn btn--ghost btn--icon-sm" aria-label="Delete ${esc(t.name)}" data-delete-tag="${esc(t.id)}"><svg><use href="#i-trash"/></svg></button>
+</li>`;
+}
+function renderTags() {
+  $('[data-tag-list]').innerHTML = S.tags.map(tagRow).join('');
+  $('[data-new-swatch]').style.background = S.newTagColor;
+}
+function applyTagColor(id, color) {
+  $$(`[data-tag-dot="${id}"]`).forEach((el) => (el.style.background = color));
+}
+
+// A tag's own page: its streams, and a one-line summary of what they add up to.
+function tagSummary(t, streams) {
+  if (!streams.length) return 'No streams use this tag yet.';
+  const inCents = streams.filter((s) => s.kind === 'income').reduce((a, s) => a + s.usual, 0);
+  const outCents = streams.filter((s) => s.kind === 'expense').reduce((a, s) => a + s.usual, 0);
+  const parts = [];
+  if (inCents) parts.push(`${money(inCents)} in`);
+  if (outCents) parts.push(`${money(outCents)} out`);
+  const everyDays = new Set(streams.map((s) => s.every));
+  const everyText = everyDays.size === 1 ? ` every ${streams[0].every} days` : '';
+  return `${streams.length} stream${streams.length === 1 ? '' : 's'} · ${parts.join(' and ')}${everyText}`;
+}
+function renderTag() {
+  const el = screenEl('tag');
+  const t = tag(S.currentTag) ?? S.tags[0];
+  const streams = S.streams.filter((s) => s.tag === t.id);
+  $('#tag-title', el).innerHTML = `${dot(t.id, 'dot--lg')}${esc(t.name)}`;
+  $('[data-tag-summary]', el).textContent = tagSummary(t, streams);
+  $('[data-tag-streams]', el).innerHTML = streams.map(streamCard).join('') || '<p class="muted">No streams use this tag yet.</p>';
+}
+
+const RENDER = { overview: renderOverview, balances: renderBalances, income: () => renderStreams('income'), expenses: () => renderStreams('expense'), tags: renderTags, tag: renderTag };
+const NAV_FOR = { overview: 'overview', balances: 'overview', income: 'income', expenses: 'expenses', tags: 'tags', tag: 'tags' };
+
+function show(name) {
+  closePopover();
+  closeDialog();
+  if (name === 'add-expense') { show('expenses'); openStreamDialog('expense'); return; }
+  if (name === 'add-income') { show('income'); openStreamDialog('income'); return; }
+  // Coming up is a card on the overview now, not its own screen: land on the overview, scrolled down to it.
+  const scrollToComingUp = name === 'coming-up';
+  if (scrollToComingUp) name = 'overview';
+  if (!RENDER[name]) name = 'overview';
+  S.screen = name;
+  $$('.screen').forEach((s) => (s.hidden = s.dataset.screen !== name));
+  RENDER[name]();
+  $$('[data-go]').forEach((a) => {
+    const isNav = a.closest('nav');
+    if (isNav) a.setAttribute('aria-current', a.dataset.go === NAV_FOR[name] ? 'page' : 'false');
+  });
+  if (scrollToComingUp) {
+    const cu = $('[data-coming-up]');
+    if (cu) cu.scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0);
+  } else {
+    window.scrollTo(0, 0);
+  }
+}
+
+// ---------------------------------------------------------------- popovers (calendar, tag menu, colour picker)
+let popover = null;
+function openPopover(anchor, html, { label } = {}) {
+  closePopover();
+  const root = $('#popover-root');
+  const el = document.createElement('div');
+  el.className = 'popover';
+  el.setAttribute('role', 'dialog');
+  if (label) el.setAttribute('aria-label', label);
+  el.tabIndex = -1;
+  el.innerHTML = html;
+  root.appendChild(el);
+  const r = anchor.getBoundingClientRect();
+  const w = el.offsetWidth, h = el.offsetHeight;
+  let left = Math.min(r.left, window.innerWidth - w - 8);
+  let top = r.bottom + 4;
+  if (top + h > window.innerHeight - 8 && r.top - h - 4 > 8) top = r.top - h - 4;
+  el.style.left = Math.max(8, left) + 'px';
+  el.style.top = Math.max(8, top) + 'px';
+  popover = { el, anchor };
+  anchor.setAttribute('aria-expanded', 'true');
+  ($('[autofocus]', el) ?? $('button, input', el) ?? el).focus({ preventScroll: true });
+  return el;
+}
+function closePopover() {
+  if (!popover) return;
+  popover.anchor.removeAttribute('aria-expanded');
+  popover.el.remove();
+  const { anchor } = popover;
+  popover = null;
+  if (document.contains(anchor)) anchor.focus({ preventScroll: true });
+}
+
+function calendarHTML(view, selected) {
+  const [y, m] = view.split('-').map(Number);
+  const first = new Date(Date.UTC(y, m - 1, 1));
+  const lead = first.getUTCDay();
+  const daysIn = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const prevDays = new Date(Date.UTC(y, m - 1, 0)).getUTCDate();
+  const cells = [];
+  for (let i = lead - 1; i >= 0; i--) {
+    const iso = new Date(Date.UTC(y, m - 2, prevDays - i)).toISOString().slice(0, 10);
+    cells.push({ iso, outside: true });
+  }
+  for (let d = 1; d <= daysIn; d++) cells.push({ iso: new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10), outside: false });
+  while (cells.length % 7) {
+    const last = cells[cells.length - 1].iso;
+    cells.push({ iso: addDays(last, 1), outside: true });
+  }
+  const prevView = `${m === 1 ? y - 1 : y}-${String(m === 1 ? 12 : m - 1).padStart(2, '0')}`;
+  const nextView = `${m === 12 ? y + 1 : y}-${String(m === 12 ? 1 : m + 1).padStart(2, '0')}`;
+  return `<div class="cal">
+  <div class="cal-head">
+    <button type="button" class="btn btn--outline btn--icon-xs" data-cal-view="${prevView}" aria-label="Previous month"><svg><use href="#i-left"/></svg></button>
+    <span class="cal-title" aria-live="polite">${MONTHS_LONG[m - 1]} ${y}</span>
+    <button type="button" class="btn btn--outline btn--icon-xs" data-cal-view="${nextView}" aria-label="Next month"><svg><use href="#i-right"/></svg></button>
+  </div>
+  <div class="cal-grid" role="grid">
+    ${['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => `<span class="cal-wd" role="columnheader">${d}</span>`).join('')}
+    ${cells.map((c) => `<button type="button" class="cal-day ${c.outside ? 'outside' : ''} ${c.iso === DATA.today ? 'today' : ''}" data-pick-date="${c.iso}" aria-selected="${c.iso === selected}" aria-label="${longLabel(c.iso)}" ${c.iso === selected ? 'autofocus' : ''}>${Number(c.iso.slice(8))}</button>`).join('')}
+  </div>
+</div>`;
+}
+function openCalendar(field) {
+  const selected = field.dataset.date;
+  const el = openPopover(field, calendarHTML(selected.slice(0, 7), selected), { label: 'Choose a date' });
+  el.addEventListener('click', (ev) => {
+    const nav = ev.target.closest('[data-cal-view]');
+    if (nav) { el.innerHTML = calendarHTML(nav.dataset.calView, field.dataset.date); return; }
+    const day = ev.target.closest('[data-pick-date]');
+    if (day) {
+      field.dataset.date = day.dataset.pickDate;
+      $('span', field).textContent = longLabel(day.dataset.pickDate);
+      closePopover();
+    }
+  });
+}
+
+function tagMenuHTML(selectedId) {
+  const item = (id, name, color) => `<button type="button" class="menu-item" role="option" aria-selected="${id === selectedId}" data-pick-tag="${esc(id)}">${color ? `<span class="dot" style="background:${esc(color)}"></span>` : ''}${esc(name)}${id === selectedId ? '<svg><use href="#i-check"/></svg>' : ''}</button>`;
+  return `<div class="menu" role="listbox" aria-label="Tag">${item('', 'No tag', null)}${S.tags.map((t) => item(t.id, t.name, t.color)).join('')}</div>`;
+}
+function openTagMenu(trigger) {
+  const el = openPopover(trigger, tagMenuHTML(trigger.dataset.tag), { label: 'Tag' });
+  el.style.minWidth = trigger.getBoundingClientRect().width + 'px';
+  el.addEventListener('click', (ev) => {
+    const opt = ev.target.closest('[data-pick-tag]');
+    if (!opt) return;
+    const t = tag(opt.dataset.pickTag);
+    trigger.dataset.tag = opt.dataset.pickTag;
+    $('span', trigger).innerHTML = t ? `<span class="dot" style="background:${esc(t.color)}"></span>${esc(t.name)}` : 'No tag';
+    closePopover();
+  });
+}
+
+// The colour picker: swatches, a hue slider, a hex field. Picking recolours the tag wherever it shows.
+const SWATCHES = ['#16a34a', '#22c55e', '#15803d', '#65a30d', '#0f766e', '#ea580c', '#f97316', '#c2410c', '#d97706', '#f59e0b', '#b45309', '#0ea5e9', '#0284c7', '#06b6d4', '#a855f7', '#7c3aed', '#6366f1', '#ec4899', '#db2777', '#64748b'];
+function hexToHue(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = ((n >> 16) & 255) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  if (!d) return 0;
+  let h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return Math.round(h * 60);
+}
+function hueToHex(h) {
+  const s = 0.8, l = 0.45;
+  const c = (1 - Math.abs(2 * l - 1)) * s, xx = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = l - c / 2;
+  const [r, g, b] = h < 60 ? [c, xx, 0] : h < 120 ? [xx, c, 0] : h < 180 ? [0, c, xx] : h < 240 ? [0, xx, c] : h < 300 ? [xx, 0, c] : [c, 0, xx];
+  return '#' + [r, g, b].map((v) => Math.round((v + m) * 255).toString(16).padStart(2, '0')).join('');
+}
+function pickerHTML(color, label) {
+  return `<div class="picker">
+  <div class="swatches" role="group" aria-label="Colours">${SWATCHES.map((c) => `<button type="button" data-swatch="${c}" style="background:${c}" aria-label="${c}" aria-pressed="${c === color}"></button>`).join('')}</div>
+  <div class="field"><label class="label" for="hue-${label}">Hue</label><input type="range" class="hue" id="hue-${label}" min="0" max="360" value="${hexToHue(color)}" data-hue></div>
+  <div class="hexrow"><span class="dot dot--lg" data-preview style="background:${color}"></span><input class="input" value="${color}" aria-label="Hex colour" data-hex maxlength="7" spellcheck="false"></div>
+</div>`;
+}
+function openPicker(anchor, color, apply, label) {
+  const el = openPopover(anchor, pickerHTML(color, label), { label: `Colour of ${label}` });
+  const set = (c, from) => {
+    apply(c);
+    $('[data-preview]', el).style.background = c;
+    if (from !== 'hex') $('[data-hex]', el).value = c;
+    if (from !== 'hue') $('[data-hue]', el).value = hexToHue(c);
+    $$('[data-swatch]', el).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.swatch === c)));
+  };
+  el.addEventListener('click', (ev) => {
+    const sw = ev.target.closest('[data-swatch]');
+    if (sw) set(sw.dataset.swatch, 'swatch');
+  });
+  $('[data-hue]', el).addEventListener('input', (ev) => set(hueToHex(Number(ev.target.value)), 'hue'));
+  $('[data-hex]', el).addEventListener('input', (ev) => {
+    const v = ev.target.value.trim().toLowerCase();
+    if (/^#[0-9a-f]{6}$/.test(v)) set(v, 'hex');
+  });
+}
+
+// ---------------------------------------------------------------- dialogs
+let dialog = null;
+function openDialog(html, { sheet = false, label } = {}) {
+  closeDialog();
+  const root = $('#dialog-root');
+  root.innerHTML = `<div class="overlay" data-overlay></div><div class="dialog ${sheet ? 'dialog--sheet' : ''}" role="dialog" aria-modal="true" aria-label="${esc(label)}" tabindex="-1">${html}<button type="button" class="btn btn--ghost btn--icon-sm dialog-x" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>`;
+  dialog = { opener: document.activeElement, el: $('.dialog', root) };
+  ($('input, button', dialog.el) ?? dialog.el).focus({ preventScroll: true });
+  return dialog.el;
+}
+function closeDialog() {
+  if (!dialog) return;
+  $('#dialog-root').innerHTML = '';
+  const { opener } = dialog;
+  dialog = null;
+  if (opener && document.contains(opener)) opener.focus({ preventScroll: true });
+}
+
+const PRESET_FORM = {
+  expense: { name: 'Bus pass', usual: '85.00', every: 30, date: '2026-10-06', tag: 'bill' },
+  income: { name: '', usual: '', every: 14, date: DATA.today, tag: 'pay' }
+};
+const REPEATS = [[7, 'Weekly'], [14, 'Every 2 weeks'], [30, 'Monthly'], [0, 'Every N days']];
+function streamFormHTML(kind, v) {
+  const t = tag(v.tag);
+  const custom = !REPEATS.some(([d]) => d === v.every);
+  return `<div class="dialog-h"><h2 class="dialog-t">${kind === 'income' ? 'Add income' : 'Add expense'}</h2></div>
+<form class="form" data-stream-form data-kind="${kind}" novalidate>
+  <div class="field">
+    <label class="label" for="sf-name">Name</label>
+    <input class="input" id="sf-name" name="name" required maxlength="100" autocomplete="off" placeholder="${kind === 'income' ? 'Pay cheque' : 'Rent'}" value="${esc(v.name)}">
+  </div>
+  <div class="field">
+    <label class="label" for="sf-usual">Usual amount</label>
+    <input class="input" id="sf-usual" name="usual" inputmode="decimal" placeholder="${kind === 'income' ? '800.00' : '85.00'}" autocomplete="off" required value="${esc(v.usual)}">
+    <p class="hint">Just the usual is enough.</p>
+  </div>
+  <div class="field">
+    <span class="label" id="sf-repeats-label">Repeats</span>
+    <div class="seg seg--repeats" role="group" aria-labelledby="sf-repeats-label" data-repeats>
+      ${REPEATS.map(([d, l]) => `<button type="button" data-every="${d}" aria-pressed="${custom ? d === 0 : d === v.every}">${l}</button>`).join('')}
+    </div>
+    <div class="field" data-every-n ${custom ? '' : 'hidden'}>
+      <label class="label" for="sf-every">Every how many days</label>
+      <input class="input input--num" id="sf-every" type="number" min="1" max="366" step="1" value="${custom ? v.every : 30}">
+    </div>
+  </div>
+  <div class="field">
+    <label class="label" for="sf-date">Next date</label>
+    <button type="button" class="datefield" id="sf-date" data-datefield data-date="${v.date}" aria-haspopup="dialog"><span>${longLabel(v.date)}</span><svg><use href="#i-calendar"/></svg></button>
+  </div>
+  <div class="field">
+    <label class="label" for="sf-tag">Tag</label>
+    <button type="button" class="select" id="sf-tag" data-tag="${esc(v.tag)}" data-tagselect aria-haspopup="listbox"><span>${t ? `<span class="dot" style="background:${esc(t.color)}"></span>${esc(t.name)}` : 'No tag'}</span><svg><use href="#i-down"/></svg></button>
+  </div>
+  <div>
+    <button type="button" class="disclosure" data-range-toggle aria-expanded="false" aria-controls="sf-range"><svg><use href="#i-right"/></svg>Add a range</button>
+    <div class="field" id="sf-range" data-range hidden style="margin-top:8px">
+      <div class="form-row">
+        <div class="field"><label class="label" for="sf-min">Minimum</label><input class="input" id="sf-min" inputmode="decimal" value="${esc(v.usual)}"></div>
+        <div class="field"><label class="label" for="sf-max">Maximum</label><input class="input" id="sf-max" inputmode="decimal" value="${esc(v.usual)}"></div>
+      </div>
+      <p class="hint">If you skip this, minimum and maximum equal the usual amount.</p>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button type="button" class="btn btn--outline" data-close>Cancel</button>
+    <button type="submit" class="btn">Save</button>
+  </div>
+</form>`;
+}
+function openStreamDialog(kind) {
+  const el = openDialog(streamFormHTML(kind, PRESET_FORM[kind]), { sheet: true, label: kind === 'income' ? 'Add income' : 'Add expense' });
+  el.addEventListener('click', (ev) => {
+    const rep = ev.target.closest('[data-every]');
+    if (rep) {
+      $$('[data-every]', el).forEach((b) => b.setAttribute('aria-pressed', String(b === rep)));
+      $('[data-every-n]', el).hidden = rep.dataset.every !== '0';
+      if (rep.dataset.every === '0') $('#sf-every', el).focus();
+      return;
+    }
+    const tog = ev.target.closest('[data-range-toggle]');
+    if (tog) {
+      const open = tog.getAttribute('aria-expanded') !== 'true';
+      tog.setAttribute('aria-expanded', String(open));
+      const range = $('[data-range]', el);
+      range.hidden = !open;
+      if (open) {
+        const usual = $('#sf-usual', el).value;
+        $('#sf-min', el).value = usual;
+        $('#sf-max', el).value = usual;
+        $('#sf-min', el).focus();
+      }
+    }
+  });
+  $('[data-stream-form]', el).addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const name = $('#sf-name', el).value.trim() || (kind === 'income' ? 'New income' : 'New expense');
+    const usual = Math.round(Number(String($('#sf-usual', el).value).replace(/[$,\s]/g, '')) * 100) || 0;
+    const pressed = $('[data-every][aria-pressed="true"]', el);
+    const every = pressed?.dataset.every === '0' ? Number($('#sf-every', el).value) || 30 : Number(pressed?.dataset.every) || 30;
+    const rangeOpen = !$('[data-range]', el).hidden;
+    const min = rangeOpen ? Math.round(Number($('#sf-min', el).value.replace(/[$,\s]/g, '')) * 100) || usual : usual;
+    const max = rangeOpen ? Math.round(Number($('#sf-max', el).value.replace(/[$,\s]/g, '')) * 100) || usual : usual;
+    const first = $('#sf-date', el).dataset.date;
+    S.streams.push({ id: 'new-' + Date.now(), kind, name, min, usual, max, every, first, tag: $('[data-tagselect]', el).dataset.tag || null, next: first });
+    closeDialog();
+    renderStreams(kind);
+    toast(`${name} added. In this proposal the forecast does not change, and nothing is saved.`);
+  });
+}
+
+function confirmDialog({ title, body, action, onConfirm }) {
+  const el = openDialog(`<div class="dialog-h"><h2 class="dialog-t">${esc(title)}</h2><p class="card-d">${esc(body)}</p></div>
+<div class="form-actions"><button type="button" class="btn btn--outline" data-close>Cancel</button><button type="button" class="btn btn--destructive" data-confirm>${esc(action)}</button></div>`, { label: title });
+  $('[data-confirm]', el).focus();
+  $('[data-confirm]', el).addEventListener('click', () => { closeDialog(); onConfirm(); });
+}
+
+// ---------------------------------------------------------------- toast
+let toastTimer = 0;
+function toast(text) {
+  const el = $('#toast');
+  el.innerHTML = `<svg><use href="#i-circle-check"/></svg><span>${esc(text)}</span>`;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+// ---------------------------------------------------------------- events
+document.addEventListener('click', (ev) => {
+  const go = ev.target.closest('[data-go]');
+  if (go) { ev.preventDefault(); show(go.dataset.go); return; }
+
+  const win = ev.target.closest('[data-window]');
+  if (win) { S.days = Number(win.dataset.window); RENDER[S.screen](); return; }
+
+  const flip = ev.target.closest('[data-flip]');
+  if (flip && flip.getAttribute('aria-disabled') !== 'true') {
+    S.checkin = Math.min(Math.max(S.checkin + Number(flip.dataset.flip), 0), DATA.checkins.length - 1);
+    renderBalances();
+    return;
+  }
+  const sel = ev.target.closest('[data-select-checkin]');
+  if (sel) { S.checkin = Number(sel.dataset.selectCheckin); renderBalances(); return; }
+
+  const month = ev.target.closest('[data-month]');
+  if (month && month.getAttribute('aria-disabled') !== 'true') {
+    S.month = Math.min(Math.max(S.month + Number(month.dataset.month), 0), DATA.months.length - 1);
+    renderComingUp();
+    return;
+  }
+
+  const add = ev.target.closest('[data-add]');
+  if (add) { openStreamDialog(add.dataset.add); return; }
+
+  const del = ev.target.closest('[data-delete-stream]');
+  if (del) {
+    const s = S.streams.find((x) => x.id === del.dataset.deleteStream);
+    confirmDialog({ title: `Delete ${s.name}?`, body: 'It stops counting toward your forecast.', action: 'Delete', onConfirm: () => { S.streams = S.streams.filter((x) => x !== s); renderStreams(s.kind); } });
+    return;
+  }
+  const edit = ev.target.closest('[data-edit]');
+  if (edit) { toast('Editing a stream opens the same form, filled in. Not drawn in this proposal.'); return; }
+
+  const openTag = ev.target.closest('[data-open-tag]');
+  if (openTag) { S.currentTag = openTag.dataset.openTag; show('tag'); return; }
+
+  const renameTag = ev.target.closest('[data-rename-tag]');
+  if (renameTag) {
+    const t = tag(renameTag.dataset.renameTag);
+    const next = window.prompt('Rename tag', t.name);
+    if (next && next.trim()) {
+      t.name = next.trim();
+      renderTags();
+      if (S.screen === 'tag' && S.currentTag === t.id) renderTag();
+    }
+    return;
+  }
+
+  const delTag = ev.target.closest('[data-delete-tag]');
+  if (delTag) {
+    const t = tag(delTag.dataset.deleteTag);
+    confirmDialog({ title: `Delete ${t.name}?`, body: 'Streams using this tag keep working, untagged.' + (t.preset ? ' Presets you delete can\'t be brought back.' : ''), action: 'Delete', onConfirm: () => { S.tags = S.tags.filter((x) => x !== t); renderTags(); } });
+    return;
+  }
+  const pick = ev.target.closest('[data-pick]');
+  if (pick) {
+    if (popover?.anchor === pick) { closePopover(); return; }
+    const t = tag(pick.dataset.pick);
+    openPicker(pick, t.color, (c) => { t.color = c; applyTagColor(t.id, c); }, t.name);
+    return;
+  }
+  const newSwatch = ev.target.closest('[data-new-swatch]');
+  if (newSwatch) {
+    if (popover?.anchor === newSwatch) { closePopover(); return; }
+    openPicker(newSwatch, S.newTagColor, (c) => { S.newTagColor = c; newSwatch.style.background = c; }, 'the new tag');
+    return;
+  }
+
+  const datefield = ev.target.closest('[data-datefield]');
+  if (datefield) { if (popover?.anchor === datefield) closePopover(); else openCalendar(datefield); return; }
+  const tagselect = ev.target.closest('[data-tagselect]');
+  if (tagselect) { if (popover?.anchor === tagselect) closePopover(); else openTagMenu(tagselect); return; }
+
+  if (ev.target.closest('[data-close]') || ev.target.closest('[data-overlay]')) { closeDialog(); return; }
+  if (ev.target.closest('[data-signout]')) { toast('Nothing signs out here. This is a proposal, not the app.'); return; }
+
+  if (popover && !popover.el.contains(ev.target)) closePopover();
+});
+
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape') {
+    if (popover) closePopover();
+    else if (dialog) closeDialog();
+  }
+  if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches('[data-select-checkin]')) { ev.preventDefault(); ev.target.click(); }
+});
+window.addEventListener('resize', closePopover);
+window.addEventListener('scroll', () => { if (popover && !dialog) closePopover(); }, { passive: true });
+
+$('[data-checkin-form]').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const form = ev.currentTarget;
+  const raw = $('#balance', form).value.replace(/[$,\s]/g, '');
+  const cents = Math.round(Number(raw) * 100);
+  const saved = $('[data-saved]', form);
+  if (!Number.isFinite(cents)) { saved.innerHTML = '<span class="out">That is not an amount.</span>'; saved.classList.add('show'); return; }
+  saved.innerHTML = `<svg><use href="#i-circle-check"/></svg><span>Saved · ${money(cents)}. Your forecast starts from today.</span>`;
+  saved.classList.add('show');
+  toast('Balance saved');
+});
+
+$('[data-add-tag-form]').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const input = $('#new-tag');
+  const name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  S.tags.push({ id: 'tag-' + Date.now(), name, color: S.newTagColor, preset: false });
+  input.value = '';
+  renderTags();
+});
+
+// ---------------------------------------------------------------- start
+const start = document.documentElement.dataset.start || location.hash.replace(/^#/, '') || 'overview';
+show(start);
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Team kriket</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root { color-scheme: light dark; --bg: #fbfbf8; --surface: #ffffff; --ink: #1c211d; --muted: #5f6a62; --line: #e2e6e0; --accent: #15803d; --accent-soft: #e8f5ec; --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; --mono: "IBM Plex Mono", Menlo, monospace; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #141816; --surface: #1c221e; --ink: #edf1ea; --muted: #a3ada5; --line: #2d352f; --accent: #4ade80; --accent-soft: #163a25; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; padding-inline: 16px; padding-block: 0 48px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  header { padding-block: 32px 8px; }
+  h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--muted); max-width: 60ch; }
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 28px 0 10px; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; }
+  li a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  li a:hover, li a:focus-visible { text-decoration: underline; outline: none; }
+  li small { color: var(--muted); }
+  code { font-family: var(--mono); font-size: 13px; }
+  .soon { display: inline-block; font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 1px 8px; margin-left: 6px; vertical-align: middle; }
+  footer { margin-top: 32px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Team kriket</h1>
+    <p>Everything the team and the agents are producing this weekend, in one place. Budgeting for bumpy income; Co.Hack 2026, Saskatoon.</p>
+  </header>
+
+  <h2>The product</h2>
+  <ul>
+    <li><a href="https://app.26.cohack.tetl.ca">app.26.cohack.tetl.ca</a><small>The live app, iteration 1 (tags, income and expense streams, forecast). Deploys automatically when a pull request merges to <code>main</code>. Sign up with any email and a password.</small></li>
+    <li><a href="/tour/">The app tour</a><span class="soon">iteration 2</span><small>Real screenshots of every page at phone and desktop width, how the model and the forecast work, the API, and the next steps to plan; refreshed after each iteration. Earlier ones: <a href="/tour/1/">iteration 1</a>, <a href="/tour/2/">iteration 2</a>.</small></li>
+    <li><a href="/tour/2-proposal/">The proposed prototype for iteration 2</a><span class="soon">proposal</span><small>Clickable screens of what iteration 2 could look like, built from the notes on iteration 1; a proposal to react to, not a promise.</small></li>
+    <li><a href="https://github.com/kriket-app/kriket">github.com/kriket-app/kriket</a><small>The code, public and open source. Pull requests, CI, and the plan live here.</small></li>
+  </ul>
+
+  <h2>How the build is going</h2>
+  <ul>
+    <li><a href="/kriket/board/">The iteration 2 board</a><span class="soon">live</span><small>What is running, what has merged, next steps with rough times, and the rulings made on the founders' behalf; refreshed at every step of the build.</small></li>
+    <li><a href="/kriket/qwen/">The Qwen experiment</a><small>The same iteration 2 plan built in parallel by the kit's open-weight model on the GPU box, never merged, to compare with Claude: every run and what the checks found.</small></li>
+    <li><a href="/board/">The iteration 1 build board</a><small>Spec as confirmed, plan tasks and their reviews, infrastructure checklist, every ruling made on the founders' behalf, and a timeline; republished at each milestone.</small></li>
+    <li><a href="https://github.com/kriket-app/kriket/blob/main/docs/plans/2026-09-27-iteration-2-proposal.md">The iteration 2 proposal</a><small>Who it is for, what "not a spreadsheet" means on screen, every note from iteration 1 mapped to a change, what stays out; Theo and Erik edit it on GitHub.</small></li>
+    <li><a href="https://github.com/kriket-app/kriket/blob/main/docs/plans/2026-09-27-goals.md">The goals plan</a><span class="soon">iteration 3</span><small>One goal, a line under the answer, a target on the chart; the contract, four tasks, and eight open questions for Theo and Erik at the end.</small></li>
+    <li><a href="https://github.com/kriket-app/kriket/blob/main/docs/handoffs/2026-09-26-iteration-2.md">The iteration 2 handoff</a><small>What shipped, how the build ran, the rulings made on the founders' behalf, the Claude track's measurements for the comparison with the Qwen experiment, and what comes next.</small></li>
+    <li><a href="https://github.com/kriket-app/kriket/blob/main/docs/plans/2026-09-27-iteration-2-build.md">The iteration 2 build plan</a><small>The API contract and the eight tasks that built iteration 2.</small></li>
+    <li><a href="https://github.com/kriket-app/kriket/blob/main/docs/superpowers/plans/2026-09-26-first-pass.md">The first-pass plan</a><small>Spec, constraints, the API contract, and the four tasks that built items 0 to 3.</small></li>
+  </ul>
+
+  <h2>The kit around it</h2>
+  <ul>
+    <li><a href="/">The team kit</a><small>The way of working: rules, onboarding, the 24-hour timeline, demo script, pitch outline, retro.</small></li>
+    <li><a href="/team-kit/06-onboarding/">Onboarding</a><small>What is in the sandbox and the three things a teammate brings; the shared model through the gateway.</small></li>
+    <li><a href="https://github.com/ert485/xenia-2026">github.com/ert485/xenia-2026</a><small>The kit itself: infrastructure, the Docker box, the GPU box, the gateway, the site.</small></li>
+  </ul>
+
+  <footer>Nothing on these pages is private. Keys, contact details, and anything personal stay out of the repos and off this site.</footer>
+</div>
+</body>
+</html>

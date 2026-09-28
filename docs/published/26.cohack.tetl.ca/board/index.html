@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Kriket Build Board</title>
+<style>:root{color-scheme:light dark}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #fbfbf8;
+    --surface: #ffffff;
+    --ink: #1c211d;
+    --muted: #5f6a62;
+    --line: #e2e6e0;
+    --accent: #15803d;
+    --accent-soft: #e8f5ec;
+    --ok: #15803d;
+    --ok-soft: #e8f5ec;
+    --wait: #b45309;
+    --wait-soft: #fdf2e3;
+    --run: #1d4ed8;
+    --run-soft: #e6eefc;
+    --todo: #6b7280;
+    --todo-soft: #eef0ee;
+    --sans: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #141816; --surface: #1c221e; --ink: #edf1ea; --muted: #a3ada5; --line: #2d352f;
+      --accent: #4ade80; --accent-soft: #163a25;
+      --ok: #4ade80; --ok-soft: #163a25; --wait: #fbbf24; --wait-soft: #3d2c0a;
+      --run: #93c5fd; --run-soft: #172a4a; --todo: #9aa39c; --todo-soft: #262c28;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #141816; --surface: #1c221e; --ink: #edf1ea; --muted: #a3ada5; --line: #2d352f;
+    --accent: #4ade80; --accent-soft: #163a25;
+    --ok: #4ade80; --ok-soft: #163a25; --wait: #fbbf24; --wait-soft: #3d2c0a;
+    --run: #93c5fd; --run-soft: #172a4a; --todo: #9aa39c; --todo-soft: #262c28;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 0 48px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  header.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; padding-block: 28px 12px; border-bottom: 1px solid var(--line); }
+  h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .stamp { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  h2 { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 32px 0 12px; }
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px; }
+  .tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+  .tile .k { font-size: 12px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+  .tile .v { font-weight: 600; font-size: 15px; }
+  .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .ok { color: var(--ok); background: var(--ok-soft); }
+  .wait { color: var(--wait); background: var(--wait-soft); }
+  .run { color: var(--run); background: var(--run-soft); }
+  .todo { color: var(--todo); background: var(--todo-soft); }
+  ul.plain { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  ul.plain li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  ul.plain li .pill { margin-top: 2px; }
+  ul.plain li p { margin: 0; }
+  ul.plain li small { color: var(--muted); display: block; margin-top: 2px; }
+  .actions li { border-left: 3px solid var(--accent); }
+  code { font-family: var(--mono); font-size: 12.5px; background: var(--todo-soft); padding: 1px 5px; border-radius: 4px; }
+  pre { font-family: var(--mono); font-size: 12.5px; background: var(--todo-soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; margin: 6px 0 0; }
+  a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .spec { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .spec p { margin: 0 0 8px; max-width: 68ch; }
+  .spec dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 8px 0 0; font-size: 14px; }
+  .spec dt { color: var(--muted); }
+  .spec dd { margin: 0; }
+  .items { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; }
+  .item { display: flex; gap: 8px; align-items: center; font-size: 14px; padding: 6px 8px; border-radius: 6px; background: var(--todo-soft); }
+  .item .n { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 1.4em; }
+  .item.now { background: var(--accent-soft); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  .tablewrap { overflow-x: auto; }
+  .timeline { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--line); }
+  .timeline li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 4px 0 4px 14px; position: relative; }
+  .timeline li::before { content: ""; position: absolute; left: -6px; top: 12px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .timeline time { font-family: var(--mono); font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .rulings li { grid-template-columns: 1fr; }
+  .rulings b { font-family: var(--mono); font-weight: 500; color: var(--muted); margin-right: 6px; }
+  @media (max-width: 480px) { .timeline li { grid-template-columns: 1fr; gap: 2px; } .spec dl { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: no-preference) { .pill { transition: background-color .2s; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Kriket Build Board</h1>
+    <span class="stamp">Updated Sat 2026-09-26 14:38 CST (UTC−6) · Co.Hack 2026, hour 6 of 27 · public copy at 26.cohack.tetl.ca/board · <a href="/kriket/">team index</a> · <a href="/tour/">app tour</a></span>
+  </header>
+
+  <div class="strip">
+    <div class="tile"><span class="k">Kit site</span><span class="v"><span class="pill ok">Live</span></span><small class="stamp">26.cohack.tetl.ca</small></div>
+    <div class="tile"><span class="k">Team repo</span><span class="v"><span class="pill ok">Public, main</span></span><small class="stamp">kriket-app/kriket</small></div>
+    <div class="tile"><span class="k">Backend</span><span class="v"><span class="pill ok">Reviewed</span></span><small class="stamp">28 tests green</small></div>
+    <div class="tile"><span class="k">Frontend shell</span><span class="v"><span class="pill ok">Reviewed</span></span><small class="stamp">check, lint, build clean</small></div>
+    <div class="tile"><span class="k">App pages</span><span class="v"><span class="pill ok">Reviewed</span></span><small class="stamp">tags, streams, overview</small></div>
+    <div class="tile"><span class="k">Whole branch</span><span class="v"><span class="pill ok">Merged</span></span><small class="stamp">PR 15 on main; PR 16 fixes CI</small></div>
+    <div class="tile"><span class="k">Deploy to app.</span><span class="v"><span class="pill ok">Live</span></span><small class="stamp">app.26.cohack.tetl.ca, smoke-tested</small></div>
+  </div>
+
+  <h2>Your actions</h2>
+  <ul class="plain actions">
+    <li><span class="pill ok">Done 13:35</span><div><p>Onboarding script ran: platform apply (7 added), five secrets set, repo public, Docker-box IAM line applied.</p><small>At a quiet moment: restore ALERT_EMAIL and ALERT_SMS in the worktree's kit.local.env before any future full apply of the docker-box or org stacks; the recreated file has them empty.</small></div></li>
+    <li><span class="pill ok">Done 13:45</span><div><p>Kit PR 14 merged; the Docker box now runs the kit's main with the secrets step; the kit's own hello-app deploy is disabled so <code>app.</code> belongs to kriket from its first deploy.</p></div></li>
+    <li><span class="pill todo">Nothing pending</span><div><p>Next thing that needs you: merging the kriket PR once it opens with green CI, unless you'd rather I merge it.</p></div></li>
+  </ul>
+
+  <h2>Plan progress</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Task</th><th>Scope</th><th>State</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td>1 Backend</td><td>tables, schemas, crud, services, routes, tests, OpenAPI</td><td><span class="pill ok">Reviewed</span></td><td>4 commits; 28 of 28 tests on a real Postgres; review approved, four minors deferred to the final pass</td></tr>
+      <tr><td>2 Frontend foundation</td><td>shadcn-svelte, green tokens, app shell with bottom and top nav, route guard, money helpers, chart, PWA manifest, landing page</td><td><span class="pill ok">Reviewed</span></td><td>1 commit; check, lint, build clean; review approved; button contrast fix carried into Task 3</td></tr>
+      <tr><td>3 App pages</td><td>tags, income, expenses, overview with forecast; all fetching in server load and actions</td><td><span class="pill ok">Reviewed</span></td><td>1 commit; every page exercised in Chrome against the real stack; review approved, four minors deferred</td></tr>
+      <tr><td>4 Integration</td><td>e2e run, make check, compose build, readme</td><td><span class="pill ok">Done</span></td><td>make check pass; backend 28 of 28; e2e 4 of 4; compose build with both health checks answering; readme rewritten</td></tr>
+      <tr><td>Final</td><td>whole-branch review on the most capable model, one fix wave, re-review, PR</td><td><span class="pill ok">Merged</span></td><td>review: ready with fixes (3 important, 3 cheap minors fixed; 33 backend tests); PR 15 merged 14:28, before its checks ran: my auto-merge merged at once on an unprotected branch</td></tr>
+      <tr><td>Follow-up</td><td>the three CI failures the first org-repo run exposed: gitleaks licence, stale generated files, e2e database on a fresh runner</td><td><span class="pill ok">Merged</span></td><td>PR 16 merged after all four checks passed; a ruleset on main now requires the check status</td></tr>
+      <tr><td>Deploy</td><td>three arm64 images to ECR, SSM deploy to the Docker box, smoke test through TLS</td><td><span class="pill ok">Live</span></td><td>health ok; real sign-up through the public URL; cookie forwarded by the SvelteKit server; presets seeded; forecast starts on today's Saskatoon date</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin:8px 0 0;font-size:14px;color:var(--muted)">Plan: <a href="https://github.com/kriket-app/kriket/blob/feat/first-pass/docs/superpowers/plans/2026-09-26-first-pass.md">docs/superpowers/plans/2026-09-26-first-pass.md</a> on branch <code>feat/first-pass</code>. Each task gets an independent reviewer; findings go back to the implementer, up to five rounds.</p>
+
+  <h2>Spec, as confirmed</h2>
+  <div class="spec">
+    <p>A budgeting app for people whose money is bumpy. Set it up once; it forecasts where the balance is heading and says whether you'll hit the goal, instead of asking for every receipt. Green and white, playful. Name from "is your bank account sounding like crickets".</p>
+    <dl>
+      <dt>Streams</dt><dd>income and expense, each with a minimum, usual, and maximum amount, a repeat interval in days, a first date, a tag</dd>
+      <dt>Forecast</dt><dd>daily balance for 30, 90, or 180 days at worst case, expected, and best case</dd>
+      <dt>Tags</dt><dd>eight presets seeded per user, editable</dd>
+      <dt>Constraints</dt><dd>backend split into schemas, services, routes, crud; frontend fetches only in server files; shadcn-svelte; one <code>--brand</code> token for the green; bottom nav on phones, top nav on desktop; a landing page</dd>
+      <dt>Team terms</dt><dd>50/50 prize, equal IP, open source, AI within Erik's AWS cap, Theo pays for no tools</dd>
+    </dl>
+    <div class="items">
+      <div class="item now"><span class="n">0</span>Tags with presets</div>
+      <div class="item now"><span class="n">1</span>Income streams</div>
+      <div class="item now"><span class="n">2</span>Expense streams</div>
+      <div class="item now"><span class="n">3</span>Forecasted balance</div>
+      <div class="item"><span class="n">4</span>Goals</div>
+      <div class="item"><span class="n">5</span>Mobile app (PWA)</div>
+      <div class="item"><span class="n">6</span>One-time expenses</div>
+      <div class="item"><span class="n">7</span>One-time incomes</div>
+      <div class="item"><span class="n">8</span>Suggestions to meet a goal</div>
+      <div class="item"><span class="n">9</span>Subscription reminders</div>
+    </div>
+  </div>
+
+  <h2>Infrastructure and onboarding</h2>
+  <ul class="plain">
+    <li><span class="pill ok">Done</span><p>Kit site live at the apex with all team-kit pages; the printed QR resolves to it.</p></li>
+    <li><span class="pill ok">Done</span><p>GPU box up, gateway serving the team model; Theo's key issued and tested end to end. <small>OpenCode shows the model as an option in the repo; his current model stays the default.</small></p></li>
+    <li><span class="pill ok">Done</span><p>Org <code>kriket-app</code> with both of you as owners; repo created from Theo's template; default branch renamed to <code>main</code>.</p></li>
+    <li><span class="pill ok">Done</span><p>Deploy wiring on the repo (branch <code>kit/deploy-docker-box</code>, folded into <code>feat/first-pass</code>): compose split into a box file and a local override, Caddy as the <code>web</code> service, the kit's deploy and check workflows, Makefile, gitleaks rules.</p></li>
+    <li><span class="pill ok">Done</span><p>App settings stored in the parameter store: the auth secret and the public URL.</p></li>
+    <li><span class="pill ok">Done</span><p>Deploy and preview roles, ECR repository, and the three repo secrets for the team repo; the two kit-site secrets on the kit repo; repo public; the box may now list its app parameters.</p></li>
+    <li><span class="pill ok">Done</span><p>Kit PR 14 merged (deploy script hands app secrets to compose; team repo on the allow-list); box updated to the kit's main and verified listing the app parameters.</p></li>
+    <li><span class="pill ok">Done</span><p>First deploy to <code>app.26.cohack.tetl.ca</code> succeeded and was smoke-tested; every merge to main deploys. Previews per PR arrive with the kit's next piece.</p></li>
+  </ul>
+
+  <h2>Rulings made on your behalf</h2>
+  <ul class="plain rulings">
+    <li><p><b>R1</b>Date helpers live in their own backend file to avoid a circular import between forecast and settings.</p></li>
+    <li><p><b>R2</b>The forecast route validates its query inline: Express 5 makes <code>req.query</code> read-only.</p></li>
+    <li><p><b>R3</b>Backend and frontend tasks ran in parallel on one branch (disjoint directories) to save the clock.</p></li>
+    <li><p><b>R4</b>Local runs use Node 24 with the engine check relaxed; Docker and CI keep the Node 26 pin.</p></li>
+    <li><p><b>R5</b>shadcn's CLI required a preset; the frontend uses the "vega" preset (Inter font) and chart labels are HTML over the SVG. Cosmetic, kept.</p></li>
+    <li><p><b>R6</b>Three intended frontend deletions rode along in a backend commit through the shared index; the tree is correct, history left alone.</p></li>
+    <li><p><b>Repo</b>Default branch renamed to main (the kit's deploy trust needs it); repo made public by Erik; OIDC subject customised to include the workflow reference; ruleset on main requiring the check status.</p></li>
+    <li><p><b>Error, not a ruling</b>PR 15 was merged before its checks by my auto-merge command; the ruleset above is the correction, and PR 16 carries the fixes its CI run exposed.</p></li>
+  </ul>
+
+  <h2>Timeline</h2>
+  <ul class="timeline">
+    <li><time>08:55</time><span>Session starts; apex has no site and no DNS record; other session mid-Task 12.</span></li>
+    <li><time>09:25</time><span>Kit site live: CloudFront, bucket, apex aliases, pages built and leak-checked.</span></li>
+    <li><time>12:19</time><span>Whiteboard photo and two recordings received; transcribed locally.</span></li>
+    <li><time>12:27</time><span>Org kriket-app created (Erik); Theo joined.</span></li>
+    <li><time>12:30</time><span>Repo created fresh from the template under the org; branch renamed to main.</span></li>
+    <li><time>12:45</time><span>Theo's gateway key issued and verified with a real completion.</span></li>
+    <li><time>12:50</time><span>Idea summary and scope (items 0 to 3) confirmed; requirements received.</span></li>
+    <li><time>13:05</time><span>Plan written and committed; backend and frontend implementers dispatched in parallel.</span></li>
+    <li><time>13:24</time><span>Both implementers report done with concerns; reviewers dispatched.</span></li>
+    <li><time>13:28</time><span>Docker-box plan shows alarm-subscription drift from the recreated env file; IAM change re-planned targeted.</span></li>
+    <li><time>13:31</time><span>Both reviews approved, no critical or important findings; Task 3 (app pages) dispatched.</span></li>
+    <li><time>13:35</time><span>Erik ran the onboarding script: roles, ECR, secrets, public repo, box IAM.</span></li>
+    <li><time>13:37</time><span>Kit PR opened, ready for review, with its callout in the description (Erik's standing rule: all callouts, no tags, never draft). Board published at 26.cohack.tetl.ca/board.</span></li>
+    <li><time>13:45</time><span>Kit PR 14 merged; Docker box updated to the kit's main; kit's hello deploy disabled by Erik. Deploy path for kriket complete.</span></li>
+    <li><time>13:50</time><span>Task 3 (app pages) committed and verified in a browser; its review and Task 4 (e2e, gates, compose build, readme) running in parallel.</span></li>
+    <li><time>13:58</time><span>Task 3 review approved. Timeline times corrected to the machine clock (Saskatoon, UTC−6).</span></li>
+    <li><time>14:04</time><span>Task 4 done: every gate green, compose build with both health checks. Whole-branch review dispatched on Fable.</span></li>
+    <li><time>14:17</time><span>Whole-branch review: ready with fixes. Fix wave of six commits; app tour iteration 1 published at /tour/.</span></li>
+    <li><time>14:28</time><span>PR 15 opened and, wrongly, merged at once: the auto-merge command merges immediately on a branch with no rules. Its first CI run then failed on three things no local run had shown.</span></li>
+    <li><time>14:31</time><span>Fixes on the way: OIDC subject customised on the repo (the first deploy could not assume its role), ruleset on main requiring the check status, PR 16 with the three CI fixes, deploy re-run.</span></li>
+    <li><time>14:36</time><span>Deploy succeeded; kriket live at app.26.cohack.tetl.ca and smoke-tested end to end through the public URL.</span></li>
+    <li><time>14:37</time><span>PR 16 merged after all four checks passed. Iteration 1 complete.</span></li>
+  </ul>
+</div>
+
+</body>
+</html>
